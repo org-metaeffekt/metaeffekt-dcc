@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>test-base-profile</id>
+
+    <type>
+        <base/>
+    </type>
+    
+    <unit id="test-unit" />
+    
+    <capability-definition id="test.capability">
+        <attribute-key key="key0" />
+        <attribute-key key="key1" default="default1" />
+        <attribute-key key="key2" default="default2" />
+        <attribute-key key="key3" default="default3" />
+        <attribute-key key="key4" />
+        <attribute-key key="key5" />
+    </capability-definition>
+    
+    <unit id="unit-with-capability">
+        <provided-capability id="test.capability" />
+        <attributes>
+            <attribute key="key5" value="attribute5"/>
+        </attributes>
+        <mappings>
+            <mapping targetCapabilityId="test.capability">
+                <expression attributeKey="key0" value="0"/>
+                <expression attributeKey="key1" value="1"/>
+            </mapping>
+        </mappings>
+    </unit>
+
+</profile>

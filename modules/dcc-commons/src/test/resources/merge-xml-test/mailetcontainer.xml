@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mailetcontainer enableJmx="true">
+    <context>
+        <postmaster>postmaster@example.com</postmaster>
+    </context>
+    <spooler>
+        <threads>20</threads>
+    </spooler>
+    <processors>
+        <processor enableJmx="true" state="root">
+            <mailet class="PostmasterAlias" match="All"/>
+            <mailet class="Null" match="RelayLimit=30"/>
+            <mailet class="ToProcessor" match="SMTPAuthSuccessful">
+                <processor>transport</processor>
+            </mailet>
+            <mailet class="ToProcessor" match="All">
+                <processor>transport</processor>
+            </mailet>
+        </processor>
+        <processor enableJmx="true" state="error">
+            <mailet class="ToRepository" match="All">
+                <repositoryPath>file://var/mail/error/</repositoryPath>
+            </mailet>
+        </processor>
+        <processor enableJmx="true" state="transport">
+            <mailet class="SetMimeHeader" match="SMTPAuthSuccessful">
+                <name>X-UserIsAuth</name>
+                <value>true</value>
+            </mailet>
+            <mailet class="SetMimeHeader" match="HasMailAttribute=org.apache.james.SMIMECheckSignature">
+                <name>X-WasSigned</name>
+                <value>true</value>
+            </mailet>
+            <mailet class="RecipientRewriteTable" match="All"/>
+            <mailet class="ToSenderFolder" match="All">
+                <folder>Sent</folder>
+                <consume>false</consume>
+            </mailet>
+            <mailet class="LocalDelivery" match="RecipientIsLocal"/>
+            <mailet class="ToProcessor" match="HostIsLocal">
+                <processor>local-address-error</processor>
+                <notice>550 - Requested action not taken: no such user here</notice>
+            </mailet>
+        </processor>
+    </processors>
+</mailetcontainer>

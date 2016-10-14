@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="core.initialize.resources" basedir=".." default="initialize-resources" 
+    xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+
+    <property name="dcc.package.dir" value="${dcc.solution.dir}/packages" />
+
+    <import file="${dcc.package.dir}/dcc-core/scripts/dcc-core.xml" />
+
+    <target name="initialize-resources" depends="core.init" >
+        
+        <!-- create or complete certificates -->
+        <if>
+            <isset property="certificate.components.baseDir" />
+            <then>
+                <core:generateCertificates baseDir="${certificate.components.baseDir}" />
+            </then>
+        </if>
+    </target>
+
+</project>

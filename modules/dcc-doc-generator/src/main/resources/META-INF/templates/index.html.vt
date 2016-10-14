@@ -1,0 +1,55 @@
+#htmlStart($generator.getPackageId(), '.')
+
+#rootContainerStart($generator.getPackageId(), '.', '')
+
+#if ($deploymentProfiles)
+<h2 style="margin-top:6px">Deployment Profiles</h2>
+#panelStart('dcc-profile-list', 'Deployment Profile Overview', $generator.getPackageId())
+<p>
+    Deployment profiles are fully configured, ready to be installed configurations.
+    Follow the instructions in the complementary installation documentation to
+    install and operate the deployment defined by this type of profiles.
+</p>
+#renderProfileTable($deploymentProfiles, true)
+#panelEnd
+#end
+
+#if ($solutionProfiles)
+<h2 style="margin-top:6px">Solution Profiles</h2>
+#panelStart('dcc-profile-list', 'Solution Profile Overview', $generator.getPackageId())
+<p>
+    Solution profiles represent complete solution configurations. A solution configuration
+    can however not be installed and operated as such. A deployment profiles is required
+    to bind the solution to a specific target deployment environment.
+</p>
+#renderProfileTable($solutionProfiles, false)
+#panelEnd
+#end
+
+#if ($contributionProfiles)
+<h2 style="margin-top:6px">Contribution Profiles</h2>
+#panelStart('dcc-profile-list', 'Contribution Profile Overview', $generator.getPackageId())
+<p>
+    Contribution profiles contain reusable building blocks. Contribution profiles can
+    therefore be shared by different solutions.
+</p>
+#renderProfileTable($contributionProfiles, false)
+#panelEnd
+#end
+
+#if ($baseProfiles)
+<h2 style="margin-top:6px">Base Profiles Overview</h2>
+#panelStart('dcc-profile-list', 'Base Profile Overview', $generator.getPackageId())
+<p>
+    Base profiles contain abstract definitions. These are either capability definitions (structures
+    specifying a defined contract) or unit templates (abstract units).
+</p>
+#renderProfileTable($baseProfiles, false)
+#panelEnd
+#end
+
+#rootContainerEnd($generator.getPackageId(), '.', '')
+#footer
+</div>
+
+#htmlEnd

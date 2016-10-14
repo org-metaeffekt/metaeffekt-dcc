@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mailetcontainer>
+  <processors>
+    <processor state="root" enableJmx="true">
+      <mailet match="All" class="org.metaeffekt.dcc.MailetToBeMerged">
+        <name>property</name>
+        <value>value42</value>
+      </mailet>      
+    </processor>
+  </processors>
+</mailetcontainer>
+ 
+   

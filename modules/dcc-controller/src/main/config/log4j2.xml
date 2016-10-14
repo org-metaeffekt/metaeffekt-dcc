@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration strict="true" monitorInterval="30" shutdownHook="disable" >
+
+    <Properties>
+        <Property name="dcc.shell.home">.</Property>
+        <Property name="consoleLayoutPattern">%d{ISO8601} %-5p [%t] %c(%L) - %m%n</Property>
+        <Property name="fileLayoutPattern">%d{ISO8601} %-5p [%t] %c#%M(%L) - %m%n</Property>
+        <Property name="shellLayoutPattern">[%-5p] %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="SHELL" target="SYSTEM_OUT">
+            <PatternLayout pattern="${shellLayoutPattern}"/>
+        </Console>
+
+        <RollingFile name="FILE"
+            fileName="${sys:dcc.shell.home}/logs/dcc-shell.log"
+            filePattern="${sys:dcc.shell.home}/logs/dcc-shell-%d{MM-dd-yyyy}-%i.log.gz">
+
+            <PatternLayout pattern="${fileLayoutPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.metaeffekt.core.common.kernel.ant.log.ant.log.LoggingProjectAdapter" level="ERROR"/>
+        <Logger name="org.metaeffekt.dcc" level="INFO"/>
+        <Logger name="org.metaeffekt.dcc.commons.spring.xml.ProfileApplicationContext" level="ERROR"/>
+        <Logger name="org.metaeffekt.dcc.docgenerator" level="ERROR"/>
+        <Logger name="org.springframework.shell" level="INFO"/>
+
+        <Root level="ERROR">
+            <AppenderRef ref="FILE"/>
+            <AppenderRef ref="SHELL"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

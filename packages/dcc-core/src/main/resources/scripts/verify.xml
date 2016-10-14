@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="core.verify" basedir=".." default="verify">
+
+    <property name="dcc.package.dir" value="${dcc.solution.dir}/packages" />
+
+    <import file="${dcc.package.dir}/dcc-core/scripts/dcc-core.xml" />
+
+    <target name="verify" depends="core.init, core.verify" />
+
+</project>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<script xmlns="http://metaeffekt.org/schema/dcc/http/script"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://metaeffekt.org/schema/dcc/http/script http://metaeffekt.org/schema/dcc/http/script/dcc-http-script.xsd">
+    <server>
+        <host>localhost</host>
+        <port>9200</port>
+        <scheme>http</scheme>
+    </server>
+    
+    <command>
+        <method>PUT</method>
+        <uri>result-store</uri>
+        <body>
+            { 
+                "settings": { },
+                "mappings" : { 
+                    "result" : { 
+                        "properties" : { 
+                            "expression" : { "type" : "string", "index" : "not_analyzed" },
+                            "subjectId" : { "type" : "string", "index" : "not_analyzed" },
+                            "timestamp" : { "type" : "date" }
+                        } 
+                    } 
+                }
+            }
+        </body>
+    </command>
+    
+    <command>
+        <method>PUT</method>
+        <uri>.test_kibana/config/4.0.2/</uri>
+        <body>
+            {
+                "buildNum": 6004,
+                "defaultIndex": "result-store"
+            }
+        </body>
+    </command>
+    
+    <command>
+        <method>PUT</method>
+        <uri>.test_kibana/index-pattern/result-store/</uri>
+        <body>
+            {
+               "title": "result-store",
+               "timeFieldName": "timestamp",
+               "customFormats": "{}",
+               "fields": "[{\"type\":\"string\",\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"name\":\"expression\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":false,\"analyzed\":false,\"name\":\"_source\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"name\":\"code.system\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":false,\"analyzed\":false,\"name\":\"_index\",\"count\":0,\"scripted\":false},{\"type\":\"date\",\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"name\":\"timestamp\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":true,\"analyzed\":false,\"name\":\"_type\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":false,\"analyzed\":false,\"name\":\"_id\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"name\":\"subjectId\",\"count\":0,\"scripted\":false},{\"type\":\"string\",\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"name\":\"code.key\",\"count\":0,\"scripted\":false}]"
+            }
+        </body>
+    </command>
+    
+</script>

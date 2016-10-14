@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core-definitions">
+    
+    <path id="dcc.default.classpath">
+        <!-- include the rest of the lib folder -->
+        <fileset dir="${dcc.solution.dir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    
+    <componentdef name="nested" classname="org.apache.ant.props.NestedPropertyExpander">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </componentdef>
+    
+    <propertyhelper>
+        <nested/>
+    </propertyhelper>
+
+    <taskdef name="overwriteProperty" classname="org.metaeffekt.dcc.commons.ant.SetPropertyTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="propertyAsVariable" classname="org.metaeffekt.dcc.commons.ant.GetPropertyAsVariableTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="applyVelocityTemplate" classname="org.metaeffekt.dcc.commons.ant.ApplyVelocityTemplateTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="canonicalizePath" classname="org.metaeffekt.dcc.commons.ant.CanonicalizePathTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+
+    <taskdef name="httpRequest" classname="org.metaeffekt.dcc.commons.ant.HttpRequestTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="httpScriptExec" classname="org.metaeffekt.dcc.commons.ant.HttpScriptExecutionTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    
+    <taskdef name="createKeystore" classname="org.metaeffekt.dcc.commons.ant.CreateKeystoreTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core" loaderref="classes">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="createTruststore" classname="org.metaeffekt.dcc.commons.ant.CreateTruststoreTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core" loaderref="classes">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="generateCertificates" classname="org.metaeffekt.dcc.commons.ant.GenerateCertificatesTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core" loaderref="classes">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <typedef name="keyEntry" classname="org.metaeffekt.dcc.commons.ant.KeyEntry"
+        uri="http://metaeffekt.org/schema/dcc/package/core" loaderref="classes">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+
+    <typedef name="certEntry" classname="org.metaeffekt.dcc.commons.ant.CertificateEntry"
+        uri="http://metaeffekt.org/schema/dcc/package/core" loaderref="classes">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+    
+    <typedef name="timeout" classname="org.metaeffekt.dcc.commons.ant.TimeoutCondition"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+    
+    <typedef name="timestamp" classname="org.metaeffekt.dcc.commons.ant.Timestamp"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+    
+    <typedef name="queryProperty" classname="org.metaeffekt.dcc.commons.ant.QueryPropertyTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+
+    <typedef name="compare" classname="org.metaeffekt.dcc.commons.ant.CompareCondition"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </typedef>
+
+    <taskdef name="mergeXml" classname="org.metaeffekt.dcc.commons.ant.MergeXmlTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="consolidateLibs" classname="org.metaeffekt.dcc.commons.ant.ConsolidateLibsTask"
+        uri="http://metaeffekt.org/schema/dcc/package/core">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    
+    <!-- DEPRECATED TASKDEFS -->
+    <taskdef name="overwriteProperty" classname="org.metaeffekt.dcc.commons.ant.SetPropertyTask" >
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    <taskdef name="propertyAsVariable" classname="org.metaeffekt.dcc.commons.ant.GetPropertyAsVariableTask" >
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    <taskdef name="core.apply-velocity-template" classname="org.metaeffekt.dcc.commons.ant.ApplyVelocityTemplateTask">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    <taskdef name="core.canonicalize-path" classname="org.metaeffekt.dcc.commons.ant.CanonicalizePathTask">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    <taskdef name="core.http-request" classname="org.metaeffekt.dcc.commons.ant.HttpRequestTask">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    <taskdef name="core.http-script-exec" classname="org.metaeffekt.dcc.commons.ant.HttpScriptExecutionTask">
+        <classpath>
+            <path refid="dcc.default.classpath" />
+        </classpath>
+    </taskdef>
+    
+</project>

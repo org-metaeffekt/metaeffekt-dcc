@@ -1,0 +1,374 @@
+## Pass all string to either #handleText or #handleNonBreakableText (the latter displays <null> in case value is null)
+#macro(handleText $value)#if ($value)$StringEscapeUtils.escapeHtml4($value.toString())#end#end
+#macro(handleNonBreakableText $value)#if ($value)<div style="word-break: break-all"><samp>$StringEscapeUtils.escapeHtml4($value.toString())</samp></div>#else<samp>&lt;null&gt;</samp>#end#end
+
+## convention: provide macros for type specific hrefs. Makes life a whole lot easier.
+#macro(href $value)
+    #if ($value)
+        <a href="#$value"><samp>$value</samp></a>
+    #end
+#end
+#macro(hrefCapabilityDefinition $capDef)
+    #if ($capDef)
+        <a href="capability-definitions.html#$capDef.getId()"><samp>$capDef.getId()</samp></a>
+    #end
+#end
+#macro(hrefUnitId $unitId)
+    #if ($unitId)
+        <a href="unit-reference.html#$unitId"><samp>$unitId</samp></a>
+    #end
+#end
+#macro(hrefCapability $cap)
+    #if ($cap)
+        <a href="capabilities.html#$cap.getUniqueId()"><samp>$cap.getId()</samp></a>
+    #end
+#end
+#macro(hrefOrigin $value)
+    #if ($value)
+        <a href="$urlUtils.asRelativeUrl($baseDir, $value.getAbsolutePath())">
+            <small><samp>$urlUtils.asRelativePath($solutionRootDir.getAbsolutePath(), $value.getAbsolutePath())</samp><small>
+            <span class="glyphicon glyphicon-link" area-hidden="true"></span>
+        </a>
+    #end
+#end
+
+#macro(navbar $id $path)
+<div class="navbar" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" style="padding-left:0px" href="$path/index.html">Profile Documentation - <samp>$id</samp></a>
+    </div>
+  </div>
+</div>
+#end
+
+#macro(footer)
+    <hr>
+    <div class="container-fluid">
+        <footer>
+            <p>DCC generated documentation</p>
+        </footer>
+    </div>
+#end
+
+#macro(htmlStart $title $path)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>$title</title>
+        <link href="$path/com.bootstrap/css/bootstrap-3.3.2.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <script src="$path/org.jquery/js/jquery-1.11.1.min.js"></script>
+        <script src="$path/com.bootstrap/js/bootstrap-3.3.2.min.js"></script>
+#set($dotSvg='.svg')
+#set($baseDir = $generator.getTargetDir() + "/" + $profile.getId())
+#set($deploymentProfiles=$generator.filterProfiles($profiles, "DEPLOYMENT"))
+#set($solutionProfiles=$generator.filterProfiles($profiles, "SOLUTION"))
+#set($contributionProfiles=$generator.filterProfiles($profiles, "CONTRIBUTION"))
+#set($baseProfiles=$generator.filterProfiles($profiles, "BASE"))
+#end
+
+#macro(htmlEnd)
+    </body>
+</html>
+#end
+
+#macro(panelStart $a $title $id)
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><a name="$a">$title - <samp>$id</samp></a></h3>
+    </div>
+    <div class="panel-body">
+#end
+#macro(panelEnd $title)
+    </div>
+</div>
+#end
+
+#macro(activeStyle $activeId $id)
+#if ($id.equals($activeId))font-weight: bold;#end
+#end
+
+#macro(profileNav $title $profiles $activeId)
+#if ($profiles)
+<h4>$title</h4>
+#foreach($p in $profiles)
+    <h5 style="#activeStyle($profile, $p)"><a href="$path/$generator.getSubfolder($p)/unit-overview.html"><samp>$p.getId()</samp></a></h5>
+    #if($p.equals($profile))
+        <h5 style="#activeStyle($activeId, 'profile-unit-overview')">&nbsp;- <a href="unit-overview.html">Profile Overview</a></h5>
+        <h5 style="#activeStyle($activeId, 'profile-unit-reference')">&nbsp;- <a href="unit-reference.html">Unit Reference</a></h5>
+        <h5 style="#activeStyle($activeId, 'profile-capabilities')">&nbsp;- <a href="capabilities.html">Capability Reference</a></h5>
+        <h5 style="#activeStyle($activeId, 'profile-capability-definition')">&nbsp;- <a href="capability-definitions.html">Capability Definitions</a></h5>
+    #end
+#end
+#end
+#end
+
+#macro(rootContainerStart $id $path $activeId)
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-10">
+#navbar($id, $path)
+
+#end
+
+#macro(rootContainerEnd $id $path $activeId)
+</div> <!-- col-md-10 -->
+
+<div class="col-md-2" style="padding-left:0px">
+<div data-spy="affix" style="padding-top:12px" class="hidden-print hidden-xs hidden-sm affix">
+<h5><a href="$path/index.html">Home</a></b></h5>
+#profileNav('Deployment Profiles', $deploymentProfiles, $activeId)
+#profileNav('Solution Profiles', $solutionProfiles, $activeId)
+#profileNav('Contribution Profiles', $contributionProfiles, $activeId)
+#profileNav('Base Profiles', $baseProfiles, $activeId)
+</div>
+</div> <!-- col-md-2 -->
+</div> <!-- row -->
+</div> <!-- container -->
+#end
+
+#macro(renderSvg $unit)
+
+  #set($capabilityWidth=220.0)
+  #set($capabilityHeight=30.0)
+
+  #set($unitHeaderOffset=60)
+  #set($capabilityUnitTopOffsetY=50)
+  #set($unitFooterOffset=10)
+  #set($unitWidth=$capabilityWidth * 2 - 20 * 2 + 5)
+  #set($unitOffsetX=20)
+  #set($unitOffsetY=2)
+  #set($unitTitleOffsetX=$unitOffsetX + 15)
+  #set($unitTitleOffsetY=25.0)
+
+  #set($capabilityDistance=3)
+  #set($capabilityTextOffsetY=19)
+
+  #set($requiredCapabilityOffsetX=2)
+  #set($requiredCapabilityTextOffsetX=$requiredCapabilityOffsetX + 10)
+  
+  #set($providedCapabilityOffsetX=$capabilityWidth + 5)
+  #set($providedCapabilityTextOffsetX=$providedCapabilityOffsetX + 10)
+
+  #set($height = $unitHeaderOffset + $unitFooterOffset + ($capabilityHeight + $capabilityDistance) * $generator.computeHeight($unit))
+  
+  #set($unitHeaderFillColor="#fdfdfe")
+  #if ($unit.isAbstract())
+    #set($unitFillColor="#f1f1f2")
+    #set($unitTextStyle="italic")
+  #else
+    #set($unitFillColor="#f1f1f2")
+    #set($unitTextStyle="normal")
+  #end  
+  
+  #set($unitStrokeColor="#908f93")
+  #set($unitTextColor="#000000")
+  
+  #set($rcFillColor="#a0fefe")
+  #set($rcStrokeColor="#555555")
+  #set($rcTextColor="#000000")
+  
+  #set($pcFillColor="#fefea0")
+  #set($pcStrokeColor="#555555")
+  #set($pcTextColor="#000000")
+
+  #set($commandFillColor="#fefefe")
+  #set($commandStrokeColor="#555555")
+  #set($commandTextColor="#000000")
+
+  <g id="group_$unit.getId()">
+    <rect
+       width="$unitWidth"
+       height="$height"
+       rx="4"
+       ry="4"
+       x="$unitOffsetX"
+       y="$unitOffsetY"
+       id="unit"
+       style="fill:$unitFillColor;fill-opacity:1;fill-rule:nonzero;stroke:$unitStrokeColor;stroke-width:2.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate">
+       <title id="title4687">$generator.getText($profile, $unit)</title>
+    </rect>
+    <a xlink:href="../unit-reference.html#$unit.getId()" target="_parent">
+    <g>
+    <rect
+       width="$unitWidth"
+       height="35"
+       rx="4"
+       ry="4"
+       x="$unitOffsetX"
+       y="$unitOffsetY"
+       id="unit_header"
+       style="fill:$unitHeaderFillColor;fill-opacity:1;fill-rule:nonzero;stroke:$unitStrokeColor;stroke-width:2.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate">
+      <title id="title4687">$generator.getText($profile, $unit)</title>
+    </rect>
+    <text
+       id="text4390"
+       xml:space="preserve"
+       style="font-size:14px;font-style:$unitTextStyle;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:left;line-height:125%;writing-mode:lr-tb;text-anchor:left;fill:$unitTextColor;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold"><tspan
+         x="$unitTitleOffsetX"
+         y="$unitTitleOffsetY"
+         id="tspan4392">$unit.getId()</tspan>
+     </text>
+     </g>
+     </a>
+    #set($offset = 50)
+    #set($offset_text = $offset + 19)
+    
+    #foreach($cap in $generator.sortCapabilities($unit.getRequiredCapabilities()))
+    <a xlink:href="../capabilities.html#$cap.getUniqueId()" target="_parent">
+        <g id="$cap.getId()_group">
+          <title>$generator.getText($profile, $cap, true)</title>
+          <rect
+             width="$capabilityWidth"
+             height="$capabilityHeight"
+             rx="4"
+             ry="4"
+             x="$requiredCapabilityOffsetX"
+             y="$offset"
+             id="$cap.getId()"
+             style="fill:$rcFillColor;fill-opacity:1;fill-rule:nonzero;stroke:$rcStrokeColor;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+          <text
+             id="$cap.getId()_text"
+             x="$requiredCapabilityTextOffsetX"
+             y="$offset_text"
+             xml:space="preserve"
+             style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:left;line-height:125%;writing-mode:lr-tb;text-anchor:left;fill:$rcTextColor;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold">
+                <tspan
+                    x="$requiredCapabilityTextOffsetX"
+                    y="$offset_text">$cap.getId()</tspan>
+            </text>
+        </g>
+    </a>
+    #set($offset = $offset + $capabilityHeight + $capabilityDistance)
+    #set($offset_text = $offset_text + $capabilityHeight + $capabilityDistance)
+    #end
+    
+    #set($offset = $capabilityUnitTopOffsetY)
+    #set($offset_text = $offset + $capabilityTextOffsetY)
+    
+    #foreach($cap in $generator.sortCapabilities($unit.getProvidedCapabilities()))
+    <a xlink:href="../capabilities.html#$cap.getUniqueId()" target="_parent">
+        <g id="$cap.getId()_group">
+        <title>$generator.getText($profile, $cap)</title>
+          <rect
+             width="$capabilityWidth"
+             height="30"
+             rx="4"
+             ry="4"
+             x="$providedCapabilityOffsetX"
+             y="$offset"
+             id="$cap.getId()"
+             style="fill:$pcFillColor;fill-opacity:1;fill-rule:nonzero;stroke:$pcStrokeColor;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+          <text
+             x="$providedCapabilityTextOffsetX"
+             y="$offset_text"
+             id="$cap.getId()_text"
+             xml:space="preserve"
+             style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:left;line-height:125%;writing-mode:lr-tb;text-anchor:left;fill:$pcTextColor;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold">
+                <tspan
+                    x="$providedCapabilityTextOffsetX"
+                    y="$offset_text"
+                    id="tspan4388">$cap.getId()</tspan>
+            </text>
+        </g>
+    </a>
+    #set($offset = $offset + $capabilityHeight + $capabilityDistance)
+    #set($offset_text = $offset_text + $capabilityHeight + $capabilityDistance)
+    #end
+
+    #set($offset_y = 60 + 3 + 32 * $generator.computeHeight($unit))
+    #set($offset = 26)
+    #set($offset_text = $offset + 7)
+    #set($offset_y_text = $offset_y + 19)
+
+    #foreach($cmd in $generator.sortCommands($unit.getCommands()))
+##    <a xlink:href="../capabilities.html#$generator.getUniqueId($unit, $cmd)" target="_parent">
+        <g id="command.$cmd.getCommandId()_group">
+          <title>$generator.getText($profile, $unit, $cmd)</title>
+          <rect
+             width="$generator.getCommandWidth($cmd)"
+             height="30"
+             rx="4"
+             ry="4"
+             x="$offset"
+             y="$offset_y"
+             id="command.$cmd.getCommandId()"
+             style="fill:$commandFillColor;fill-opacity:1;fill-rule:nonzero;stroke:$commandStrokeColor;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+          <text
+             x="$offset_text"
+             y="$offset_y_text"
+             id="command.$cmd.getCommandId()_text"
+             style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:left;line-height:125%;writing-mode:lr-tb;text-anchor:left;fill:$commandTextColor;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold">
+                <tspan x="$offset_text" y="$offset_y_text">$cmd.getCommandId()</tspan>
+            </text>
+        </g>
+##    </a>
+    #set($offset = $offset + $generator.getCommandWidth($cmd) + 5)
+    #set($offset_text = $offset_text + $generator.getCommandWidth($cmd) + 5)
+    #end
+  </g>
+#end
+
+#macro(renderProfileTable $profiles $showDeploymentId)
+<table id="table_$generator.getPackageId()-profile-list" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Profile Id</th>
+            <th>Description</th>
+#if ($showDeploymentId)
+            <th>Deployment Id</th>
+#end
+        </tr>
+    </thead>
+    <tbody>
+        #foreach($profile in $profiles)
+        <tr>
+            <td class="col-md-1">
+                <a href="$generator.getSubfolder($profile)/unit-overview.html"><samp>$profile.getId()</samp></a>
+            </td>
+#if ($showDeploymentId)
+            <td class="col-md-3">
+#else
+            <td class="col-md-4">
+#end
+                $profile.getDescription()
+            </td>
+#if ($showDeploymentId)
+            <td class="col-md-1">#handleNonBreakableText($profile.getDeploymentId())</td>
+#end
+        </tr>
+        #end
+    </tbody>
+</table>
+#end
+
+##macro(modalLink $id $text)
+##<button type="button" class="btn btn-link" data-toggle="modal" data-target="#${id}" style="outline: none">$text</button>
+##end
+
+#macro(modalDialog $id $title $src)
+#if ($src)
+<div class="modal fade" id="$id" tabindex="-1" role="dialog" aria-labelledby="{$id}Label">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="{$id}Label">$title</h4>
+      </div>
+      <div class="modal-body">
+        <pre>$generator.loadFileContent($src.getAbsolutePath())</pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+#end
+#end
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-test-deployment-profile</id>
+    
+    <type>
+        <deployment>
+            <properties location="deployment.properties" />
+        </deployment>
+    </type>
+
+    <description>Uses the package's profile.xml to construct a sample configuration.</description>
+    
+    <import resource="test-solution-profile.xml" />
+    
+</profile>

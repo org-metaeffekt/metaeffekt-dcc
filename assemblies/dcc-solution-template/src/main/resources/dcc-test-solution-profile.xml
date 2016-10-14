@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+        xmlns="http://metaeffekt.org/schema/dcc/profile"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-test-solution-profile</id>
+
+    <type>
+        <solution>
+            <properties location="solution.properties" />
+        </solution>
+    </type>
+
+    <description>Example Profile for installing HSQL, Tomcat and eHF</description>
+
+
+    <import resource="packages/dcc-core/dcc-core-profile.xml" />
+
+    <unit id="host-app-01" extends="agent-host-template" />
+    <unit id="host-app-02" extends="agent-host-template" />
+
+</profile>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>jmx-base-profile</id>
+
+    <description>
+        Definitions and templates to integrate JMX.
+    </description>
+
+    <capability-definition id="jmx.runtime">
+        <description>
+            Capability definition covering the JMX configuration.</description>
+        <attribute-key key="jmx.enabled" default="false">
+            <description>Controls whether the container is started with JMX.</description>
+        </attribute-key>
+        <attribute-key key="jmx.ssl.enabled" default="false">
+            <description>Controls whether JMX should use SSL.</description>
+        </attribute-key>
+        <attribute-key key="jmx.rmi.registry.port" default="9097">
+            <description>Specifies the RMI registry port.</description>
+        </attribute-key>
+        <attribute-key key="jmx.rmi.server.port" default="9997">
+            <description>Specifies the JMX server port.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="jmx.ldap.login.config">
+        <description>
+            Covers attributes to configure an LDAP as identity provider for JMX access.
+        </description>
+        
+        <inherit definitionRef="certificate" prefix="cert"/>
+
+        <attribute-key key="userProvider">
+            <description>This option identifies the LDAP directory that stores user entries.</description>
+        </attribute-key>
+        <attribute-key key="authIdentity">
+            <description>This option specifies the identity to use when authenticating a user to the LDAP directory.</description>
+        </attribute-key>
+        <attribute-key key="authzIdentity">
+            <description>This option specifies an authorization identity for the user.</description>
+        </attribute-key>
+        <attribute-key key="userFilter" optional="true">
+            <description>The LDAP filter argument.</description>
+        </attribute-key>
+        <attribute-key key="useSSL">
+            <description>
+                If false, this module does not establish an SSL connection to the LDAP server before attempting 
+                authentication.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <unit id="jmx-runtime-template" abstract="true" package="dcc-core">
+        <description>
+            Template for JMX-runtimes.
+        </description>
+        
+        <required-capability id="jmx.ldap.login.config" optional="true" multipleBindingsAllowed="true" />
+
+        <provided-capability id="jmx.runtime" definitionRef="jmx.runtime"/>
+
+        <attributes>
+            <attribute key="jmx.enabled" value="false"/>
+            <attribute key="jmx.ssl.enabled" value="false"/>
+            <attribute key="jmx.rmi.registry.port" value="9097"/>
+            <attribute key="jmx.rmi.server.port" value="9997"/>
+        </attributes>
+    </unit>
+
+</profile>

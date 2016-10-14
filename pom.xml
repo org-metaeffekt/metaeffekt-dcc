@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.metaeffekt.dcc</groupId>
+    <artifactId>dcc-application</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.metaeffekt.core</groupId>
+        <artifactId>ae-core</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
+    <properties>
+        <artifact.inventory.enabled>true</artifact.inventory.enabled>
+        <artifact.inventory.version>0.1.0-SNAPSHOT</artifact.inventory.version>
+        <ae.core.version>0.1.0-SNAPSHOT</ae.core.version>
+        <dcc.version>0.1.0-SNAPSHOT</dcc.version>
+    </properties>
+
+    <modules>
+        <module>pom-hierarchy</module>
+        <module>modules</module>
+        <module>libraries</module>
+        <module>packages</module>
+        <module>assemblies</module>
+        <module>plugins</module>
+        <module>reference</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.metaeffekt.core</groupId>
+                    <artifactId>ae-version-maven-plugin</artifactId>
+                    <configuration>
+                        <projectVersion>${dcc.version}</projectVersion>
+                        <groupIdVersionMap>
+                            <org.metaeffekt.dcc>${dcc.version}</org.metaeffekt.dcc>
+                            <org.metaeffekt.core>${ae.core.version}</org.metaeffekt.core>
+                        </groupIdVersionMap>
+                        <propertyVersionMap>
+                            <artifact.inventory.version>${artifact.inventory.version}</artifact.inventory.version>
+                            <ae.core.version>${ae.core.version}</ae.core.version>
+                            <dcc.version>${dcc.version}</dcc.version>
+                            <artifact.inventory.enabled>${artifact.inventory.enabled}</artifact.inventory.enabled>
+                        </propertyVersionMap>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

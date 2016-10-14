@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core-deprecated" xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+
+    <!-- in this script we keep deprecated targets and macros. This should be obsolete over time -->
+    
+    <!-- DEPRECATED use core:uninstallUnit macro instead -->
+    <target name="core.uninstallCurrentUnit">
+        <core:uninstallUnit />
+    </target>
+    
+    <macrodef name="core.ensurePathExists">
+        <attribute name="path" />
+        <sequential>
+            <core:ensurePathExists path="@{path}" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="core.expectFile">
+        <attribute name="file" />
+        <sequential>
+            <core:expectFile file="@{file}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.expectProperty">
+        <attribute name="propertyName" />
+        <sequential>
+            <core:expectProperty property="@{propertyName}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.trimProperty">
+        <attribute name="input" />
+        <attribute name="property" />
+        <sequential>
+            <core:trimProperty input="@{input}" property="@{property}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.replaceProperty">
+        <attribute name="input" />
+        <attribute name="property" />
+        <sequential>
+            <core:replaceProperty input="@{input}" property="@{property}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.copyExternalResources">
+        <sequential>
+            <core:copyResources resourceSequence="${dcc.external.resource.sequence}" resourceBaseDir="${dcc.solution.dir}/external" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.sortFiles">
+        <attribute name="dir"/>
+        <attribute name="includes"/>
+        <attribute name="resultProperty"/>
+        <sequential>
+            <core:sortFiles dir="@{dir}" includes="@{includes}" resultProperty="@{resultProperty}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="core.aggregateFiles">
+        <attribute name="unitSequence" />
+        <attribute name="pathProperty" />
+        <attribute name="aggregationDir" />
+        <attribute name="optionalProperty" default="true" />
+        <element name="filter-properties" optional="true" />
+        <sequential>
+            <!-- iterate over unit sequence to aggregate files -->
+            <for list="@{unitSequence}" param="unitId">
+                <sequential>
+                    <core:log message="Aggregating files for instance @{unitId} in @{aggregationDir}." />
+                    <!-- copy all files to a dedicated folder -->
+                    <if>
+                        <isset property="@{unitId}.@{pathProperty}" />
+                        <then>
+                            <if>
+                                <available file="${@{unitId}.@{pathProperty}}" type="file" />
+                                <then>
+                                    <!-- in case of a file we just copy the file (bwc) -->
+                                    <filter-properties />
+                                    <copy todir="@{aggregationDir}" overwrite="true"
+                                        file="${@{unitId}.@{pathProperty}}">
+                                        <filterchain>
+                                            <expandproperties />
+                                        </filterchain>
+                                    </copy>
+                                </then>
+                                <else>
+                                    <!-- copy the whole dir -->
+                                    <if>
+                                        <available file="${@{unitId}.@{pathProperty}}" type="dir" />
+                                        <then>
+                                            <filter-properties />
+                                            <copy todir="@{aggregationDir}" overwrite="true">
+                                                <fileset dir="${@{unitId}.@{pathProperty}}" />
+                                                <filterchain>
+                                                    <expandproperties />
+                                                </filterchain>
+                                            </copy>
+                                        </then>
+                                        <else>
+                                            <core:log message="Path '${@{unitId}.@{pathProperty}}' does not exist. Skipping aggregation." />
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                        </then>
+                        <else>
+                            <if>
+                                <isfalse value="@{optionalProperty}" />
+                                <then>
+                                    <fail message="Unit must include the '@{pathProperty}' attribute." />
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="log-error">
+        <attribute name="message" />
+        <attribute name="reference" default="" />
+        <attribute name="unit" default="${dcc.unit.id}" />
+        <attribute name="command" default="${dcc.command}" />
+        <sequential>
+            <core:log-error message="@{message}"
+                reference="@{reference}"
+                unit="@{unit}"
+                command="@{command}" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="log">
+        <attribute name="message" />
+        <attribute name="unit" default="${dcc.unit.id}" />
+        <attribute name="command" default="${dcc.command}" />
+        <attribute name="level" default="INFO" />
+        <sequential>
+            <core:log message="@{message}"
+                unit="@{unit}"
+                level="@{level}"
+                command="@{command}" />
+        </sequential>
+    </macrodef>
+</project>

@@ -1,0 +1,73 @@
+#htmlStart($generator.getPackageId(), '..')
+
+#rootContainerStart($generator.getPackageId(), '..', 'profile-capabilities')
+   
+<h2 style="margin-top:6px">Profile - $profile.getId()</h2>
+<h3>Capability Reference</h3>
+#foreach($unit in $generator.sortUnits($profile.getUnits(true)))
+  #foreach($cap in $generator.sortCapabilities($unit.getRequiredCapabilities()))
+    #panelStart($cap.getUniqueId(), 'Required Capability', $cap.getUniqueId())
+    <p>#handleText($cap.getCapabilityDefinition().getDescription())</p>
+    <p><i>Based on capability definition: #hrefCapabilityDefinition($cap.getCapabilityDefinition()).</i></p>
+    <h4>Attributes</h4>
+    <table id="table_$cap.getUniqueId()-capability" class="table table-striped">
+        <thead>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Value / Default</th>
+        </thead>
+
+    #foreach($attribute in $generator.sortAttributeKeys($cap.getCapabilityDefinition().getAttributeKeys()))
+        <tr>
+            <td class="col-md-2">#handleNonBreakableText($attribute.getKey())</td>
+            <td class="col-md-4">#handleText($attribute.getDescription())</td>
+            <td class="col-md-4">#handleNonBreakableText($generator.getAttributeValueOrDefault($profile, $cap, $attribute))</td>
+        </tr>
+    #end
+        </tbody>
+    </table>
+    #panelEnd
+  #end
+#set ($separator_dot=".")
+  #foreach($cap in $generator.sortCapabilities($unit.getProvidedCapabilities()))
+    #panelStart($cap.getUniqueId(), 'Provided Capability', $cap.getUniqueId())
+    <p>#handleText($cap.getCapabilityDefinition().getDescription())</p>
+    <p><i>Based on capability definition: #hrefCapabilityDefinition($cap.getCapabilityDefinition()).</i></p>
+    <h4>Attributes</h4>
+    <table id="table_$cap.getUniqueId()-capability" class="table table-striped">
+        <thead>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Value / Default</th>
+#if (!$unit.isAbstract())
+            <th>Overwritable Property</th>
+#end
+        </thead>
+
+    #foreach($attribute in $generator.sortAttributeKeys($cap.getCapabilityDefinition().getAttributeKeys()))
+        <tr>
+            <td class="col-md-2">#handleNonBreakableText($attribute.getKey())</td>
+            <td class="col-md-4">#handleText($attribute.getDescription())</td>
+#if (!$unit.isAbstract())
+            <td class="col-md-2">
+#else
+            <td class="col-md-4">
+#end
+                #handleNonBreakableText($generator.getAttributeValueOrDefault($profile, $cap, $attribute))
+            </td>
+#if (!$unit.isAbstract())
+    #set($text = $cap.getUniqueId() + $separator_dot + $attribute.getKey())
+            <td class="col-md-2">#handleNonBreakableText($text)</td>
+#end
+        </tr>
+    #end
+        </tbody>
+    </table>
+    #panelEnd
+  #end
+  
+#end
+
+    #footer
+#rootContainerEnd($generator.getPackageId(), '..', 'profile-capabilities')
+#htmlEnd

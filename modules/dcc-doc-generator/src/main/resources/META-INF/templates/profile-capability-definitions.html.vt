@@ -1,0 +1,39 @@
+#htmlStart($generator.getPackageId(), '..')
+
+#rootContainerStart($generator.getPackageId(), '..', 'profile-capability-definition')
+    
+<h2 style="margin-top:6px">Profile - $profile.getId()</h2>
+<h3>Capability Definitions</h3>
+#foreach($capdef in $generator.sort($profile.getCapabilityDefinitions()))
+    #panelStart($capdef.getId(), 'Capability Definition', $capdef.getId())
+    <p>
+        #handleText($capdef.getDescription())
+    </p>
+    <table id="table_$generator.getPackageId()-$capdef.getId()-capability-definition-attributes" class="table table-striped">
+        <thead>
+            <row>
+                <th>Attribute Key</th>
+                <th>Description</th>
+                <th>Default Value</th>
+                <th>Optional</th>
+                <th>Origin</th>
+            </row>
+        </thead>
+
+        <tbody>
+            #foreach($attribute in $generator.sortAttributeKeys($capdef.getAttributeKeys()))
+            <tr>
+                <td class="col-md-2">#handleNonBreakableText($attribute.getKey())</td>
+                <td class="col-md-2">#handleText($attribute.getDescription())</td>
+                <td class="col-md-2">#handleNonBreakableText($attribute.getDefaultValue())</td>
+                <td class="col-md-2">#handleNonBreakableText($attribute.isOptional())</td>
+                <td class="col-md-2">#hrefOrigin($attribute.getOrigin())</td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+    #panelEnd
+#end
+#footer
+#rootContainerEnd($generator.getPackageId(), '..', 'profile-capability-definition')
+#htmlEnd

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>tomcatPackageProfile</id>
+
+    <type>
+        <deployment>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+
+    <import resource="dcc-core-profile.xml" />
+
+    <capability-definition id="tomcat.runtime.config">
+        <attribute-key key="url" />
+    </capability-definition>
+    
+    <unit id="tomcat-runtime-template" abstract="true" package="dcc-tomcat-7">
+        <required-capability id="host" definitionRef="host" />
+
+        <provided-capability id="tomcat.runtime.config" definitionRef="tomcat.runtime.config" />
+        <provided-capability id="runtime" definitionRef="runtime" />
+
+        <command type="configure">
+            <capability id="tomcat.runtime.config" />
+        </command>
+        <command type="install">
+            <capability id="tomcat.runtime.config" />
+        </command>
+        <command type="deploy">
+            <capability id="tomcat.runtime.config" />
+        </command>
+        <command type="prepare-persistence">
+            <capability id="tomcat.runtime.config" />
+        </command>
+        <command type="start"/>
+        <command type="stop"/>
+
+        <attributes>
+            <attribute key="port" value="8443" />
+        </attributes>
+
+        <mappings>
+            <mapping targetCapabilityId="tomcat.runtime.config">
+                <map-unit-attributes/>
+                <map-all sourceCapabilityId="host" targetPrefix="host" />
+                <expression attributeKey="url" value="https://host:${port}" />
+            </mapping>
+
+            <mapping targetCapabilityId="runtime">
+                <map-unit-attributes/>
+                <map-all sourceCapabilityId="host" targetPrefix="host"/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="host1" extends="agent-host-template" package="something">
+        <command type="bootstrap"/>
+        <command type="import-test-data"/>
+        <command type="verify"/>
+        <command type="import"/>
+    </unit>
+
+    <unit id="host2" extends="agent-host-template" />
+
+    <unit id="tomcat1" extends="tomcat-runtime-template" />
+
+    <unit id="tomcat2" extends="tomcat-runtime-template" />
+
+    <binding>
+        <source unitRef="host1" capabilityId="host"/>
+        <target unitRef="tomcat1" capabilityId="host"/>
+    </binding>
+
+    <binding>
+        <source unitRef="host2" capabilityId="host"/>
+        <target unitRef="tomcat2" capabilityId="host"/>
+    </binding>
+
+</profile>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project name="props.test" default="test">
+
+    <componentdef classname="org.apache.ant.props.NestedPropertyExpander"
+                  name="myNested" classpath="dcc-commons-0.1.0-SNAPSHOT-runtime.jar"/>
+    <propertyhelper>
+        <myNested/>
+    </propertyhelper>
+
+    <property file="props-test.properties"/>
+
+    <property name="testName" value="test"/>
+
+    <target name="test">
+
+        <echo file="props-test.out" append="false">
+
+            prefix: ${testName}
+
+            without prefix: ${property}
+
+            with prefix: ${test.property}
+
+            with prefix nested: ${${testName}.property}
+
+        </echo>
+
+
+    </target>
+
+
+</project>

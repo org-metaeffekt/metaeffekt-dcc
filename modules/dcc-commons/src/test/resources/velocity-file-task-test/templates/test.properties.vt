@@ -1,0 +1,23 @@
+#set($i=0)
+#foreach($item in $aBContributionIteratorSequence)
+contribution.1.$i = $item
+#set($i=$i+1)
+#end
+
+#set($i=0)
+#foreach($item in $c-DContributionIteratorSequence)
+contribution.2.$i = $item
+#set($i=$i+1)
+#end
+
+#set($i=0)
+#foreach($item in $aBRequisitionIteratorSequence)
+requisition.1.$i = $item
+#set($i=$i+1)
+#end
+
+#set($i=0)
+#foreach($item in $cDRequisitionIteratorSequence)
+requisition.2.$i = $item
+#set($i=$i+1)
+#end

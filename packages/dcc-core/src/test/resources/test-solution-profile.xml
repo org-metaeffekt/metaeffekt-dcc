@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-test-solution-profile</id>
+    
+    <type>
+        <solution>
+            <properties location="solution.properties" />
+        </solution>
+    </type>
+
+    <description>Uses the package's profile.xml to construct a sample configuration.</description>
+    
+    <import resource="packages/dcc-core/dcc-core-profile.xml" />
+
+    <unit id="certificate-components" extends="certificate-components-template" />
+
+    <unit id="host" extends="agent-host-template">
+        <attributes>
+            <attribute key="name" value="localhost" />
+        </attributes>
+    </unit>
+ 
+</profile>

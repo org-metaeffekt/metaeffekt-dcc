@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-profile</id>
+
+    <description>
+        This profile defines central capability definitions and template units that are common to
+        all packages.
+    </description>
+
+    <import resource="dcc-core-logging-profile.xml" />
+    <import resource="dcc-core-jmx-profile.xml" />
+    <import resource="dcc-core-ldap-profile.xml" />
+
+    <capability-definition id="host">
+        <description>Capability defining a physical host with hostname and/or IP address.</description>
+        <attribute-key key="name">
+            <description>
+                The host name. Use either the IP or the fully qualified DNS name of 
+                a host. Please note that the DNS name will not be analyzed or resolved. In 
+                particular two DNS names pointing to the same physical host will be treated as 
+                separate entities. In this case conflicts on host resource level (ports) can not 
+                be detected early in the installation procedure. The fully qualified name (host 
+                name with full domain information) is required when other resources (like i.e. 
+                certificates) are host/domain bound.
+            </description>
+        </attribute-key>
+        <attribute-key key="ip" optional="true">
+            <description>DEPRECATED: Will be removed in future versions.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <capability-definition id="proxy">
+        <description>
+            Lists all common attributes of a proxy. Only parts of these may be evaluated by a runtime.
+        </description>
+
+        <attribute-key key="host" optional="true">
+            <description>The proxy host.</description>
+        </attribute-key>
+        <attribute-key key="port" optional="true">
+            <description>The proxy port.</description>
+        </attribute-key>
+        <attribute-key key="version" optional="true">
+            <description>The proxy version.</description>
+        </attribute-key>
+        <attribute-key key="user.name" optional="true">
+            <description>If set the user name that authenticates at the proxy.</description>
+        </attribute-key>
+        <attribute-key key="user.password" optional="true">
+            <description>If set the user password that is used to authenticate the user at the proxy.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="network">
+        <description>
+            General network settings primarily used to configure proxies.
+        </description>
+
+        <inherit definitionRef="proxy" prefix="http.proxy" />
+        <inherit definitionRef="proxy" prefix="https.proxy" />
+        <inherit definitionRef="proxy" prefix="socks.proxy" />
+        <inherit definitionRef="proxy" prefix="ftp.proxy" />
+
+        <attribute-key key="nonProxyHosts" optional="true">
+            <description>Pipe-separated list of hosts to be excluded.</description>
+        </attribute-key>
+
+        <attribute-key key="useSystemProxies" optional="true">
+            <description>Indicates, whether to use the system level proxy setting.</description>
+        </attribute-key>
+        
+    </capability-definition>
+    
+    <capability-definition id="agent.endpoint">
+        <description>
+            Capability defining a DCC enabled host with a DCC Agent installation running on 
+            a specific port.
+        </description>
+        <inherit definitionRef="host" />
+        <attribute-key key="port">
+            <description>The IP port of the DCC Agent.</description>
+       </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="runtime" abstract="true">
+        <description>Capability defining a generic runtime. A generic runtime requires a host and supplements a port.</description>
+        <inherit definitionRef="host" prefix="host" />
+        
+        <attribute-key key="port">
+            <description>The port of the runtime.</description>
+       </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="java.memory.settings" abstract="true">
+        <description>Java runtime configurations.</description>
+        <attribute-key key="heapSizeInitial">
+            <description>Initial heap size of the runtime in MB.</description>
+        </attribute-key>
+        <attribute-key key="heapSizeMax">
+            <description>Maximum heap size of the runtime in MB.</description>
+        </attribute-key>
+        <attribute-key key="permSizeMax" optional="true">
+            <description>Maximum perm size of the runtime in MB. Legacy JVM setting for Java VMs before 1.8.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <capability-definition id="java.runtime">
+        <description>Java runtime configurations.</description>
+        <inherit definitionRef="java.memory.settings"/>
+        <attribute-key key="enableServiceWrapper" default="false">
+            <description>Controls whether a native service is used as wrapper to manage the runtime. This is
+                usually not required since a watchdog takes care about monitoring and restarting the managed 
+                processes.
+            </description>
+        </attribute-key>
+        <attribute-key key="enableJpda" default="false">
+            <description>Controls whether the container is started with with a remote debugging listener.</description>
+        </attribute-key>
+        <attribute-key key="jpdaPort" optional="true">
+            <description>The port for accessing the remote debugging listener. Exposed only when enableJpda is set to true.</description>
+        </attribute-key>
+        <attribute-key key="language" default="en">
+            <description>The explicit default language for the runtime.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="ssl.runtime">
+        <description>A runtime that is secured using SSL.</description>
+        <inherit definitionRef="key.pair" prefix="ssl"/>
+    </capability-definition>
+
+    <capability-definition id="servlet.runtime">
+        <description>Capability defining a servlet runtime (servlet container).</description>
+        <inherit definitionRef="runtime"/>
+        <inherit definitionRef="java.runtime"/>
+        <inherit definitionRef="ssl.runtime"/>
+        
+        <inherit definitionRef="keystore" prefix="ssl.keystore"/>
+        <inherit definitionRef="keystore" prefix="ssl.truststore"/>
+
+        <attribute-key key="enableTls" optional="true">
+            <description>Flag to enable/disable transport layer security.</description>
+        </attribute-key>
+        <attribute-key key="securePort" optional="true">
+            <description>The port to listen for tls connections.</description>
+        </attribute-key>
+        <attribute-key key="ajpPort" optional="true">
+            <description>Port for AJP connections.</description>
+        </attribute-key>
+        <attribute-key key="shutdownPort" optional="true">
+            <description>Port for shutdown requests.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="deployable">
+        <description>Marks a unit to be providing a deployable artifact.</description>
+        <attribute-key key="artifact.path">
+            <description>The path pointing at the provided deployable artifact.</description>
+        </attribute-key>
+        <attribute-key key="healthcheck.uri" optional="true">
+            <description>The uri of the health-check endpoint associated with the deployed artifact.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <unit id="host-template" abstract="true">
+        <description>Abstract unit defining a template for a host.</description>
+        <provided-capability id="host" />
+        <attributes>
+            <!-- 
+                Explicitly list the attributes (even if null) for consistency with documentation
+                and attribute overwrite approach 
+             -->
+            <attribute key="name" type="basic" description="The host name. Use either the IP or 
+                the fully qualified DNS name of a host. Please note that the DNS name will not be 
+                analyzed or resolved. In particular two DNS names pointing to the same physical host 
+                will be treated as separate entities. In this case conflicts on host resource level 
+                (ports) can not  be detected early in the installation procedure. The fully qualified 
+                name (host name with full domain information) is required when other resources (like 
+                i.e. certificates) are host/domain bound." />
+            <attribute key="ip" description="DEPRECATED: will be removed in future versions." />
+        </attributes>
+        <mappings>
+            <mapping targetCapabilityId="host">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="agent-host-template" abstract="true" extends="host-template" package="dcc-core">
+        <description>Template unit defining a template for hosts running a DCC Agent.</description>
+        <provided-capability id="agent.endpoint" />
+        <command type="initialize"/>
+        <command type="clean"/>
+        <command type="verify">
+            <capability id="agent.endpoint" />
+        </command>
+        
+        <attributes>
+            <attribute key="agent.port" value="33036" description="The agent port."/>
+        </attributes>
+        
+        <mappings>
+            <mapping targetCapabilityId="agent.endpoint">
+                <map-unit-attributes/>
+                <expression attributeKey="port" value="${agent.port}" />
+            </mapping>
+        </mappings>
+        
+        <asserts>
+            <prerequisite key="java.version.pattern" value="1\.8\..*"/>
+            
+            <prerequisite key="path.length.max.windows" value="100"/>
+            <prerequisite key="path.length.max.linux" value="500"/>
+            
+            <!-- the dcc per default does assumes a capacity of 2GB (minus overhead) -->
+            <prerequisite key="memory.capacity.min" value="1200"/>
+        </asserts>
+    </unit>
+    
+    <unit id="runtime-template" abstract="true">
+        <description>Template for runtime processes. The template defines basic assertions for 
+            validation purposes. It is recommended that any runtime / process inherits from this 
+            template.</description>
+            
+        <!-- all runtimes have in common that they run on a host -->
+        <required-capability id="host" identifiesHost="true" />
+            
+        <!-- default asserts these can be overwritten in the unit hierarchy -->
+        <asserts>
+            <prerequisite key="memory.physical.min" value="64" />
+            <prerequisite key="memory.virtual.max" value="128" />
+        </asserts>
+    </unit>
+
+    <unit id="java-runtime-template" abstract="true" extends="runtime-template">
+        <description>Template for java runtime processes. The template defines attributes and assertions for validation purposes.
+            It is recommended that any java runtime / process inherits from this template.</description>
+        
+        <!-- NOTE: this template does not provide any runtime capability so far. The templates and concrete
+             units, which are based on this template can therefore choose what to expose. 
+        -->
+        
+        <attributes>
+            <attribute key="heapSizeMax" value="512" />
+            <attribute key="heapSizeInitial" value="128" />
+            <attribute key="permSizeMax" value="128" />
+            
+        </attributes>
+        
+        <asserts>
+            <prerequisite key="memory.physical.min" value="128" />
+            <prerequisite key="memory.virtual.max" value="%{${heapSizeMax} + 128}" />
+        </asserts>
+    </unit>
+    
+    <unit id="wrapped-java-runtime-template" abstract="true" extends="java-runtime-template">
+        <description>Abstract template specifying the defaults for a java runtime unit.</description>
+        <attributes>
+            <attribute key="enableServiceWrapper" value="false" />
+            <attribute key="enableJpda" value="false" />
+            <attribute key="jpdaPort" value="8000" />
+            <attribute key="language" value="en" />
+        </attributes>
+    </unit>
+    
+    <capability-definition id="keystore">
+        <description>
+            A keystore is configured by a keystore file and a keystore password to access the content.
+        </description>
+        <attribute-key key="input.file" optional="true">
+            <description>
+                Relative path the input file. When installing the solution. This path is
+                relative to the external directory located in the solution root. Providing a value
+                is optional (may reference a file, which is already integral part of the solution).
+            </description>
+        </attribute-key>
+        <attribute-key key="file" optional="true">
+            <description>
+                The target file (relative or absolute) which is used in the deployment environment.
+            </description>
+        </attribute-key>
+        <attribute-key key="password" optional="true">
+            <description>
+                The password is required to open the keystore. Usually this setting is provided in
+                the deployment.properties file.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="certificate">
+        <description>
+            A certificate is represented by a certificate file (PEM format). An alias can 
+            be provided for addressing the certificate when placed into a keystore or 
+            truststore.
+        </description>
+        <!-- NOTE: the file is optional, because SSL may be switched off in consuming unit; 'conditionally optional' -->
+        <attribute-key key="file" optional="true">
+            <description>The reference to the certificate file.</description>
+        </attribute-key>
+        <attribute-key key="alias" optional="true">
+            <description>The alias for referencing the certificate when placed into a keystore / truststore.</description>
+        </attribute-key>
+        <attribute-key key="chain.path" optional="true">
+            <description>Reference to folder that contains the certification chain.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="key">
+        <description>
+            A key is defined by a file (PEM) and a password. The password can be used to 
+            protect the key depending on where the key is maintained. An alias can be provided 
+            for addressing the private key when placed in a keystore.
+        </description>
+        <!-- NOTE: the file is optional, because SSL may be switched off in consuming unit; 'conditionally optional' -->
+        <attribute-key key="file" optional="true">
+            <description>Reference to the key file.</description>
+        </attribute-key>
+        <attribute-key key="password" optional="true">
+            <description>
+                The password to protect the key. This password can be used when the key
+                is placed in a keystore to protect access to the key.
+            </description>
+        </attribute-key>
+        <attribute-key key="alias" optional="true">
+            <description>The reference to the key, when placed into a keystore.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="key.pair">
+        <description>
+            A key pair consists of the private key and the certificate (public key).
+        </description>
+        <inherit definitionRef="certificate" prefix="cert" />
+        <inherit definitionRef="key" prefix="key" />
+    </capability-definition>
+
+    <!-- FIXME: revise a trusted actor should point to a (certificate file) public key that can be used to compose keystores. -->
+    <!-- DEPRECATED -->
+    <capability-definition id="trusted.actor">
+        <description>
+            A trusted actor uses a keystore for holding its certificates for identification and 
+            authorization purposes. The truststore contains certificates of the trusted systems.
+        </description>
+        <inherit definitionRef="keystore" prefix="keystore"/>
+        <inherit definitionRef="keystore" prefix="truststore"/>
+    </capability-definition>
+    
+    <capability-definition id="external.resources">
+        <description>
+            Capability definition representing a list of external resources.
+        </description>
+        <attribute-key key="dcc.external.resource.sequence" >
+            <description>
+                DCC specific attribute used to list all external resources that need to be
+                copied at configuration time to the target host. The list is comma-separated. 
+                A resource can also be a folder. In this case the complete folder will be copied.
+            </description>
+        </attribute-key>
+    </capability-definition>
+    
+    <capability-definition id="coded.value" abstract="true" >
+        <description>Common attributes of coded value.</description>
+        <attribute-key key="code.id">
+            <description>Coded value id.</description>
+        </attribute-key>
+        <attribute-key key="code.scheme" optional="true">
+            <description>Coded value scheme.</description>
+        </attribute-key>
+        <attribute-key key="display.name" optional="true">
+            <description>Coded value display name.</description>
+        </attribute-key>
+    </capability-definition>
+ 
+    <capability-definition id="socket" >
+        <description>Socket definition.</description>
+        <inherit definitionRef="host" prefix="host"/>
+        <attribute-key key="port">
+            <description>Port of the socket.</description>
+        </attribute-key>
+        <attribute-key key="title">
+            <description>Descriptive name of the socket / or service provided by the socket.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="trust.contribution">
+        <description>Capability for collecting contributions to a trust relationship of units.</description>
+    </capability-definition>
+
+    <capability-definition id="trust.config">
+        <description>Capability for defining all relevant attributes for establishing a trust relationship.</description>
+        <inherit definitionRef="certificate" prefix="cert" />
+    </capability-definition>
+
+    <capability-definition id="trust.source.config">
+        <description>Capability for defining all relevant attributes for establishing a trust relationship.</description>
+        <attribute-key key="cert.path">
+            <description>The path to the certificates. The certificates are required in PEM format. The file names must end with '.cert.pem'.</description>
+        </attribute-key>
+        <attribute-key key="cert.alias.prefix" optional="true">
+            <description>A prefix for the alias of the systems that are represented by the certificates.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <unit id="trust-contribution-template" abstract="true">
+        <description>
+            Template for defining a trust contribution. Concrete units simply need to overwrite 
+            the default attributes.
+        </description>
+        
+        <required-capability id="trust.contribution" identifiesHost="true" />
+        <provided-capability id="trust.config" />
+
+        <attributes>
+            <attribute key="cert.file" value="${dcc.solution.dir}/external/certificates/${_unitId}.cert.pem"/>
+            <attribute key="cert.alias" value="${_unitId}"/>
+        </attributes>
+        
+        <mappings>
+            <mapping targetCapabilityId="trust.config">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+    
+    <unit id="trust-contributions-template" abstract="true">
+        <description>
+            Template for defining trust contributions. Concrete units simply need to overwrite 
+            the default attributes.
+        </description>
+        
+        <required-capability id="trust.contribution" identifiesHost="true" />
+        <provided-capability id="trust.source.config" />
+
+        <attributes>
+            <attribute key="cert.path" value="${dcc.solution.dir}/external/certificates/${_unitId}" />
+            <attribute key="cert.alias.prefix" value="${_unitId}-" />
+        </attributes>
+        
+        <mappings>
+            <mapping targetCapabilityId="trust.source.config">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <capability-definition id="endpoint">
+        <description>
+            Capability defining an generic endpoint.
+        </description>
+        <inherit definitionRef="host" prefix="host" />
+        <attribute-key key="port">
+            <description>The endpoint port.</description>
+        </attribute-key>
+        <attribute-key key="scheme">
+            <description>The scheme to use (http, https, ldap, ldaps or the like).</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <capability-definition id="components">
+        <description>
+            Identifies a set of components. The components are located in the specified baseDir and are 
+            defined by a set of files.
+        </description>
+        <attribute-key key="baseDir">
+            <description>Base directory where component specification can be found.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="component">
+        <attribute-key key="baseDir" optional="true">
+            <description>Component baseDir. The folder contains all required information for a component in a trust relationship.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <unit id="components-template" abstract="true" package="dcc-core">
+        <description>
+            Template to define a set of certificate components. Certificate components are
+            processed during during initialization. Additional files are created as required.
+        </description>
+        <provided-capability id="components" />
+        <command type="initialize-resources" >
+            <capability id="components" prefix="certificate.components"/>
+        </command>
+        <attributes>
+            <attribute key="baseDir" value="${dcc.solution.dir}/external/certificates" type="basic" 
+                description="Base directory of the certificate components." />
+        </attributes>
+        <mappings>
+            <mapping targetCapabilityId="components">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="certificate-components-template" abstract="true" package="dcc-core" extends="components-template" >
+        <description>DEPRECATED: a component does not only consist of certificates.</description>
+    </unit>
+    
+</profile>

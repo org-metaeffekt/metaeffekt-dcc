@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-ldap</id>
+
+    <capability-definition id="ldap.access" abstract="true">
+        <description>Capability definition to define shared attributes to access and LDAP system.</description>
+        
+        <attribute-key key="system.id">
+            <description>
+                The name of the LDAP system. This uniquely identifies the LDAP system from 
+                the consumer perspective. Different consumers may chose a different system name
+                for the same LDAP.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="system.name">
+            <description>The display name of the LDAP system.</description>
+        </attribute-key>
+        
+        <attribute-key key="domain.suffix" optional="true">
+            <description>The domain suffix of the LDAP system.</description>
+        </attribute-key>
+
+        <attribute-key key="base.dn">
+            <description>The base DN to be used in the LDAP system.</description>
+        </attribute-key>
+
+        <attribute-key key="user.base.dn" optional="true">
+            <description>
+                The base DN of the ldap node below which the relevant users are located.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="person.base.dn" optional="true">
+            <description>
+                The base DN of the ldap node below which the relevant person information is located.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="group.base.dn" optional="true">
+            <description>
+                The base DN of the ldap node below which the relevant groups are located.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="role.base.dn" optional="true">
+            <description>
+                The base DN of the ldap node below which the relevant roles are located.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="organization.base.dn" optional="true">
+            <description>
+                The base DN of the ldap node below which the relevant organization (groups) are located.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="ldap.consumer.config">
+        <description>
+            Capability definition containing all attributes of an LDAP consumer. The 
+            attributes cover authentication relevant-attributes and structural meta data for 
+            accessing an LDAP system.
+        </description>
+        <inherit definitionRef="ldap.access"/>
+        
+        <attribute-key key="user.name">
+            <description>
+                The system user name used to access the LDAP system during 
+                authentication.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="user.password">
+            <description>The system user password to authenticate.</description>
+        </attribute-key>
+        
+    </capability-definition>
+
+    <capability-definition id="ldap.config">
+        <description>
+            Capability definition containing configuration of both endpoint and consumer side. This
+            definition is in particularly useful to configure all relevant attributes in a dedicated 
+            unit. This is required when multiple LDAP systems need to be bound. 
+        </description>
+        
+        <inherit definitionRef="ldap.endpoint"/>
+        <inherit definitionRef="ldap.consumer.config"/>
+        
+        <attribute-key key="scheme" default="ldap">
+            <description>The scheme (ldap or ldaps).</description>
+        </attribute-key>
+        
+    </capability-definition>
+    
+    <!-- FIXME: can we get rid of this and provide the SSL detail in an other fashion as part of ldap.config 
+        Revise in the context of (certificate-)components.
+    -->
+    <capability-definition id="ldaps.endpoint">
+        <description>
+            Capability definition containing all relevant attributes of an LDAPS endpoint 
+            exposing an LDAP v3 interface using TLS.
+        </description>
+        <inherit definitionRef="key.pair" prefix="ssl"/>
+
+        <attribute-key key="enabled" optional="true">
+            <description>Flag to enable LDAPS.</description>
+        </attribute-key>
+        <attribute-key key="port" optional="true">
+            <description>The port for LDAPS.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <capability-definition id="ldap.endpoint">
+        <description>
+            Capability definition containing all relevant attributes of an LDAP endpoint exposing
+            an LDAP v3 interface.
+        </description>
+        <inherit definitionRef="host" prefix="host" />
+        <attribute-key key="port" >
+            <description>
+                The port to use when accessing the LDAP system.
+            </description>
+        </attribute-key>
+        <attribute-key key="type">
+            <description>
+                Type of the LDAP system. Using the type attribute the required LDAP dialect / adapter 
+                can be derived.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="ldap.schema">
+        <description>Marks a unit to be providing LDAP schema definitions.</description>
+        <attribute-key key="schema.path">
+            <description>The path pointing to a folder with LDIF files.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <!-- FIXME: 
+        - remove optional; split in two capabilities; unify in template
+        - revise in context with ldap.import 
+    -->
+    <capability-definition id="ldap.bootstrap">
+        <description>Marks a unit to be providing bootstrap data.</description>
+        <attribute-key key="bootstrap.data.path" optional="true">
+            <description>The path pointing at the provided LDIF file.</description>
+        </attribute-key>
+        <attribute-key key="policy.defs.path" optional="true">
+            <description>The path pointing at the provided password policy definitions.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <!-- FIXME: 
+        - remove optional; split in two capabilities; unify in template
+        - revise in context with ldap.bootstrap 
+    -->
+    <capability-definition id="ldap.import">
+        <description>Marks a unit to be providing import data.</description>
+        <attribute-key key="import.data.path" optional="true">
+            <description>The path pointing at the provided ldif file.</description>
+        </attribute-key>
+        <attribute-key key="policy.defs.path" optional="true">
+            <description>The path pointing at the provided password policy definitions.</description>
+        </attribute-key>
+    </capability-definition>
+    
+    
+    <!-- FIXME JKO is it authentication.endpoint or ldap.authentication.endpoint ? -->
+    <!-- FIXME KKL we need to revise this. Conventions are not fully applied here. Alternative
+           configurations exist but are not really compatible with this. Potentially we isolate
+           the whole LDAP aspect into a dedicated LDAP package. -->
+    <!-- DEPRECATED  -->
+    <capability-definition id="ldap.authentication.endpoint">
+        <description>DEPRECATED: Capability for a general LDAP authentication endpoint.</description>
+        <inherit definitionRef="runtime" prefix="ldap" />
+        <attribute-key key="username">
+            <description>The username to connect to the ldap authentication endpoint.</description>
+        </attribute-key>
+        <attribute-key key="password">
+            <description>The password to connect to the ldap authentication endpoint.</description>
+        </attribute-key>
+        <attribute-key key="baseDn">
+            <description>The baseDn of the ldap authentication endpoint.</description>
+        </attribute-key>
+        <attribute-key key="display.name">
+            <description>The display name of the ldap authentication endpoint.</description>
+        </attribute-key>
+        <attribute-key key="system.name">
+            <description>The system name of the ldap authentication endpoint.</description>
+        </attribute-key>
+    </capability-definition>
+    
+</profile>

@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://metaeffekt.org/schema/dcc/profile"
+    attributeFormDefault="unqualified" 
+    elementFormDefault="qualified"
+    version="1.0">
+    
+    <xsd:annotation>
+        <xsd:documentation>
+            DCC Profile Schema, version 1.0.
+        </xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:complexType name="identifiedType">
+        <xsd:attribute name="id" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1" />
+                    <xsd:pattern value="[^\s]+"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+ 
+    <xsd:element name="profile" type="profileType"> 
+        <xsd:annotation>
+            <xsd:documentation>
+                A profile aggregates units and bindings connecting these units.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <xsd:complexType name="profileType">
+        <xsd:sequence>
+            <xsd:element name="id" minOccurs="1" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The id of the profile.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:pattern value="[^\s]+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="type" type="profileTypeType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The type element specifies the type of the profile. 
+                        Either a base, contribution, solution or deployment type 
+                        profile can be specified. The type element can be omitted. The 
+                        default profile type is base.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="auto-bind" type="autoBindType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Including the auto-bind element in a profile enables automatic 
+                        bindings between units. The mechanism enables a 1:1 binding of 
+                        unambiguous provided capabilities with the same capability definition.
+                        This feature is regarded for development use only and must not be used 
+                        in production profiles.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Describes the scope and purpose of the profile.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="import" type="importType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Using the import element other profiles can be 
+                            imported. Importing a profile several times does 
+                            not have any duplication or other negative effects.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="capability-definition" type="capabilityDefinitionType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A profile supports the definition of zero or more 
+                            capability definitions.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="unit" type="unitType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A profile supports the definition of zero or more 
+                            units. A unit can represent different aspects of a 
+                            solution or deployment. A unit can be a host, 
+                            runtime, a instance or just a container of 
+                            configuration.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="binding" type="bindingType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A profile supports the definition of zero or more 
+                            bindings. A binding connects a provided capability 
+                            of one unit with an required capability of another 
+                            unit.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="asserts" type="assertListType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A profile supports the definition of zero or more 
+                            asserts.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                
+                <xsd:element name="if" type="ifType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A profile supports conditional elements. Available since version 1.2.3.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="propertyLocationType">
+        <xsd:attribute name="location" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Relative path the property file.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="importType">
+        <xsd:attribute name="resource" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Relative path the profile file to be imported.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="propertyHolderType">
+        <xsd:simpleContent>
+            <xsd:annotation>
+                <xsd:documentation>
+                    Extension of type string for backward compatibility reason. DEPRECATED.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="prefix" type="xsd:string" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Using a prefix the inherited attributes keys can be 
+                            isolated.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandCapabilityType">
+        <xsd:simpleContent>
+            <xsd:extension base="propertyHolderType">
+                <xsd:attribute name="id" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A command is always based on capabilities. In particular, 
+                            the inputs for the command execution are derived from this
+                            capability.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandContributionType">
+        <xsd:simpleContent>
+            <xsd:extension base="propertyHolderType">
+                <xsd:attribute name="capabilityId" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A command may further consume a set of contributions 
+                            from other units. A contribution can be used to 
+                            collect information from units which are bound to
+                            a provided capability of the current unit. The 
+                            contribution value is the capability definition 
+                            of interest, which is to be provided by the bound 
+                            units. See the reference manual for more details.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="boundTo" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Restricts the evaluation to bindings that are bound to the given capability id.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandProvisionType">
+        <xsd:sequence>
+            <xsd:element name="restrictions" type="provisionRestrictionsType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Enables filtering the collected units based on the listed restrictions.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="prefix" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Using a prefix the inherited attributes keys can be
+                    isolated.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="capabilityId" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A command may further consume a set of provisions
+                    from other units. A provision can be used to
+                    collect information from all the units which have
+                    the given provided capability and are bound to the current
+                    unit.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="provisionRestrictionsType">
+        <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="host-bound">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Host bound restricts the unit that are collected to those units that are
+                        also associated to the same host.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandRequisitionType">
+        <xsd:simpleContent>
+            <xsd:extension base="propertyHolderType">
+                <xsd:attribute name="capabilityId" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A command may further consume information from 
+                            consumed units with a particular capability 
+                            definition. In reference to the <code>contribution</code>
+                            this is referred to as <code>requisition</code>.
+                            A requisition can be used to collect information 
+                            from units which are bound to a required capability 
+                            of the current unit. The requisition value is the 
+                            capability definition of interest, which is to be 
+                            provided by the bound units. 
+                            See the reference manual for more details.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="boundTo" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Restricts the evaluation to bindings that are bound to the given capability id.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="inheritDefinitionRefType">
+        <xsd:attribute name="definitionRef" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The reference contains the id of the referenced capability 
+                    definition.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1" />
+                    <xsd:pattern value="[^\s]+"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="prefix" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Using a prefix the inherited attributes keys can be 
+                    isolated.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="capabilityDefinitionType">
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Describes the purpose of the capability  definition.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="inherit" type="inheritDefinitionRefType" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Used to reference another capability definition. The attributes 
+                                of the referenced capability definition are also added to the 
+                                referencing capability definition. The attributes will retain 
+                                their original names, but the names can be prefixed using the 
+                                prefix attribute in order to avoid duplicate names.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="attribute-key" type="attributeKeyType" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A list of attribute keys that are represented by the capability definition.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="abstract" type="xsd:boolean" default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Setting abstract to true means that the capability 
+                            definition can not directly be used for 
+                            capabilities.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="attributeKeyType">
+        <xsd:sequence>
+            <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Describes the purpose of the capability attribute key.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="key" type="xsd:string" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Defines the key.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="optional" type="xsd:boolean" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Setting optional to true an attribute key can be defined as
+                    non-mandatory in the capability definition.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="default" type="xsd:string" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The default value if available. Since 1.2.5.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="unitType">
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Describes the scope and purpose of the unit.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="required-capability" type="requiredCapabilityType" minOccurs="0" maxOccurs="unbounded" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Defines a required capability consumed by the unit.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="provided-capability" type="capabilityType" minOccurs="0" maxOccurs="unbounded" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Defines a provided capabilities offered by the unit.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="command" type="commandType" minOccurs="0" maxOccurs="unbounded" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Defines a command the unit participates in.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="attributes" type="attributesType" minOccurs="0" maxOccurs="1" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A unit may have zero or more attributes.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                To derive an attribute value of an attribute key 
+                                of an provided capability values from the consumed
+                                required capabilities or local attribute values 
+                                can be mapped to the target attribute keys.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="asserts" type="assertListType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A unit supports the definition of zero or more asserts.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="abstract" type="xsd:boolean" use="optional" default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A unit can be defined as abstract. Abstract units 
+                            can be used as templates for concrete (abstract=false) 
+                            units.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="extends" type="xsd:string" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A unit can extend from other units inheriting the
+                            complete configuration from its parent.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="package" type="xsd:string" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A unit is normally assigned to a particular package. 
+                            This information is required when executing the unit 
+                            specific commands.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="capabilityType">
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" >
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Describes the purpose of the capability.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="definitionRef" type="xsd:string" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            References the capability definition to be used for
+                            this capability.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="requiredCapabilityType">
+        <xsd:complexContent>
+            <xsd:extension base="capabilityType">
+                <xsd:attribute name="optional" type="xsd:boolean" use="optional" default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A required capability may be non-mandatory. Use the optional
+                            flag to mark such capabilities.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="multipleBindingsAllowed" type="xsd:boolean" use="optional" default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A required capability allows multiple bindings 
+                            when set to true. This is required when a unit 
+                            consumes several configurations of a capability
+                            definition.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="identifiesHost" type="xsd:boolean" use="optional" default="false">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            It may not be possible from a given unit to uniquely identify the bound
+                            host. This flag enables to qualify a required capability to be the
+                            capability that determines the host.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="attributesType">
+        <xsd:sequence>
+            <xsd:element name="attribute" type="attributeType" minOccurs="1" maxOccurs="unbounded" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines all relevant meta data of an attribute.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="attributeType">
+        <xsd:attribute name="key" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The attribute key.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="value" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The attribute value.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="description" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The description of the attribute value.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type" type="attributeTypeEnum" default="expert" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The type of the attribute value.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="mappingsType">
+        <xsd:sequence>
+            <xsd:element name="mapping" type="mappingType" minOccurs="1" maxOccurs="unbounded" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        One or more mappings.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="mappingType">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="map-unit-attributes" type="mapUnitAttributesType" minOccurs="0" maxOccurs="1" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            If defined, indicates that all unit-level attributes 
+                            should be included in the mapping. No further mappings for
+                            1:1 attribute key matches have to be defined.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="expression" type="expressionType" minOccurs="0" maxOccurs="unbounded" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            An attribute value can be derived from either one or more 
+                            attribute values provided by the required capabilities or 
+                            local unit attributes. An expression can use variables for this purpose.
+                            <ul>
+                                <li>
+                                    The value of an attribute key in a required 
+                                    capability can be expressed as
+                                    <code>${capabilityId[attribute.key]}</code>.
+                                </li>
+                                <li>
+                                    The value of a unit attribute can be written 
+                                    as <code>${attribute.key}</code>.
+                                </li>
+                            </ul>
+                            Example:
+                            <pre>&lt;expression attributeKey="url" value="jdbc:hsqldb:hsql://${hsqldb.runtime[host.name]}:${hsqldb.runtime[port]}/${database.id}" /&gt;</pre>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="map-all" type="mapAllType" minOccurs="0" maxOccurs="unbounded" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Maps all attributes of the target capability based on
+                            further meta data.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="targetCapabilityId" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The id of the target capability to be mapped.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="expressionType">
+        <xsd:attribute name="attributeKey" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The attribute key to map a value for.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="value" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Expression value using variables.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="mapAllType">
+        <xsd:attribute name="sourceCapabilityId" type="xsd:string" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The source capability to map from.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="sourcePrefix" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    A prefix that the source uses. The prefix is eliminated by 
+                    the mapping.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="targetPrefix" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    A prefix that the target uses. The prefix is introduced by 
+                    the mapping.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="mapUnitAttributesType">
+        <xsd:attribute name="sourcePrefix" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    A prefix that the source uses. The prefix is eliminated by 
+                    the mapping.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="targetPrefix" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    A prefix that the target uses. The prefix is introduced by 
+                    the mapping.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="bindingType">
+        <xsd:sequence>
+            <xsd:element name="source" type="sourceBindingEndpointType" minOccurs="1" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        References the source capability of the binding.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="target" type="targetBindingEndpointType" minOccurs="1" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        References the target capability of the binding.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="bindingEndpointType">
+        <xsd:attribute name="unitRef" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:complexType name="sourceBindingEndpointType">
+        <xsd:complexContent>
+            <xsd:extension base="bindingEndpointType">
+                <xsd:attribute name="capabilityId" type="xsd:string" use="required" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The capability id of the source.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="targetBindingEndpointType">
+        <xsd:complexContent>
+            <xsd:extension base="bindingEndpointType">
+                <xsd:attribute name="capabilityId" type="xsd:string" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The capability id of the target.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandType">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="capability" type="commandCapabilityType">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            One or more capabilities (provided capabilities of the unit) that 
+                            are used as parameters for the command execution.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="contribution" type="commandContributionType">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            One or more contributed capabilities collected from the bound (downstream) units.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="requisition" type="commandRequisitionType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            One or more required capabilities collected from the bound (upstream) units.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="provision" type="commandProvisionType" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            One or more capabilities collected other units (not necessarily bound).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:sequence minOccurs="0">
+                <xsd:element name="package" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Indicated which package provides the script for the command.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="capability" type="commandCapabilityType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                One or more contributed capabilities from the current unit.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="contribution" type="commandContributionType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                One or more provided capabilities collected from the bound (downstream) units.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="requisition" type="commandRequisitionType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                One or more required capabilities collected from the bound (upstream) units.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="commandEnum" use="required" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    Defines the type of the command. See enumeration values.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="package" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The package the command is referring to. The package 
+                    can also be defined on unit level. The more specific 
+                    setting overwrites the unit level setting.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:simpleType name="commandEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="clean"/>
+            <xsd:enumeration value="initialize-resources"/>
+            <xsd:enumeration value="initialize"/>
+            <xsd:enumeration value="install"/>
+            <xsd:enumeration value="configure"/>
+            <xsd:enumeration value="deploy"/>
+            <xsd:enumeration value="prepare-persistence"/>
+            <xsd:enumeration value="bootstrap"/>
+            <xsd:enumeration value="import"/>
+            <xsd:enumeration value="import-test-data"/>
+            <xsd:enumeration value="verify"/>
+            <xsd:enumeration value="start"/>
+            <xsd:enumeration value="upload"/>
+            <xsd:enumeration value="reconfigure"/>
+            <xsd:enumeration value="stop"/>
+            <xsd:enumeration value="uninstall"/>
+            <xsd:enumeration value="initialize-upgrade"/>
+            <xsd:enumeration value="prepare-upgrade"/>
+            <xsd:enumeration value="upgrade"/>
+            <xsd:enumeration value="upgrade-resources"/>
+            <xsd:enumeration value="finalize-upgrade"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="profileTypeType">
+        <xsd:choice minOccurs="1" maxOccurs="1">
+            <xsd:element name="base" type="baseProfileType" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a base profile type.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="contribution" type="contributionProfileType">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a contribution profile type.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="solution" type="solutionProfileType" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a solution profile type.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="deployment" type="deploymentProfileType" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a deployment profile type.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+    
+    <xsd:complexType name="baseProfileType" />
+    
+    <xsd:complexType name="contributionProfileType" />
+    
+    <xsd:complexType name="solutionProfileType">
+        <xsd:sequence>
+            <xsd:element name="properties" type="propertyLocationType" minOccurs="0" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A solution profile may reference a solution-level properties file.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="deploymentProfileType">
+        <xsd:sequence>
+            <xsd:element name="id" minOccurs="0" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The optional <code>id</code> element defines the 
+                        deployment id used for the installation. The id is
+                        used to isolate different deployments on the target
+                        hosts systems and reflects in folder names and other
+                        resources.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:pattern value="[^\s]+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="properties" type="propertyLocationType" minOccurs="1" maxOccurs="1" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A solution profile may reference a solution-level properties file.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="autoBindType" />
+
+    <xsd:complexType name="assertListType">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="unique" type="uniqueAssertType">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A unique assertion (assert) specifies a resource identifier that must be unique within the profile. The
+                        assertion is evaluated when loading the profile.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="prerequisite" type="prerequisiteAssertType" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A prerequisite defines attributes that can be used to verify whether all prerequisites are met.
+                        The evaluation of this assert type is performed during command execution (on the target hosts).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="is-true" type="isTrueAssertType" >
+                <xsd:annotation>
+                    <xsd:documentation>
+                        An is-true assert checks that a certain condition is satisfied. This assertion is evaluated when loading
+                        the profile.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="uniqueAssertType">
+        <xsd:attribute name="value">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Expression that is evaluated when the profile is parsed.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"></xsd:minLength>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="enabled" use="optional" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Flag to enable the assertion. The content can be again an expression 
+                    that is evaluated when the profile is parsed.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"></xsd:minLength>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="message" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The message to display to the user, when the asserted condition is not fulfilled.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="isTrueAssertType">
+        <xsd:attribute name="value">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Expression that is evaluated when the profile is parsed.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"></xsd:minLength>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="message" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The message to display to the user, when the asserted condition is not fulfilled.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="prerequisiteAssertType">
+        <xsd:attribute name="key">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Key of the prerequisite.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"></xsd:minLength>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="value">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Value of the prerequisite. The prerequisite key/value pair is
+                    transported to the hosts to support the verify command.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"></xsd:minLength>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:simpleType name="attributeTypeEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="expert"/>
+            <xsd:enumeration value="basic"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="ifType">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+                Enables to use conditional expressions when parsing the configuration. If the result of the expression is
+                true, then the content of the element will be further parsed. In order to evaluate the expression
+                a special evalutation context object is used. The evaluation context supports - apart from standard
+                SpEL functions - properties using "property('propertyName') or property('propertyName', 'defaultValue'), 
+                evaluating whether a bean with a given name was already parsed (depends on parsing sequence) 
+                "beanParsed('beanName') and provides access to the Environment (see org.springframework.core.env.Environment for
+                details) using "environment()".
+            ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="import" type="importType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        
+        <xsd:attribute name="expression" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[
+                    Spring expression to determine whether the configuration is parsed.
+                ]]></xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

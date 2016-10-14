@@ -1,0 +1,138 @@
+#htmlStart($profile.getId(), '..')
+
+#rootContainerStart($generator.getPackageId(), '..', 'profile-unit-overview')
+
+<h2 style="margin-top:6px">Profile - $profile.getId()</h2>
+<h3>Profile Overview</h3>
+#panelStart('profile-summary', 'Profile Summary', $profile.getId())
+#modalDialog('modal_deploymentProperties', 'Deployment Properties', $profile.getDeploymentPropertiesFile())
+#modalDialog('modal_solutionProperties', 'Solution Properties', $profile.getSolutionPropertiesFile())
+#modalDialog('modal_profile', 'Profile', $profile.getOrigin())
+<table id="table_$generator.getPackageId()-summary" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Detail</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-md-2">Profile id</td>
+            <td class="col-md-8"><samp>$profile.getId()</samp></td>
+        </tr>
+#if($profile.getDeploymentId()) 
+        <tr>
+            <td class="col-md-1">Deployment id</td>
+            <td class="col-md-2"><samp>$profile.getDeploymentId()</samp></td>
+        </tr>
+#end
+        <tr>
+            <td class="col-md-1">Profile type</td>
+            <td class="col-md-2"><samp>$profile.getType()</samp></td>
+        </tr>
+        <tr>
+            <td class="col-md-1">Profile description</td>
+            <td class="col-md-2">$profile.getDescription()</td>
+        </tr>
+        <tr>
+            <td class="col-md-1">Profile file</td>
+            <td class="col-md-2">
+                #hrefOrigin($profile.getOrigin())
+            </td>
+        </tr>
+#if($profile.getSolutionPropertiesFile()) 
+        <tr>
+            <td class="col-md-1">Solution properties</td>
+            <td class="col-md-2">
+                <a href="#" data-toggle="modal" data-target="#modal_solutionProperties" style="outline: none">
+                    <samp>$profile.getRelativePath($profile.getSolutionPropertiesFile())</samp>
+                </a>
+            </td>
+        </tr>
+#end
+#if($profile.getDeploymentPropertiesFile()) 
+        <tr>
+            <td class="col-md-1">Deployment properties</td>
+            <td class="col-md-2">
+                <a href="#" data-toggle="modal" data-target="#modal_deploymentProperties" style="outline: none">
+                    <samp>$profile.getRelativePath($profile.getDeploymentPropertiesFile())</samp>
+                </a>
+            </td>
+        </tr>
+#end
+    </tbody>
+</table>
+
+#panelEnd
+
+## On profile overview level we only display the concrete unit. 
+
+#if($profile.getUnits().size() > 0) 
+#panelStart('concrete-units', 'Concrete Units', $profile.getId())
+<table id="table_$generator.getPackageId()-unit-overview" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Unit Id</th>
+            <th>Description</th>
+            <th>Parent Unit</th>
+            <th>Origin</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        #foreach($unit in $generator.sortUnits($profile.getUnits(true)))
+        #if(!$unit.isAbstract())
+        <tr>
+            <td class="col-md-1"><a href="unit-reference.html#$unit.getId()"><samp>#handleText($unit.getId())</samp></a></td>
+            <td class="col-md-2">$generator.getDescription($unit, $profile)</td>
+            <td class="col-md-1">#href($unit.getParentId())</td>
+            <td class="col-md-1">#hrefOrigin($unit.getOrigin())</td>
+        </tr>
+        #end
+        #end
+    </tbody>
+</table>
+
+#panelEnd
+#end
+
+#if($profile.getType().toString().equals("BASE"))
+#if($profile.getUnits(true).size() > $profile.getUnits(false).size())
+#panelStart('unit-templates', '<i>Unit Templates</i>', $profile.getId())
+<table id="table_$generator.getPackageId()-unit-overview" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Unit Id</th>
+            <th>Description</th>
+            <th>Parent Unit</th>
+            <th>Origin</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        #foreach($unit in $generator.sortUnits($profile.getUnits(true)))
+        #if($unit.isAbstract())
+        <tr>
+            <td class="col-md-1"><a href="unit-reference.html#$unit.getId()"><samp>#handleText($unit.getId())</samp></a></td>
+            <td class="col-md-2">$generator.getDescription($unit, $profile)</td>
+            <td class="col-md-1">#href($unit.getParentId())</td>
+            <td class="col-md-1">#hrefOrigin($unit.getOrigin())</td>
+        </tr>
+        #end
+        #end
+    </tbody>
+</table>
+#panelEnd
+#end
+#else
+<div class="alert alert-info" role="alert">
+    <b>Note!</b> Abstract template units are only listed for base profiles. 
+    For a full list of templates consult the 
+    <a href="unit-reference.html">Unit Reference</a>.
+</div>
+#end
+
+#rootContainerEnd($generator.getPackageId(), '..', 'profile-unit-overview')
+#footer
+</div>
+#htmlEnd

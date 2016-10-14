@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://camel.apache.org/schema/spring
+        http://camel.apache.org/schema/spring/camel-spring.xsd">
+    
+    <bean id="propertySource" class="org.metaeffekt.dcc.agent.AccessiblePropertyPlaceholderConfigurer" >
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="locations">
+            <list>
+                <value>classpath:META-INF/default-dcc-agent.properties</value>
+                <value>classpath:dcc-agent.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="agentScriptExecutor" class="org.metaeffekt.dcc.agent.AgentScriptExecutor" >
+        <constructor-arg index="0" value="${dcc.agent.working.dir}"/>
+        <constructor-arg index="1" value="${dcc.agent.destination.dir}" />
+    </bean>
+
+    <camel:camelContext id="platformCamelContext">
+        <camel:routeBuilder ref="dccRouteBuilder"/>
+    </camel:camelContext>
+    
+    <bean id="dccRouteBuilder" class="org.metaeffekt.dcc.agent.AgentRouteBuilder">
+        <constructor-arg ref="agentScriptExecutor"/>
+
+        <property name="routePolicy" ref="routePolicy"/>
+        <property name="version" value="${dcc.agent.version}"/>
+        
+        <property name="propertySource" ref="propertySource" />
+    </bean>
+
+    <bean id="resourceComponent" class="org.metaeffekt.dcc.agent.camel.component.resource.ResourceComponent">
+        <property name="component" ref="restletComponent" />
+        <property name="camelContext" ref="platformCamelContext" />
+    </bean>
+
+    <bean id="restletComponent" class="org.restlet.Component"/>
+
+    <bean id="routePolicy" class="org.metaeffekt.dcc.agent.HttpErrorMappingRoutePolicy"/>
+
+    <util:list id="sslConfiguration">
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="sslContextFactory" />
+            <constructor-arg value="${dcc.agent.ssl.context.factory}" />
+        </bean>
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="needClientAuthentication" />
+            <constructor-arg value="${dcc.agent.ssl.client.authentication}" />
+        </bean>
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="keystorePath" />
+            <constructor-arg value="${dcc.agent.ssl.keystore.path}" />
+        </bean>
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="keystorePassword" />
+            <constructor-arg value="${dcc.agent.ssl.keystore.password}" />
+        </bean>
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="truststorePath" />
+            <constructor-arg value="${dcc.agent.ssl.truststore.path}" />
+        </bean>
+        <bean class="org.restlet.data.Parameter">
+            <constructor-arg value="truststorePassword" />
+            <constructor-arg value="${dcc.agent.ssl.truststore.password}" />
+        </bean>
+    </util:list>
+</beans>

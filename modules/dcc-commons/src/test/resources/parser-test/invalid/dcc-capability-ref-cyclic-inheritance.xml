@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <!-- Test Profile defining a cyclic inheritance for CapabilityDefinitions which should cause an Exception -->
+    <id>invalidCyclicProfile</id>
+
+    <type>
+        <base/>
+    </type>
+
+    <capability-definition id="Alpha">
+        <inherit definitionRef="Gamma" />
+        <attribute-key key="alpha" />
+    </capability-definition>
+
+    <capability-definition id="Beta">
+        <inherit definitionRef="Alpha" />
+        <attribute-key key="beta"/>
+    </capability-definition>
+
+    <capability-definition id="Gamma">
+        <inherit definitionRef="Beta" />
+        <attribute-key key="gamma"/>
+    </capability-definition>
+
+</profile>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>test-deployment-profile</id>
+
+    <type>
+        <deployment>
+            <id>test</id>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+    
+    <if expression="property('test.property') != null || property('test.property') != ''">
+        <import resource="test-solution-profile.xml" />
+    </if>
+
+</profile>

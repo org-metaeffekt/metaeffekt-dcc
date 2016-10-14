@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.metaeffekt.core</groupId>
+        <artifactId>ae-core-plugin-management-pom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
+    <groupId>org.metaeffekt.dcc</groupId>
+    <artifactId>dcc-modules-behavior-pom</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    
+    <packaging>pom</packaging>
+
+    <properties>
+        <dcc.version>0.1.0-SNAPSHOT</dcc.version>
+        <artifact.inventory.version>0.1.0-SNAPSHOT</artifact.inventory.version>
+        <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.metaeffekt.dcc</groupId>
+                <artifactId>dcc-dependency-management-pom</artifactId>
+                <version>${dcc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- FIXME: isolate proper POM in metaeffekt core and add there -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <skipIfEmpty>true</skipIfEmpty>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>test-jar</id>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.metaeffekt.core</groupId>
+                    <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+                    <version>${ae.core.version}</version>
+                    <executions>
+                        <execution>
+                            <id>package-runtime</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>publish-artifact</goal>
+                            </goals>
+                            <configuration>
+                                <qualifier>runtime</qualifier>
+                                <filesets>
+                                    <!-- copy src/main/config; this may contain property tokens -->
+                                    <fileset>
+                                        <directory>${basedir}/target/classes</directory>
+                                        <includes>
+                                            <include>**/*.class</include>
+                                            <include>**/*.xml</include>
+                                            <include>**/*.xsd</include>
+                                            <include>**/*.txt</include>
+                                            <include>**/*.ldif</include>
+                                            <include>**/*.xls</include>
+                                            <include>**/*.properties</include>
+                                            <include>*.uris</include>
+                                            <include>*.jks</include>
+                                            <include>*.crt</include>
+                                            <include>*.wsdl</include>
+                                            <include>META-INF/services/**/*</include>
+                                            <include>META-INF/**/*.xslt</include>
+                                            <include>META-INF/**/*.schemas</include>
+                                            <include>META-INF/**/*.handlers</include>
+                                            <include>META-INF/**/*.wsdd</include>
+                                            <include>META-INF/**/*.csv</include>
+                                        </includes>
+                                        <excludes>
+                                            <exclude>**/.svn/**/*</exclude>
+                                            <exclude>**/.svn</exclude>
+                                        </excludes>
+                                        <followSymlinks>false</followSymlinks>
+                                    </fileset>
+                                </filesets>
+                            </configuration>
+                        </execution>
+                        <!-- support sources for debugging with custom artifacts -->
+                        <execution>
+                            <id>publish-runtime-sources-artifact</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>publish-artifact-overwrite</goal>
+                            </goals>
+                            <configuration>
+                                <sourceQualifier>sources</sourceQualifier>
+                                <targetQualifier>runtime-sources</targetQualifier>
+                                <attachArtifact>true</attachArtifact>
+                            </configuration>
+                        </execution>
+                        
+                        <execution>
+                            <!-- Some dcc modules contain a src/main/config folder to transport configuration 
+                                 without implicitly including it into the runtime artifacts. -->
+                            <id>package-config</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>publish-artifact</goal>
+                            </goals>
+                            <configuration>
+                                <qualifier>config</qualifier>
+                                <filesets>
+                                    <fileset>
+                                        <directory>${project.build.directory}/tmp/config-artifact</directory>
+                                        <outputDirectory>.</outputDirectory>
+                                        <includes>
+                                            <include>**/*</include>
+                                        </includes>
+                                    </fileset>
+                                </filesets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.metaeffekt.core</groupId>
+                <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.metaeffekt.core</groupId>
+                <artifactId>ae-inventory-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>package-doc-artifact</id>
+            <activation>
+                <file>
+                    <exists>src/main/dita</exists>
+                </file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.metaeffekt.core</groupId>
+                            <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+                            <version>${ae.core.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>package-doc</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>publish-artifact</goal>
+                                    </goals>
+                                    <configuration>
+                                        <qualifier>doc</qualifier>
+                                        <filesets>
+                                            <fileset>
+                                                <directory>${project.build.directory}/tmp/doc-artifact</directory>
+                                                <includes>
+                                                    <include>**/*</include>
+                                                </includes>
+                                                <excludes>
+                                                    <exclude>**/.svn/**/*</exclude>
+                                                    <exclude>**/.svn</exclude>
+                                                </excludes>
+                                            </fileset>
+                                        </filesets>
+                                    </configuration>
+                                </execution>
+                                </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>build-and-package-api-artifact</id>
+            <activation>
+                <!-- FIXME: once we use the latest maven, we could have multiple properties here -->
+                <file><exists>src/main/java</exists></file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.metaeffekt.core</groupId>
+                            <artifactId>ae-api-publish-maven-plugin</artifactId>
+                            <version>${ae.core.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>package-api</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>publishapi</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <scanRootDir>${basedir}/target/classes</scanRootDir>
+                                <annotationClass>org.metaeffekt.core.commons.annotation.Public</annotationClass>
+                                <filesets>
+                                    <fileset>
+                                        <directory>${basedir}/target/classes</directory>
+                                        <includes>
+                                            <include>--nothing--</include>
+                                        </includes>
+                                        <followSymlinks>false</followSymlinks>
+                                    </fileset>
+                                </filesets>
+                            </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.metaeffekt.core</groupId>
+                                    <artifactId>ae-commons-annotation</artifactId>
+                                    <version>${ae.core.version}</version>
+                                    <classifier>api</classifier>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                    
+                        <plugin>
+                            <groupId>org.metaeffekt.core</groupId>
+                            <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+                            <version>${ae.core.version}</version>
+                            <executions>
+                                <execution>
+                                    <!--
+                                        Replaces the standard artifact (fat jar) with the public api version
+                                        Doing this is part of the multiartifact / public api enforcement 
+                                        strategy. 
+                                    -->
+                                    <id>overwrite-standard-artifact</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>publish-artifact-overwrite</goal>
+                                    </goals>
+                                    <configuration>
+                                        <sourceQualifier>api</sourceQualifier>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>publish-api-sources-artifact</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>publish-artifact-overwrite</goal>
+                                    </goals>
+                                    <configuration>
+                                        <sourceQualifier>sources</sourceQualifier>
+                                        <targetQualifier>api-sources</targetQualifier>
+                                        <attachArtifact>true</attachArtifact>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.metaeffekt.core</groupId>
+                        <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.metaeffekt.core</groupId>
+                        <artifactId>ae-api-publish-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <!-- enabled-default contribution of test dependencies -->
+            <id>MIXIN_test-dependencies</id>
+            <dependencies>
+                <dependency>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.easymock</groupId>
+                    <artifactId>easymock</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </dependency>
+            </dependencies>
+            <activation>
+                <file>
+                    <missing>.NODEP_TEST</missing>
+                </file>
+            </activation>
+        </profile>
+
+        <profile>
+            <!-- enabled-default contribution of logging dependencies -->
+            <id>MIXIN_slf4j-dependencies</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+        
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+            </dependencies>
+            <activation>
+                <file>
+                    <missing>.NODEP_SLF4J</missing>
+                </file>
+            </activation>
+        </profile>
+    </profiles>
+
+
+</project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration strict="true" monitorInterval="30" shutdownHook="disable">
+
+    <!-- Dedicated log4j2 configuration that is used during script execution. The 
+         scripts use internally log4j but should only log to the console. The
+         logging is further supported by the script specific log files that
+         are produced in the destination folders.
+    -->
+    <Properties>
+        <Property name="consoleLayoutPattern">%m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${consoleLayoutPattern}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.metaeffekt" level="WARN"/>
+        <Logger name="org.metaeffekt.dcc" level="INFO"/>
+        <Logger name="org" level="ERROR"/>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+        xmlns="http://metaeffekt.org/schema/dcc/profile"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+
+    <id>auto-bind-test</id>
+
+    <type>
+        <deployment>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+
+
+    <auto-bind/>
+
+    <capability-definition id="capDef1"/>
+    <capability-definition id="capDef2"/>
+
+    <unit id="unit1">
+        <provided-capability id="provCap1" definitionRef="capDef1"/>
+        <provided-capability id="provCap2" definitionRef="capDef2"/>
+    </unit>
+
+    <unit id="unit1a">
+        <provided-capability id="provCap1" definitionRef="capDef1"/>
+    </unit>
+
+    <unit id="unit2">
+        <required-capability id="reqCap1" definitionRef="capDef1"/>
+        <required-capability id="reqCap2" definitionRef="capDef2"/>
+    </unit>
+
+    <unit id="unit3">
+        <required-capability id="reqCap1" definitionRef="capDef1"/>
+        <required-capability id="reqCap2" definitionRef="capDef2"/>
+    </unit>
+
+    <binding>
+        <source unitRef="unit1" capabilityId="provCap1"/>
+        <target unitRef="unit2" capabilityId="reqCap1"/>
+    </binding>
+
+    <binding>
+        <source unitRef="unit1a" capabilityId="provCap1"/>
+        <target unitRef="unit3" capabilityId="reqCap1"/>
+    </binding>
+
+</profile>

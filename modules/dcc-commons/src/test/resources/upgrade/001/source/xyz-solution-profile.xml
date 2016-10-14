@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>xyz-solution-profile</id>
+
+    <type>
+        <solution>
+            <properties location="xyz-solution.properties"/>
+        </solution>
+    </type>
+
+    <capability-definition id="a.b.c">
+        <attribute-key key="d" />
+        <attribute-key key="e" />
+        <attribute-key key="f" />
+        <attribute-key key="g" />
+        
+        <attribute-key key="removeUnset" />
+        <attribute-key key="removeSet" />
+        <attribute-key key="removeSetSolutionLevel" />
+    </capability-definition>
+
+    <unit id="xyz">
+        <provided-capability id="a.b.c" />
+    
+        <attributes>
+            <attribute key="d" value="101 (value set in profile)" />
+            <attribute key="e" value="202 (value set in profile)" />
+            <attribute key="f" value="F (value set in profile)" />
+            
+            <attribute key="g" value="G (value set in profile, but overwritten in deployment properties)" />
+
+            <attribute key="removeUnset" value="Remove (exists in source, but does not exist in target, MUST NOT APPEAR IN DIFF)" />
+            <attribute key="removeSet" value="--overwrite in deployment properties--" />
+
+            <attribute key="removeSetSolutionLevel" value="--overwrite in solution properties--" />
+
+            <attribute key="unusedAttribute" value="some value that is not used" />
+
+        </attributes>
+        
+        <mappings>
+            <mapping targetCapabilityId="a.b.c">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+        
+    </unit>
+
+</profile>

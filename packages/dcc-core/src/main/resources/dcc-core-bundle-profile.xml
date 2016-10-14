@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+            http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-bundle-profile</id>
+    
+    <description>Provides basic capability definitions and templates for deploying eHI integration instances.</description>
+
+    <import resource="../dcc-core/dcc-core-profile.xml" />
+
+    <capability-definition id="bundle.runtime">
+        <description>Marker capability. Connecting a bundle means deploying the bundle to the runtime.</description>
+        <inherit definitionRef="servlet.runtime" />
+    </capability-definition>
+    
+    <capability-definition id="bundle">
+        <description>Defines the attributes of a bundle.</description>
+        <attribute-key key="name">
+            <description>Name of the bundle. The bundle must follow the '&lt;name&gt;-&lt;version&gt;-bundle.zip' pattern.</description>
+        </attribute-key>
+        <attribute-key key="dir">
+            <description>Directory where the bundle can be found.</description>
+        </attribute-key>
+        <attribute-key key="prefix" optional="true">
+            <description>Prefix of the attributes to configure the bundle.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="properties">
+        <description>Defines a set of properties.</description>
+        <attribute-key key="name">
+            <description>Name of the properties.</description>
+        </attribute-key>
+        <attribute-key key="prefix">
+            <description>Prefix of the attributes that make up the property set.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="resources">
+        <description>Defines a set of resources.</description>
+        <attribute-key key="source.dir">
+            <description>Name of the properties.</description>
+        </attribute-key>
+        <attribute-key key="includes">
+            <description>Include pattern.</description>
+        </attribute-key>
+        <attribute-key key="excludes" optional="true">
+            <description>Include pattern.</description>
+        </attribute-key>
+        <attribute-key key="target.dir">
+            <description>Target directory to copy the resources to</description>
+        </attribute-key>
+    </capability-definition>
+    
+    <unit id="bundle-template" abstract="true" >
+        <description>Bundle template for extension.</description>
+        
+        <required-capability id="bundle.runtime" multipleBindingsAllowed="true" identifiesHost="true" />
+        <provided-capability id="bundle" definitionRef="bundle" />
+        
+        <attributes>
+            <attribute key="name" description="The name of the bundle." type="basic"/>
+            <attribute key="dir" value="${dcc.solution.dir}/extension/bin/bundles" description="The directory in which the bundle is located." type="basic"/>
+            <attribute key="prefix" description="The prefix can be used to define further attributes to configure the bundle with." type="basic"/>
+        </attributes>
+        
+        <mappings>
+            <mapping targetCapabilityId="bundle">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+</profile>

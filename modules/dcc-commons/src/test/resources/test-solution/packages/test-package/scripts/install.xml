@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project name="test" basedir=".." default="test">
+
+    <target name="test">
+        <echo message="Hello" />
+        
+        <exec executable="${dcc.java.home}/bin/java" failonerror="false">
+            <arg value="-versions" />
+        </exec>
+        
+        <fail message="Sad but true: I'm only here to fail!" />
+
+    </target>
+
+</project>

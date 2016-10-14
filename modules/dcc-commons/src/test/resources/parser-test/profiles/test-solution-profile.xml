@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>test-base-profile</id>
+
+    <type>
+        <solution>
+            <properties location="solution.properties"/>
+        </solution>
+    </type>
+    
+    <import resource="test-base-profile.xml" />
+
+</profile>

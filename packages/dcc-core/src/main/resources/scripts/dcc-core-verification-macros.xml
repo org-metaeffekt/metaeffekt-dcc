@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core-verification-macros" xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+    
+    <macrodef name="verifyPathLength" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="path" default="${dcc.target.dir}" />
+        <attribute name="windowsMaxLengthProperty" default="verify.destination.path.length.windows" />
+        <attribute name="linuxMaxLengthProperty" default="verify.destination.path.length.linux" />
+        <sequential>
+            <local name="target.path.max" />
+            
+            <core:doForOs>
+                <windows>
+                    <core:conditionalProperty name="target.path.max" property="@{windowsMaxLengthProperty}" default="100"/>
+                </windows>
+                <linux>
+                    <core:conditionalProperty name="target.path.max" property="@{linuxMaxLengthProperty}" default="500"/>
+                </linux>
+            </core:doForOs>
+
+            <if>
+                <and>
+                    <length string="@{path}" when="greater" length="${target.path.max}" />
+                </and>
+                <then>
+                    <fail message="The path '@{path}' exceeds the recommended length of '${target.path.max}'." />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="verifyPathContainsNoWhitespaces" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="path" default="${dcc.target.dir}" />
+        <sequential>
+            <if>
+                <matches string="@{path}" pattern="[^\s]*\s" />
+                <then>
+                    <fail message="The path '@{path}' contains whitespaces. This is currently not supported." />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="verifyJavaVersion" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="javaHome" default="${dcc.java.home}" />
+        <attribute name="javaVersionPatternProperty" default="verify.java.version.pattern" />
+        
+        <sequential>
+            <local name="java.executable" />
+            <local name="java.output" />
+            <local name="java.version" />
+            <local name="java.version.regexp" />
+
+            <!-- 
+                if verify.java.version.pattern then use this as java.version.regexp
+                else if verify.java.version then derive java.version.regexp
+                else do not set java.version.regexp: no verification
+            -->
+
+            <if>
+                <isset property="@{javaVersionPatternProperty}" />
+                <then>
+                    <property name="java.version.regexp" value="${@{javaVersionPatternProperty}}" />
+                </then>
+            </if>
+            
+            <!-- test the pattern (if set) -->
+            <if>
+                <isset property="java.version.regexp" />
+                <then>
+                    <core:propertyForOs name="java.executable" 
+                        linuxValue="@{javaHome}/bin/java" 
+                        windowsValue="@{javaHome}/bin/java.exe" />
+                    
+                    <exec executable="${java.executable}"
+                       failonerror="true" outputproperty="java.output">
+                        <arg line="-version"/>
+                    </exec>
+
+                    <!-- extract java version from output -->
+                    <propertyregex property="java.version" input="${java.output}" regexp="java version &quot;([^&quot;]*)&quot;" select="\1" />
+
+                    <core:debug>
+                        <echo message="Result of 'java -version': ${java.output}" />
+                        <echo message="Testing found java version '${java.version}' against regular expression '${java.version.regexp}.*'." />
+                    </core:debug>
+
+                    <if>
+                        <not>
+                            <matches string="${java.version}" pattern="${java.version.regexp}.*" />
+                        </not>
+                        <then>
+                            <if>
+                                <isset property="@{javaVersionPatternProperty}" />
+                                <then>
+                                    <fail message="The found java version '${java.version}' does not match the expression '${@{javaVersionPatternProperty}}'."/>
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="verifyPhysicalMemoryCapacity" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="requiredCapacityProperty" default="${verify.memory.capacity.min}" />
+        <sequential>
+            <local name="available.capacity" />
+            <core:queryProperty property="available.capacity" queryKey="system.memory.physical.total" />
+            
+            <core:debug>
+                <echo message="required physical total: ${@{requiredCapacityProperty}}mb"/>
+                <echo message="available physical total: ${available.capacity}mb"/>
+            </core:debug>
+
+            <if>
+                <isset property="@{requiredCapacityProperty}" />
+                <then>
+                    <if>
+                        <isset property="available.capacity" />
+                        <then>
+                            <if>
+                                <core:compare arg1="${available.capacity}" mode="lessthan" arg2="${@{requiredCapacityProperty}}" type="integer" />
+                                <then>
+                                    <fail message="The minimum required physical memory capacity of ${@{requiredCapacityProperty}}mb exceeds the available ${available.capacity}mb. Please use a system with appropriate memory sizing." />
+                                </then>
+                            </if>
+                        </then>
+                        <else>
+                            <core:log level="WARN" message="Cannot determine physical memory capacity. Verification of available system parameters not possible." />
+                        </else>
+                    </if>
+                </then>
+            </if>
+            <!-- NOTES
+                Native query options for the total physical memory:
+                windows: Total physical memory on windows natively: systeminfo |find "Total Physical Memory"
+                linux: 
+                
+                Recommendation: introduce sigar into dcc
+            -->
+            
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="verifyFreeVirtualMemoryCapacity" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="requiredCapacityProperty" default="${verify.memory.virtual.free.min}" />
+        <sequential>
+            <local name="available.capacity" />
+            <core:queryProperty property="available.capacity" queryKey="system.memory.virtual.free" />
+            
+            <core:debug>
+                <echo message="required virtual free: ${@{requiredCapacityProperty}}mb"/>
+                <echo message="available virtual free: ${available.capacity}mb"/>
+            </core:debug>
+
+            <if>
+                <isset property="@{requiredFreeCapacityProperty}" />
+                <then>
+                    <if>
+                        <isset property="available.capacity" />
+                        <then>
+                            <if>
+                                <core:compare arg1="${available.capacity}" mode="lessthan" arg2="${@{requiredCapacityProperty}}" type="integer" />
+                                <then>
+                                    <fail message="The minimum required free memory capacity of ${@{requiredCapacityProperty}}mb exceeds the available ${available.capacity}mb. Please use a system with appropriate memory sizing." />
+                                </then>
+                            </if>
+                        </then>
+                        <else>
+                            <core:log level="WARN" message="Cannot determine the free memory capacity. Verification of available system parameters not possible." />
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="verifyFreePhysicalMemoryCapacity" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="requiredCapacityProperty" default="${verify.memory.physical.free.min}" />
+        <sequential>
+            <local name="available.capacity" />
+            <core:queryProperty property="available.capacity" queryKey="system.memory.physical.free" />
+            
+            <core:debug>
+                <echo message="required physical free: ${@{requiredCapacityProperty}}mb"/>
+                <echo message="available physical free: ${available.capacity}mb"/>
+            </core:debug>
+
+            <if>
+                <isset property="@{requiredFreeCapacityProperty}" />
+                <then>
+                    <if>
+                        <isset property="available.capacity" />
+                        <then>
+                            <if>
+                                <core:compare arg1="${available.capacity}" mode="lessthan" arg2="${@{requiredCapacityProperty}}" type="integer" />
+                                <then>
+                                    <fail message="The minimum required free physical memory capacity of ${@{requiredCapacityProperty}}mb exceeds the available ${available.capacity}mb. Please use a system with appropriate memory sizing." />
+                                </then>
+                            </if>
+                        </then>
+                        <else>
+                            <core:log level="WARN" message="Cannot determine the free physical memory capacity. Verification of available system parameters not possible." />
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+</project>

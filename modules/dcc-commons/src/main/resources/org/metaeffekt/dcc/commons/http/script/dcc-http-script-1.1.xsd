@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://metaeffekt.org/schema/dcc/http/script"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://metaeffekt.org/schema/dcc/http/script"
+            attributeFormDefault="unqualified"
+            elementFormDefault="qualified"
+            version="1.1">
+
+    <xsd:annotation>
+        <xsd:documentation>
+            Several applications or processes expose http or rest endpoints to operate the service
+            or to configure it. On Linux system curl is available to perform such tasks. However
+            curl is not always available. On Microsoft Windows there is no operating system standard 
+            application that can be used.
+            Therefore this format was derived. It is inspired by the Sense plug-in for Google Chrome, 
+            where a user set of HTTP requests and get the results displayed.
+            The implementation currently supports GET, POST, PUT and DELETE. Other HTTP methods may 
+            follow as required. 
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="script">
+        <xsd:annotation>
+            <xsd:documentation>
+                A script consists of a server element and multiple commands. Each command is
+                defines a HTTP request and allows to provide execution meta data.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="server" type="serverType" minOccurs="1" maxOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The server specifies the host to which the HTTP operation is send.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="command" type="commandType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Each command represents an HTTP request that is to the server. The
+                            order in the file is preserved during the execution.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="serverType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The server element specifies the details for addressing the host.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="host" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The host or IP address name of the host.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:pattern value="^\S+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            
+            <xsd:element name="port" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The port of the HTTP endpoint on the host.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:integer" />
+                </xsd:simpleType>
+            </xsd:element>
+            
+            <xsd:element name="scheme" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The scheme or protocol to use. The implementation currently only supports
+                        HTTP.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:pattern value="^\S+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+
+            <xsd:element name="credentials" minOccurs="0" maxOccurs="1" type="credentialsType">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Optional credentials for basic authentication to the server. Can be
+                        overwritten with specific credentials in the command.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="credentialsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Credentials can be specified to authenticate specific or all commands to a server.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="username" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The username for authentication to the server.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="password" minOccurs="1" maxOccurs="1" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The password for authentication to the server. May be empty.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="commandType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A command specifies an individual HTTP request with additional meta data.
+            </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:sequence>
+            <xsd:element name="method" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The HTTP method to use. The implementation currently only supports
+                        GET, PUT, POST and DELETE.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1" />
+                        <xsd:pattern value="^\S+" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="uri" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The URI of the resource.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1" />
+                        <xsd:pattern value="^\S+" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="body" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The body element contains the body content for the request. Only
+                        the HTTP methods POST and PUT support content.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="credentials" minOccurs="0" maxOccurs="1" type="credentialsType">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Optional credentials for basic authentication of this command to the server.
+                        Overwrites credentials set on the server.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="failOnError" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A command marked with failOnError 'true' will fail when the response status
+                    code is greater or equal to 400. The implementation then terminates the 
+                    execution of the script. With failOnError set to 'false' the execution will
+                    ignore a response status code and continue with the execution of further
+                    commands.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+</xsd:schema>

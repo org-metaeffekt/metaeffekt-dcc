@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project name="test" basedir=".." default="test">
+
+    <target name="test">
+        <echo message="Hello" />
+        
+        <fail message="Sad but true: I'm only here to fail!" />
+    </target>
+
+</project>

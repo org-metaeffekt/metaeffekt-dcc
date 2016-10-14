@@ -1,0 +1,26 @@
+# access an old deployment property from the previous file
+test.1=$source.deploymentProperties().get('test.abc')
+$source.deploymentProperties().get('test.abc').property()
+
+
+# access a property in unit 'xyz'
+test.2=$source.unit('xyz').get('d')
+$source.unit('xyz').get('d').property()
+
+
+# access a property of provided capability 'a.b.c' of unit 'xyz'
+test.3=$source.unit('xyz').capability('a.b.c').get('d')
+$source.unit('xyz').capability('a.b.c').get('d').property()
+$source.unit('xyz').capability('a.b.c').get('d').overwrite('new-value').property()
+$source.unit('xyz').capability('a.b.c').get('d').property()
+
+# non-parameterized (new) property using escaping function
+xyz.e=$property.escapeValue('203:32')
+
+# check reading / escaping using special characters defined in the deployment properties
+test.escaping=$source.deploymentProperties().get('test.special.chars')
+
+# access system properties
+test.4=$system.properties().get('user.language')
+
+$source.diffDeploymentProperties($target)

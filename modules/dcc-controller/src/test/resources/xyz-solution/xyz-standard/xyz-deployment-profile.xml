@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>xyy-deployment</id>
+
+    <type>
+        <deployment>
+            <id>xyz</id>
+            <properties location="xyz-deployment.properties"/>
+        </deployment>
+    </type>
+    
+    <unit id="config">
+        <attributes>
+            <attribute key="host" value="wdf-lap-0815" />
+            <attribute key="port" value="10815" />
+        </attributes>
+    </unit>
+    
+</profile>

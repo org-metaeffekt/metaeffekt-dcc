@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dcc-core</artifactId>
+
+    <parent>
+        <groupId>org.metaeffekt.dcc</groupId>
+        <artifactId>dcc-packages-behavior-pom</artifactId>
+        <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-packages-behavior-pom</relativePath>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    
+    <properties>
+        <dcc.documentation.includes>**/packages/${project.artifactId}/${project.artifactId}-profile.xml</dcc.documentation.includes>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

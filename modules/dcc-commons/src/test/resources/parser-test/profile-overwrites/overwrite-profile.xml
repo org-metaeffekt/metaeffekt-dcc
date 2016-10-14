@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>overwrite-base-profile</id>
+    
+    <type>
+        <deployment>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+
+    <capability-definition id="cap.def.1">
+        <attribute-key key="key1" />
+        <attribute-key key="key2" />
+        <attribute-key key="key3" optional="true" />
+    </capability-definition>
+
+    <capability-definition id="cap.def.2">
+        <attribute-key key="key2" />
+    </capability-definition>
+
+    <unit id="unit1-template" abstract="true">
+        <required-capability id="cap.def.req" definitionRef="cap.def.1" optional="true"/>
+        <provided-capability id="cap.def" definitionRef="cap.def.1" />
+        
+        <attributes>
+            <attribute key="key1" value="initial"/>
+            <attribute key="key2" value="initial"/>
+        </attributes>
+    </unit>
+
+    <unit id="unit1" extends="unit1-template">
+        <required-capability id="cap.def.req" definitionRef="cap.def.2" optional="true"/>
+        <provided-capability id="cap.def" definitionRef="cap.def.2" />
+        
+        <attributes>
+            <!-- remove key1 -->
+            <attribute key="key1" />
+
+            <!-- overwrite attribute key 'key2' -->
+            <attribute key="key2" value="overwrite"/>
+
+            <!-- add further attribute key 'key3' -->
+            <attribute key="key3" value="add"/>
+
+            <!-- add further attribute key 'key3' -->
+            <attribute key="key4" value="fromProfile"/>
+
+        </attributes>
+    </unit>
+
+</profile>

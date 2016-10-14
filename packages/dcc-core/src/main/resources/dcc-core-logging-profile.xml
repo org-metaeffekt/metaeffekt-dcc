@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-core-logging-base-profile</id>
+
+    <description>
+        Definitions and templates to facilitate logging.
+    </description>
+
+    <!-- FIXME: evaluate, whether we need this really -->
+    <capability-definition id="log.consumer">
+        <description>Enables to bind log consumers with log providers.</description>
+    </capability-definition>
+    
+    <capability-definition id="log.config" abstract="true">
+        <description>Defines general information about the input and source of log events.</description>
+
+        <!-- there must be a host the log originates from -->
+        <inherit definitionRef="host" prefix="source.host"/>
+        
+        <attribute-key key="input.type">
+            <description>The input type.</description>
+        </attribute-key>
+        
+        <attribute-key key="input.tag">
+            <description>Additional tag to mark the logs with.</description>
+        </attribute-key>
+
+        <attribute-key key="source.id" >
+            <description>The source identifier of the log events on the given host.</description>
+        </attribute-key>
+
+        <attribute-key key="source.type" >
+            <description>The source type of the log events on the given host.</description>
+        </attribute-key>
+
+        <attribute-key key="source.category" optional="true">
+            <description>The category of the log events the source produces.</description>
+        </attribute-key>
+
+        <attribute-key key="source.deployment.id" optional="true">
+            <description>The deployment id of the source to distinguish different deployments.
+            </description>
+        </attribute-key>
+
+        <attribute-key key="source.deployment.number" optional="true">
+            <description>The source deployment number is the instance number of the deployment. The number
+               may be encoded in the deployment id to make it unique in this respect. Usually
+               this is only required to distinguish several deployments of the same solution in a test or staging 
+               environment.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="log.file.config">
+        <description>Defines a file-based log event input source.</description>
+        <inherit definitionRef="log.config"/>
+        <attribute-key key="input.file" >
+            <description>The file to use. Depending on the consumer glob patterns are supported.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="log.socket.config">
+        <description>Defines a socket-based log event input source.</description>
+        <inherit definitionRef="log.config"/>
+        <attribute-key key="port" >
+            <description>The port of the socket.</description>
+        </attribute-key>
+    </capability-definition>
+    
+</profile>

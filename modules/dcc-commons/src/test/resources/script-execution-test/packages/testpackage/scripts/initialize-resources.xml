@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project basedir=".." default="test">
+
+    <target name="test">
+
+        <echo message="Test generate resources!" />
+
+    </target>
+
+</project>

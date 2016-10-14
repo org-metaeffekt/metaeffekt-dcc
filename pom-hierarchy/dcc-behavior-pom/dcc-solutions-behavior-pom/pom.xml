@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dcc-solutions-behavior-pom</artifactId>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.metaeffekt.dcc</groupId>
+        <artifactId>dcc-packages-behavior-pom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../dcc-packages-behavior-pom</relativePath>
+    </parent>
+    
+     <properties>
+        <!-- Use to narrow to one variants. Both are provided for backward compatibility -->
+        <dcc.script.includes>shell.*,dcc-shell.bat,dcc-shell.sh</dcc.script.includes>
+     
+        <!-- in a solution the test resources and the dcc.test.directory are the same -->
+        <dcc.test.resources.directory>${dcc.test.directory}</dcc.test.resources.directory>
+        
+        <!-- base and contribution profiles are filtered -->
+        <dcc.documentation.includeBaseProfiles>false</dcc.documentation.includeBaseProfiles>
+        <dcc.documentation.includeContributionProfiles>false</dcc.documentation.includeContributionProfiles>
+        
+        <dcc.documentation.load.depoyment.properties>false</dcc.documentation.load.depoyment.properties>
+    </properties>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <!-- copy shell binaries to enable local shell execution -->
+                            <id>unpack-shell-binaries</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.metaeffekt.dcc</groupId>
+                                        <artifactId>dcc-controller</artifactId>
+                                        <classifier>runtime</classifier>
+                                        <includes>${dcc.script.includes}</includes>
+                                    </artifactItem>
+                                </artifactItems>
+                                <outputDirectory>${dcc.test.directory}/bin</outputDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!-- copy external binaries into target test folder to enable test harness -->
+                            <id>copy-external-binaries</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <includeArtifactIds>${dcc.external.binaries.artifactIds}</includeArtifactIds>
+                                <includeTypes>zip</includeTypes>
+                                <includeClassifiers>bin</includeClassifiers>
+                                <outputDirectory>${dcc.test.external.bin.directory}</outputDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!-- copy log4j2.xml to /config -->
+                            <id>unpack-log4j-config</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.metaeffekt.dcc</groupId>
+                                        <artifactId>dcc-controller</artifactId>
+                                        <classifier>config</classifier>
+                                        <includes>log4j2.xml</includes>
+                                    </artifactItem>
+                                </artifactItems>
+                                <outputDirectory>${dcc.test.directory}/config</outputDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!-- copy *.keystore *.truststore to /config -->
+                            <id>unpack-keystore</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.metaeffekt.dcc</groupId>
+                                        <artifactId>dcc-controller</artifactId>
+                                        <classifier>runtime</classifier>
+                                        <includes>
+                                            *.keystore,
+                                            *.truststore
+                                        </includes>
+                                    </artifactItem>
+                                </artifactItems>
+                                <outputDirectory>${dcc.test.directory}/config</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    
+    <dependencies>
+
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-commons</artifactId>
+            <version>${dcc.version}</version>
+            <scope>provided</scope>
+            <classifier>api</classifier>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-commons</artifactId>
+            <version>${dcc.version}</version>
+            <scope>runtime</scope>
+            <classifier>runtime</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-controller</artifactId>
+            <version>${dcc.version}</version>
+            <scope>runtime</scope>
+            <classifier>runtime</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

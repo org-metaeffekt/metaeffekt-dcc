@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core" xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+
+    <property environment="env" />
+    
+    <import file="dcc-core-macros.xml" />
+    <import file="dcc-core-verification-macros.xml" />
+    <import file="dcc-core-deprecated.xml" />
+
+    <!-- FIXME move into core.init target -->
+    <core:validateEnvironment />
+    <core:defineGlobalEnvironment />
+    <core:defineUnitEnvironment />
+    <core:loadUnitProperties />
+        
+    <target name="core.init">
+    </target>
+    
+    <target name="core.verify" depends="core.init">
+        <core:verifyPathLength path="${dcc.target.dir}" 
+            windowsMaxLengthProperty="verify.path.length.max.windows" 
+            linuxMaxLengthProperty="verify.path.length.max.linux" />
+        <core:verifyPathContainsNoWhitespaces path="${dcc.target.dir}" />
+        
+        <core:verifyJavaVersion />
+        
+        <core:verifyPhysicalMemoryCapacity requiredCapacityProperty="verify.memory.capacity.min" />
+    </target>
+
+</project>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>sharedProfile</id>
+    <description>Shared profile description.</description>
+
+    <capability-definition id="host">
+        <description>Host description</description>
+        <attribute-key key="name" />
+        <attribute-key key="ip" optional="true"/>
+    </capability-definition>
+    
+    <capability-definition id="agent.endpoint">
+        <inherit definitionRef="host" />
+        <attribute-key key="port" />
+    </capability-definition>
+
+    <capability-definition id="runtime">
+        <inherit definitionRef="host" prefix="host" />
+        <attribute-key key="port" />
+    </capability-definition>
+
+    <capability-definition id="jdbc.endpoint">
+        <attribute-key key="url" />
+        <attribute-key key="username" />
+        <attribute-key key="password" />
+        <attribute-key key="system.username" />
+        <attribute-key key="system.password" />
+        <attribute-key key="driver" />
+        <attribute-key key="driver.lib.path"/>
+        <attribute-key key="dialect" />
+        <attribute-key key="validation.query" />
+        <attribute-key key="context" />
+    </capability-definition>
+    
+    <capability-definition id="jdbc.connection.pool">
+        <attribute-key key="initialSize"/>
+        <attribute-key key="maxActive"/>
+        <attribute-key key="maxConnectionAge"/>
+        <attribute-key key="maxIdle"/>
+        <attribute-key key="minActive"/>
+        <attribute-key key="minIdle"/>
+        <attribute-key key="tcpConnectTimeout"/>
+        <attribute-key key="validation"/>
+    </capability-definition>
+
+    <capability-definition id="deployable">
+        <attribute-key key="artifact.path"/>
+    </capability-definition>
+
+    <capability-definition id="ldap.bootstrap">
+        <attribute-key key="bootstrap.data.path"/>
+    </capability-definition>
+
+    <unit id="host-template" abstract="true">
+        <description>Abstract host template unit.</description>
+        <provided-capability id="host" definitionRef="host" />
+    </unit>
+
+    <unit id="agent-host-template" abstract="true" extends="host-template">
+        <provided-capability id="agent.endpoint" definitionRef="agent.endpoint" />
+        <command type="configure" package="test">
+            <capability id="capabilityA" />
+            <capability id="capabilityB" />
+            <contribution capabilityId="contributionA" />
+            <contribution capabilityId="contributionB" />
+            <requisition capabilityId="requisitionA" />
+        </command>
+        <attributes>
+            <attribute key="port" value="33036" />
+        </attributes>
+    </unit>
+    
+</profile>

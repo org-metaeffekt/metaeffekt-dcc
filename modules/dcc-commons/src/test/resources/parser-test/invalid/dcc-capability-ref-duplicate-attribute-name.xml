@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+        <!-- Has been copied to ehf-core/packages/dcc-shared-package -->
+
+    <id>invalidProfile</id>
+
+    <type>
+        <base/>
+    </type>
+
+    <capability-definition id="host">
+        <attribute-key key="name" />
+        <attribute-key key="ip" />
+    </capability-definition>
+
+    <capability-definition id="agent.host">
+        <!-- causes BeanDefinitionValidationException, hence inherited name attribute conflicts with local name -->
+        <inherit definitionRef="host" />
+        <attribute-key key="name"/>
+    </capability-definition>
+
+</profile>

@@ -1,0 +1,10 @@
+select profile --location dcc-test-deployment-profile.xml
+mode activate --name force
+mode activate --name failOnError
+execute initialize
+execute install
+execute configure
+execute bootstrap
+execute deploy
+execute import
+execute start

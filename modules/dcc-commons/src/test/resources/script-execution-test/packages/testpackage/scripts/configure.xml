@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project basedir=".." default="test">
+
+    <typedef
+        name="timeout"
+        classname="org.metaeffekt.dcc.commons.ant.TimeoutCondition"
+        classpath="../../../../../../target/classes"/>
+
+    <typedef
+        name="timestamp"
+        classname="org.metaeffekt.dcc.commons.ant.Timestamp"
+        classpath="../../../../../../target/classes"/>
+
+    <target name="test">
+        
+        <property environment="env"/>
+        <echo message="ANT_OPTS: ${env.ANT_OPTS}" />
+        <echo message="ANT_HOME: ${env.ANT_HOME}" />
+        <echo message="JAVA_HOME: ${env.JAVA_HOME}" />
+
+        <echo message="log4j.configurationFile: ${log4j.configurationFile}" />
+
+        <echo message="Executing Test Script" />
+        <echo />
+        <echo message="basedir = ${basedir}" />
+        <echo />
+        <echo message="dcc.solution.dir = ${dcc.solution.dir}" />
+        <echo message="dcc.package.dir = ${dcc.package.dir}" />
+        <echo message="dcc.target.dir = ${dcc.target.dir}" />
+        <echo />
+        <echo message="dcc.unit.id = ${dcc.unit.id}" />
+        <echo message="dcc.package.id = ${dcc.package.id}" />
+        
+        <local name="timestamp" />
+        <timestamp />
+        <waitfor maxwait="10" maxwaitunit="second">
+            <and>
+                <timeout started="${timestamp}" timeout="1000" />
+            </and>
+        </waitfor>
+
+    </target>
+
+</project>

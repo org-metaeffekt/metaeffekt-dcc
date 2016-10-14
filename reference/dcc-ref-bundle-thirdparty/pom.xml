@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.metaeffekt.dcc</groupId>
+        <artifactId>dcc-bundles-behavior-pom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-bundles-behavior-pom</relativePath>
+    </parent>
+
+    <artifactId>dcc-ref-bundle-thirdparty</artifactId>
+
+    <packaging>jar</packaging>
+    
+    <properties>
+        <bundle.exclude.groupIds>org.metaeffekt.dcc,org.metaeffekt.core</bundle.exclude.groupIds>
+        <bundle.exclude.artifactIds>*</bundle.exclude.artifactIds>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-commons</artifactId>
+            <version>${dcc.version}</version>
+            <classifier>runtime</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-controller</artifactId>
+            <version>${dcc.version}</version>
+            <classifier>runtime</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.metaeffekt.dcc</groupId>
+            <artifactId>dcc-doc-generator</artifactId>
+            <version>${dcc.version}</version>
+            <classifier>runtime</classifier>
+        </dependency>
+    </dependencies>
+
+</project>

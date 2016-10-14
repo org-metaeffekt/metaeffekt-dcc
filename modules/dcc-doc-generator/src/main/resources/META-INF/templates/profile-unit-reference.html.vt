@@ -1,0 +1,111 @@
+#htmlStart($profile.getId(), '..')
+
+#rootContainerStart($generator.getPackageId(), '..', 'profile-unit-reference')
+<h2 style="margin-top:6px">Profile - $profile.getId() </h2>
+<h3>Unit Reference</h3>
+
+#foreach($unit in $generator.sortUnits($profile.getUnits(true)))
+    #panelStart($unit.getId(), 'Unit', $unit.getId())
+
+    <p>$generator.getDescription($unit, $profile)</p>
+    #if ($unit.getParentId())
+    <p><i>Extends template unit: #hrefUnitId($unit.getParentId()).</i></p>
+    #end
+
+    <div valign="center">
+    <object data="resources/$unit.getId()$dotSvg" type="image/svg+xml"></object>
+    </div>
+
+    #if ($unit.getRequiredCapabilities().size() > 0)
+    <h4>Required Capabilities</h4>
+    <table id="table_$generator.getPackageId()-$capdef.getId()-unit-required-capabilities" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Capability Id</th>
+                <th>Capability Definition Id</th>
+                <th>Capability Definition Description</th>
+                <th>Optional</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            #foreach($cap in $generator.sortCapabilities($unit.getRequiredCapabilities()))
+            <tr>
+                <td class="col-md-2"><samp>#hrefCapability($cap)</samp></td>
+                <td class="col-md-2">#hrefCapabilityDefinition($cap.getCapabilityDefinition())</td>
+                <td class="col-md-4">$cap.getCapabilityDefinition().getDescription()</td>
+                <td class="col-md-2"><samp>$cap.isOptional()</samp></td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+    #end
+    
+    #if ($unit.getProvidedCapabilities().size() > 0)
+    <h4>Provided Capabilities</h4>
+    <table id="table_$generator.getPackageId()-$capdef.getId()-unit-required-capabilities" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Capability Id</th>
+                <th>Capability Definition Id</th>
+                <th>Capability Definition Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            #foreach($cap in $generator.sortCapabilities($unit.getProvidedCapabilities()))
+            <tr>
+                <td class="col-md-2"><samp>#hrefCapability($cap)</samp></td>
+                <td class="col-md-2">#hrefCapabilityDefinition($cap.getCapabilityDefinition())</td>
+                <td class="col-md-6">$cap.getCapabilityDefinition().getDescription()</td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+    #end
+
+    #if ($unit.getAttributes().size() > 0)
+    <h4>Attributes</h4>
+    <table id="table_$generator.getPackageId()-$capdef.getId()-unit-attributes" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Attribute Key</th>
+                <th>Value</th>
+                <th>Description</th>
+#if (!$unit.isAbstract())
+                <th>Overwritable Property</th>
+#end
+                <th>Origin</th>
+            </tr>
+        </thead>
+#set ($separator_dot=".")
+        <tbody>
+#foreach($attribute in $generator.sortAttributes($unit.getAttributes()))
+            <tr>
+                <td class="col-md-2">#handleNonBreakableText($attribute.getKey())</td>
+                <td class="col-md-2">#handleNonBreakableText($generator.getAttributeValue($profile, $unit, $attribute))</td>
+#if (!$unit.isAbstract())
+                <td class="col-md-2">
+#else
+                <td class="col-md-4">
+#end
+                    #handleText($attribute.getDescription())
+                </td>
+#if (!$unit.isAbstract())
+    #set ($text = $unit.getId() + $separator_dot + $attribute.getKey())
+                <td class="col-md-2">#handleNonBreakableText($text)</div></td>
+#end
+                <td class="col-md-2">#hrefOrigin($attribute.getOrigin())</td>
+            </tr>
+#end
+        </tbody>
+    </table>
+    #end
+    
+    #panelEnd
+    
+#end
+#rootContainerEnd($generator.getPackageId(), '..', 'profile-unit-reference')
+    #footer
+</div>
+#htmlEnd

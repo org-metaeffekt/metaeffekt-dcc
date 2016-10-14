@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>attribute-expressions-profile</id>
+
+    <type>
+        <deployment>
+            <properties location="deployment.properties" />
+        </deployment>
+    </type>
+
+    <capability-definition id="test">
+        <attribute-key key="key" />
+    </capability-definition>
+
+    <unit id="unit1">
+        <provided-capability id="test"
+            definitionRef="test" />
+        <attributes>
+            <attribute key="key" value="123" />
+        </attributes>
+        <mappings>
+            <mapping targetCapabilityId="test">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="unit2">
+        <required-capability id="test" definitionRef="test" />
+        <attributes>
+            <attribute key="expr" value="${test[key]}" type="basic" description="Test me!"/>
+        </attributes>
+    </unit>
+
+    <binding>
+        <source unitRef="unit1" capabilityId="test"/>
+        <target unitRef="unit2"/>
+    </binding>
+
+    <asserts>
+        <unique value="123" />
+    </asserts>
+
+</profile>

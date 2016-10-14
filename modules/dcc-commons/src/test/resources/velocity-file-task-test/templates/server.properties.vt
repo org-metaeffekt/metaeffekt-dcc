@@ -1,0 +1,13 @@
+server.port=$input.getProperty("port")
+server.silent=false
+
+#set($i=0)
+#set($idKeySuffix=".id")
+
+#foreach($item in $contributionIteratorSequence)
+#set($idKey="$item$idKeySuffix")
+server.database.$i=$input.getProperty($idKey);sql.enforce_strict_size=true;
+server.dbname.$i=$input.getProperty($idKey)
+
+#set($i=$i+1)
+#end

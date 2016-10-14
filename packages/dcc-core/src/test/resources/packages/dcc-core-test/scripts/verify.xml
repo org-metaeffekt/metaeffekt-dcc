@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core.test" default="verify" xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+
+    <property name="dcc.package.dir" value="${dcc.solution.dir}/packages" />
+    
+    <import file="${dcc.package.dir}/dcc-core/scripts/dcc-core.xml" />
+
+    <target name="verify" depends="core.init, core.verify" >
+        
+        <!-- core:validatePort -->
+        <core:validatePort port="8080" context="test" />
+
+        <sequential>
+            <!-- test the negative case -->
+            <trycatch property="result">
+                <try>
+                    <core:validatePort port="8080 " context="negative test with whitespace" />
+                    <fail message="error"/>
+                </try>
+                <catch>
+                    <if><equals arg1="${result}" arg2="error" />
+                        <then><fail message="Negative case did not validate correctly."/></then>
+                    </if>
+                </catch>
+                <finally>
+                </finally>
+            </trycatch>
+        </sequential>
+        
+
+        <!-- check copyResources works with files and folders -->
+        <core:copyResources resourceBaseDir="${dcc.solution.dir}" resourceSequence="foldertest, filetest" />
+
+        <!-- core:verifyPathLength and core:verifyPathContainsNoWhitespaces-->
+
+        <sequential>
+            <local name="verify.destination.path.length.windows" />
+            <local name="verify.destination.path.length.linux" />
+            <property name="verify.destination.path.length.windows" value="256" />
+            <property name="verify.destination.path.length.linux" value="256" />
+            <core:verifyPathLength path="${dcc.target.dir}" 
+                windowsMaxLengthProperty="verify.destination.path.length.windows" 
+                linuxMaxLengthProperty="verify.destination.path.length.linux" />
+            <core:verifyPathContainsNoWhitespaces path="${dcc.target.dir}" />
+        </sequential>
+        
+        <sequential>
+            <local name="verify.destination.path.length.windows" />
+            <local name="verify.destination.path.length.linux" />
+            <property name="verify.destination.path.length.windows" value="5" />
+            <property name="verify.destination.path.length.linux" value="5" />
+            <trycatch>
+                <try>
+                    <core:verifyPathLength path="${dcc.target.dir}" 
+                        windowsMaxLengthProperty="verify.destination.path.length.windows" 
+                        linuxMaxLengthProperty="verify.destination.path.length.linux" />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+        
+        <sequential>
+            <trycatch>
+                <try>
+                    <core:verifyPathContainsNoWhitespaces path="some string with whitespaces" />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+        
+        <!-- core:verifyJavaVersion -->
+        
+        <sequential>
+            <local name="verify.java.version"/>
+            <property name="verify.java.version" value="1.8.0_72" />
+            <core:verifyJavaVersion />
+        </sequential>
+
+        <sequential>
+            <local name="verify.java.version"/>
+            <property name="verify.java.version" value="1.8" />
+            <core:verifyJavaVersion />
+        </sequential>
+
+        <sequential>
+            <core:verifyJavaVersion />
+        </sequential>
+
+        <sequential>
+            <local name="verify.java.version.pattern"/>
+            <property name="verify.java.version.pattern" value="1\.8\.0_.*" />
+            <core:verifyJavaVersion />
+        </sequential>
+        
+        <sequential>
+            <local name="verify.java.version"/>
+            <property name="verify.java.version" value="1.9" />
+            <trycatch>
+                <try>
+                    <core:verifyJavaVersion />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+
+        <property name="dcc.debug.mode" value="true" />
+        
+        <!-- core:verifyPhysicalMemoryCapacity -->
+        
+        <sequential>
+            <local name="verify.memory.capacity.min" />
+            <property name="verify.memory.capacity.min" value="100" />
+            <core:verifyPhysicalMemoryCapacity requiredCapacityProperty="verify.memory.capacity.min" />
+        </sequential>
+
+        <sequential>
+            <!-- test the negative case with a too big value -->
+            <local name="verify.memory.capacity.min" />
+            <property name="verify.memory.capacity.min" value="9000000" />
+            <trycatch>
+                <try>
+                    <core:verifyPhysicalMemoryCapacity requiredCapacityProperty="verify.memory.capacity.min" />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+
+        <!-- core:verifyFreeVirtualMemoryCapacity -->
+        
+        <sequential>
+            <local name="x" />
+            <property name="x" value="100" />
+            <core:verifyFreeVirtualMemoryCapacity requiredCapacityProperty="x" />
+        </sequential>
+
+        <sequential>
+            <!-- test the negative case with a too big value -->
+            <local name="x" />
+            <property name="x" value="9000000" />
+            <trycatch>
+                <try>
+                    <core:verifyFreeVirtualMemoryCapacity requiredCapacityProperty="x" />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+        
+        <!-- core:verifyFreePhysicalMemoryCapacity -->
+            
+        <property name="dcc.debug.mode" value="true" />
+            
+        <sequential>
+            <local name="x" />
+            <property name="x" value="100" />
+            <core:verifyFreePhysicalMemoryCapacity requiredCapacityProperty="x" />
+        </sequential>
+
+        <sequential>
+            <!-- test the negative case with a too big value -->
+            <local name="x" />
+            <property name="x" value="9000000" />
+            <trycatch>
+                <try>
+                    <core:verifyFreePhysicalMemoryCapacity requiredCapacityProperty="x" />
+                    <fail />
+                </try>
+                <catch>
+                    <!-- do nothing -->
+                </catch>
+            </trycatch>
+        </sequential>
+        
+        <core:generateCertificates baseDir="../../external/certificates" />
+        <if>
+            <not><and>
+                <available file="../../external/certificates/core-ca/cert.pem" />
+                <available file="../../external/certificates/core-ca/private.key.pem" />
+                <available file="../../external/certificates/core-ca/public.key.pem" />
+                <available file="../../external/certificates/core-ca/trust/core-ca.cert.pem" />
+
+                <available file="../../external/certificates/app/cert.pem" />
+                <available file="../../external/certificates/app/private.key.pem" />
+                <available file="../../external/certificates/app/public.key.pem" />
+                <available file="../../external/certificates/app/trust/core-ca.cert.pem" />
+                <available file="../../external/certificates/app/signer-chain/01-core-ca.cert.pem" />
+            </and></not>
+            <then>
+                <fail message="Expecting certificate structure to be created." />
+            </then>
+        </if>
+        
+        <core:consolidateLibs metaDataDir="../../external/lib-metadata" libDir="../../external/lib"/>
+        
+    </target>
+    
+</project>

@@ -1,0 +1,6 @@
+select profile --location dcc-test-deployment-profile.xml
+mode activate --name force
+mode activate --name failOnError
+execute initialize
+retrieve logs
+documentation update

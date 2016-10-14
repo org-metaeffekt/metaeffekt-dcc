@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <artifactId>dcc-styling</artifactId>
+
+    <parent>
+        <groupId>org.metaeffekt.dcc</groupId>
+        <artifactId>dcc-modules-behavior-pom</artifactId>
+        <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-modules-behavior-pom</relativePath>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/dcc-styling</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>src/main/resources/com.bootstrap</directory>
+                                    </resource>
+                                    <resource>
+                                        <directory>src/main/resources/org.jquery</directory>
+                                    </resource>
+                                </resources>
+                                <overwrite>true</overwrite>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.metaeffekt.core</groupId>
+                    <artifactId>ae-artifact-publish-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>package-runtime</id>
+                            <configuration>
+                                <filesets>
+                                    <fileset>
+                                        <directory>${project.build.directory}/classes</directory>
+                                        <includes>
+                                            <include>**/*.*</include>
+                                        </includes>
+                                        <excludes>
+                                            <exclude>-nothing-</exclude>
+                                        </excludes>
+                                    </fileset>
+                                </filesets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>add-header-to-preserved-sources</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>format</goal>
+                            </goals>
+                            <configuration>
+                                <includes>
+                                    <include>**/org/metaeffekt/**/*.groovy</include>
+                                    <include>**/org.metaeffekt/**/*.js</include>
+                                    <include>**/org.metaeffekt/**/*.css</include>
+                                    <include>**/org.metaeffekt/**/*.sql</include>
+                                    <include>**/org.metaeffekt/**/*.xml</include>
+                                    <include>**/org.metaeffekt/**/*.html</include>
+                                    <include>**/org.metaeffekt/**/*.htm</include>
+                                    <include>**/org.metaeffekt/**/*.xhtml</include>
+                                    <include>**/org.metaeffekt/**/*.jsp</include>
+                                    <include>**/org.metaeffekt/**/*.dita</include>
+                                    <include>**/org.metaeffekt/**/*.ditamap</include>
+                                    <include>**/org.metaeffekt/**/*.svg</include>
+                                    <include>**/org.metaeffekt/**/*.vt</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.metaeffekt.core</groupId>
+            <artifactId>ae-commons-annotation</artifactId>
+            <classifier>api</classifier>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project basedir=".." default="test">
+
+    <target name="test">
+
+        <fail message="Sad but true: I'm only here to fail!" />
+
+    </target>
+
+</project>

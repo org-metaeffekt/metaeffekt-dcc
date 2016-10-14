@@ -1,0 +1,1142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc-core-macros" xmlns:core="http://metaeffekt.org/schema/dcc/package/core">
+
+    <import file="dcc-core-definitions.xml" />
+
+    <macrodef name="ensurePathExists" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="path" />
+        <sequential>
+            <if>
+                <not>
+                    <available file="@{path}" />
+                </not>
+                <then>
+                    <mkdir dir="@{path}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="expectFile" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="file" />
+        <sequential>
+            <if>
+                <not>
+                    <available file="@{file}" />
+                </not>
+                <then>
+                    <fail message="The file [@{file}] does not exist."/>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="expectProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="property" />
+        <sequential>
+            <fail unless="@{property}" message="Please provide a value for [@{property}]"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="trimProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <!-- NOTE: this implementation is not the most efficient. Consider replacing by dedicated task -->
+        <attribute name="input" />
+        <attribute name="property" />
+        <sequential>
+            <tempfile property="temp.file" />
+            <echo file="${temp.file}" message="@{input}" />
+            <move file="${temp.file}" tofile="${temp.file}.2">
+                <filterchain>
+                    <trim/>
+                </filterchain>
+            </move>
+            <loadfile property="@{property}" srcFile="${temp.file}.2" />
+            <delete file="${temp.file}.2" failonerror="false" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="replaceProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <!-- NOTE: this implementation is not the most efficient. Consider replacing by dedicated task -->
+        <attribute name="input" />
+        <attribute name="property" />
+        <sequential>
+            <tempfile property="temp.file" />
+            <echo file="${temp.file}" message="@{input}" />
+            <move file="${temp.file}" tofile="${temp.file}.2">
+                <filterchain>
+                    <expandproperties />
+                    <tokenfilter>
+                        <!-- expand properties does not add escaping. This is to compensate -->
+                        <replacestring from="\" to="\\"/>
+                        <replacestring from="\\=" to="\="/>
+                        <replacestring from="\\:" to="\:"/>
+                        <replacestring from="\\" to="/"/>
+                    </tokenfilter>
+                </filterchain>
+            </move>
+            <loadfile property="@{property}" srcFile="${temp.file}.2" />
+            <delete file="${temp.file}.2" failonerror="false" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copyResources" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="resourceSequence" />
+        <attribute name="resourceBaseDir" />
+        <sequential>
+            <!-- Consume external resource sequence -->
+            <for list="@{resourceSequence}" param="item">
+                <sequential>
+                    <local name="trimmedItem" />
+                    <local name="replacedValue" />
+                    <core:trimProperty input="@{item}" property="trimmedItem" />
+                    <core:replaceProperty input="${${trimmedItem}.file}" property="replacedValue" />
+                    <core:log message="Copying '${${trimmedItem}.input.file}' to '${replacedValue}'" />
+                    <if>
+                        <!-- check the file/dir exists -->
+                        <available file="@{resourceBaseDir}/${${trimmedItem}.input.file}" />
+                        <then>
+                            <if>
+                                <!-- differentiate files and folders -->
+                                <available file="@{resourceBaseDir}/${${trimmedItem}.input.file}" type="dir" />
+                                <then>
+                                    <!-- copy the whole folder -->
+                                    <copy overwrite="true" todir="${replacedValue}">
+                                        <fileset dir="@{resourceBaseDir}/${${trimmedItem}.input.file}" includes="**/*" />
+                                    </copy>
+                                </then>
+                                <else>
+                                    <!-- copy just the file -->
+                                    <copy file="@{resourceBaseDir}/${${trimmedItem}.input.file}" tofile="${replacedValue}" overwrite="true" />
+                                </else>
+                            </if>
+                        </then>
+                        <else>
+                            <fail message="Cannot find the file '@{resourceBaseDir}/${${trimmedItem}.input.file}' to copy! Please make sure the file is provided in the solution directory." />
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="uninstallUnit" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="unitId" default="${dcc.unit.id}" />
+        <sequential>
+            <if>
+                <available file="${dcc.unit.app.dir}"/>
+                <then>
+
+                    <!-- attempt to delete -->
+                    <delete dir="${dcc.unit.app.dir}" includeemptydirs="true" failonerror="false" />
+
+                    <!-- 
+                        In case the folder could not be delete to completion we ensure the application files 
+                        are owned by the current user before attempting a second delete. 
+                        Depending on how the precess was started they files could be root owned and therefore 
+                        not deleteable by the current user.
+                        
+                        Revise with version 1.3. In which the whole sudo usage should be revised/finalized. 
+                        The current approach is taken with respect to backward compatibility to existing 
+                        deployments.
+                    -->
+                    <if>
+                        <available file="${dcc.unit.app.dir}"/>
+                        <then>
+                            <core:doForOs>
+                                <windows>
+                                    <!-- retry and probably fail -->
+                                    <delete dir="${dcc.unit.app.dir}" includeemptydirs="true" failonerror="true" />
+                                </windows>
+                                <linux>
+                                    <if>
+                                        <isset property="user.name"/>
+                                        <then>
+                                            <core:log level="DEBUG" message="Changing owner of [${dcc.unit.app.dir}] to [${user.name}]" />
+                                            <exec executable="sudo">
+                                                <arg value="chown" />
+                                                <arg value="-R" />
+                                                <arg value="${user.name}" />
+                                                <arg value="${dcc.unit.app.dir}" />
+                                            </exec>
+
+                                            <!-- retry and probably succeed -->
+                                            <delete dir="${dcc.unit.app.dir}" includeemptydirs="true" failonerror="true" />
+                                        </then>
+                                        <else>
+                                            <!-- retry and probably fail -->
+                                            <delete dir="${dcc.unit.app.dir}" includeemptydirs="true" failonerror="true" />
+                                        </else>
+                                    </if>
+                                </linux>
+                            </core:doForOs>
+                        </then>
+                    </if>
+                </then>
+            </if>
+
+            <if>
+                <available file="${dcc.config.dir}"/>
+                <then>
+                    <delete includeemptydirs="true" failOnError="true">
+                        <fileset dir="${dcc.config.dir}">
+                            <include name="@{unitId}.*" />
+                        </fileset>
+                    </delete>
+                </then>
+            </if>
+
+            <!--  NOTE
+                - we do not delete any logs. They stay and are only removed on purge. This is also
+                  related to the monitoring topic. Processes like logstash keep a handle to the logs
+                  and we would also like to monitor the uninstall and later tasks.
+                  
+                  If we decide to also delete the logs, we should use a non-failing delete approach.
+             -->
+        </sequential>
+    </macrodef>
+
+    <macrodef name="aggregateFiles" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="unitSequence" />
+        <attribute name="pathProperty" />
+        <attribute name="aggregationDir" />
+        <attribute name="filter" default="true" />
+        <!-- for binary files you should use "false" to avoid corruption -->
+        <attribute name="optionalProperty" default="true" />
+        <element name="filter-properties" optional="true" />
+        <sequential>
+            <!-- iterate over unit sequence to aggregate files -->
+            <for list="@{unitSequence}" param="unitId">
+                <sequential>
+                    <core:log message="Aggregating files for instance @{unitId} in @{aggregationDir}." />
+                    <!-- copy all files to a dedicated folder -->
+                    <if>
+                        <isset property="@{unitId}.@{pathProperty}" />
+                        <then>
+                            <if>
+                                <available file="${@{unitId}.@{pathProperty}}" type="file" />
+                                <then>
+                                    <!-- in case of a file we just copy the file (bwc) -->
+                                    <filter-properties />
+                                    <if>
+                                        <istrue value="@{filter}" />
+                                        <then>
+                                            <copy todir="@{aggregationDir}" 
+                                                overwrite="true" 
+                                                file="${@{unitId}.@{pathProperty}}">
+                                                <filterchain>
+                                                    <expandproperties />
+                                                </filterchain>
+                                            </copy>
+                                        </then>
+                                        <else>
+                                            <copy todir="@{aggregationDir}" 
+                                                overwrite="true" 
+                                                file="${@{unitId}.@{pathProperty}}" />
+                                        </else>
+                                    </if>
+                                </then>
+                                <else>
+                                    <!-- copy the whole dir -->
+                                    <if>
+                                        <available file="${@{unitId}.@{pathProperty}}" type="dir" />
+                                        <then>
+                                            <filter-properties />
+                                            <if>
+                                                <istrue value="@{filter}" />
+                                                <then>
+                                                    <copy todir="@{aggregationDir}" overwrite="true">
+                                                        <fileset dir="${@{unitId}.@{pathProperty}}" />
+                                                        <filterchain>
+                                                            <expandproperties />
+                                                        </filterchain>
+                                                    </copy>
+                                                </then>
+                                                <else>
+                                                    <copy todir="@{aggregationDir}" overwrite="true">
+                                                        <fileset dir="${@{unitId}.@{pathProperty}}" />
+                                                    </copy>
+                                                </else>
+                                            </if>
+                                        </then>
+                                        <else>
+                                            <core:log message="Path '${@{unitId}.@{pathProperty}}' does not exist. Skipping aggregation." />
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                        </then>
+                        <else>
+                            <if>
+                                <isfalse value="@{optionalProperty}" />
+                                <then>
+                                    <fail message="Unit must include the '@{pathProperty}' attribute." />
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="sortFiles"  uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="dir"/>
+        <attribute name="includes"/>
+        <attribute name="resultProperty"/>
+        <attribute name="optional" default="true" />
+        <sequential>
+            <if>
+                <and>
+                    <isfalse value="@{optional}" />
+                    <available file="@{dir}" />
+                </and>
+                <then>
+                    <fail message="The mandatory directory '@{dir}' does not exist." />
+                </then>
+            </if>
+
+            <if>
+                <or>
+                    <available file="@{dir}" />
+                </or>
+                <then>
+                    <sort>
+                        <fileset dir="@{dir}" id="files">
+                            <include name="@{includes}" />
+                        </fileset>
+                    </sort>
+                    <property name="@{resultProperty}" refid="files"/>
+                </then>
+                <else>
+                    <property name="@{resultProperty}" value=""/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="waitForFileCreate" uri="http://metaeffekt.org/schema/dcc/package/core"
+        description="Wait for the file to be created, or fail on timeout.">
+        <attribute name="timeout" />
+        <attribute name="fileName" />
+        <attribute name="message" />
+
+        <sequential>
+            <local name="timeout" />
+
+            <waitfor maxWait="@{timeout}" timeoutproperty="timeout">
+                <available file="@{fileName}" />
+            </waitfor>
+
+            <if>
+                <isset property="timeout" />
+                <then>
+                    <fail message="@{message}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="waitForFileDelete" uri="http://metaeffekt.org/schema/dcc/package/core"
+        description="Wait for the file to be deleted, or fail on timeout.">
+        <attribute name="timeout" />
+        <attribute name="fileName" />
+        <attribute name="message" />
+
+        <sequential>
+            <local name="timeout" />
+
+            <waitfor maxWait="@{timeout}" timeoutproperty="timeout">
+                <not>
+                    <available file="@{fileName}" />
+                </not>
+            </waitfor>
+
+            <if>
+                <isset property="timeout" />
+                <then>
+                    <fail message="@{message}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="queryLocalPort" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="host" default="0.0.0.0" />
+        <attribute name="port" />
+        <attribute name="protocol" default="tcp" />
+        <attribute name="when" default="true" />
+        <attribute name="resultProperty" />
+        <sequential>
+            <overwriteProperty name="@{resultProperty}" value="false" />
+            <if>
+                <and>
+                    <istrue value="@{when}" />
+                    <not>
+                        <!-- -1 ports should be evaluated to 'undefined' -->
+                        <equals arg1="@{port}" arg2="-1" forcestring="true" />
+                    </not>
+                </and>
+                <then>
+                    <core:validatePort port="@{port}" context="local" />
+                    <local name="netstat.result" />
+                    <core:doForOs>
+                        <windows>
+                            <exec executable="netstat" outputproperty="netstat.result" failonerror="false">
+                                <arg line="-a"/>
+                                <arg line="-n"/>
+                                <arg line="-o"/>
+                                <arg line="-p @{protocol}"/>
+                            </exec>
+                        </windows>
+                        <linux>
+                            <exec executable="netstat" outputproperty="netstat.result" failonerror="false">
+                                <arg line="-anp"/>
+                                <arg line="--@{protocol}"/>
+                            </exec>
+                        </linux>
+                    </core:doForOs>
+                    <core:debug>
+                        <echo message="${netstat.result}" />
+                    </core:debug>
+
+                    <!-- test whether we know the output format -->
+                    <if>
+                        <matches string="${netstat.result}" pattern=" ([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                        <then>
+                            <if>
+                                <or>
+                                    <!-- matches must include 'local address' and 'foreign address' separated by whitespaces -->
+                                    <matches string="${netstat.result}" pattern=" (0\.0\.0\.0:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                                    <matches string="${netstat.result}" pattern=" (127\.0\.0\.1:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+
+                                    <!-- this match is required to support IPv6 formatting -->
+                                    <matches string="${netstat.result}" pattern=" (:::@{port})\s*(:::\*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                                </or>
+                                <then>
+                                    <overwriteProperty name="@{resultProperty}" value="true" />
+                                </then>
+                            </if>
+                        </then>
+                        <else>
+                            <!-- log details ... -->
+                            <core:log level="WARN" message="Cannot interpret netstat output format. Falling back to query socket." />
+                            <core:debug>
+                                <core:log level="DEBUG" message="${netstat.result}" />
+                            </core:debug>
+                            <!-- .. and fallback to query socket on localhost -->
+                            <core:querySocket host="localhost" port="@{port}" resultProperty="@{resultProperty}"/>
+                        </else>
+                    </if>
+                </then>
+                <else>
+                    <overwriteProperty name="@{resultProperty}" value="undefined" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="querySocket" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="host" />
+        <attribute name="port" />
+        <attribute name="when" default="true" />
+        <attribute name="resultProperty" />
+        <sequential>
+            <overwriteProperty name="@{resultProperty}" value="false" />
+            <if>
+                <and>
+                    <istrue value="@{when}" />
+                    <not>
+                        <!-- -1 ports should be evaluated to 'undefined' -->
+                        <equals arg1="@{port}" arg2="-1" forcestring="true" />
+                    </not>
+                </and>
+                <then>
+                    <core:validatePort port="@{port}" context="local" />
+                    <if>
+                        <socket server="@{host}" port="@{port}" />
+                        <then>
+                            <overwriteProperty name="@{resultProperty}" value="true" />
+                        </then>
+                    </if>
+                </then>
+                <else>
+                    <overwriteProperty name="@{resultProperty}" value="undefined" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="queryProcess" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="pidFile" />
+        <attribute name="resultProcessIdProperty" />
+        <attribute name="resultProcessStartedProperty" />
+        <sequential>
+
+            <overwriteProperty name="@{resultProcessIdProperty}" value="undefined" />
+            <overwriteProperty name="@{resultProcessStartedProperty}" value="undefined" />
+
+            <if>
+                <available file="@{pidFile}" />
+                <then>
+                    <local name="pidResult" />
+                    <local name="pid" />
+                    <local name="process" />
+                    <loadfile property="pidResult" srcFile="@{pidFile}" />
+
+                    <propertyregex property="pid"
+                        input="${pidResult}" regexp="([0-9]*)" select="\1" />
+
+                    <overwriteProperty name="@{resultProcessIdProperty}" value="${pid}" />
+
+                    <!-- query process status -->
+                    <if>
+                        <os family="dos" />
+                        <then>
+                            <!-- tasklist /FI "PID eq ${pid}" /FO LIST -->
+                            <exec executable="tasklist" outputproperty="process" >
+                                <arg value="/FI" />
+                                <arg value="PID eq ${pid}" />
+                                <arg value="/FO" />
+                                <arg value="LIST" />
+                            </exec>
+                        </then>
+                        <else>
+                            <!-- ps -p ${pid} -->
+                            <exec executable="ps" outputproperty="process" >
+                                <arg value="-p" />
+                                <arg value="${pid}" />
+                            </exec>
+                        </else>
+                    </if>
+
+                    <if>
+                        <contains string="${process}" substring="${pid}" />
+                        <then>
+                            <overwriteProperty name="@{resultProcessStartedProperty}" value="true" />
+                        </then>
+                        <else>
+                            <overwriteProperty name="@{resultProcessStartedProperty}" value="false" />
+                        </else>
+                    </if>
+                </then>
+            </if>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef name="validatePort" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="port" />
+        <attribute name="context" />
+        <sequential>
+            <if>
+                <or>
+                    <matches string="@{port}" pattern="\s" />
+                </or>
+                <then>
+                    <fail message="The port value '@{port}' (@{context}) does not match the expected format." />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="checkPortConflict" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="port" />
+        <attribute name="type" />
+        <attribute name="status" />
+        <attribute name="when" default="true" />
+
+        <attribute name="errorProperty" default="error" />
+        <attribute name="messageProperty" default="message" />
+        <sequential>
+            <core:validatePort port="@{port}" context="@{type}" />
+            <if>
+                <and>
+                    <istrue value="@{when}" />
+                    <istrue value="@{status}" />
+                </and>
+                <then>
+                    <log-error message="Port conflict detected: another process seems to listen to @{type} port @{port} on host [${host.name}]" />
+                    <property name="@{errorProperty}" value="true" />
+
+                    <core:appendToList property="@{messageProperty}" value="@{type} port [@{port}]" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="checkConflicts" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="errorProperty" default="error"/>
+        <attribute name="messageProperty" default="message"/>
+        <element name="query" optional="false" />
+        <element name="check" optional="false" />
+        <element name="enabled" optional="false" />
+        <sequential>
+            <query />
+            <if>
+                <!-- only perform the check, in case the check is enabled -->
+                <enabled />
+                <then>
+                    <check />
+                </then>
+            </if>
+            <!-- fail in case the previous check identified a conflict -->
+            <if>
+                <istrue value="${@{errorProperty}}" />
+                <then>
+                    <fail message="Conflict(s) detected on host [${host.name}]: ${@{messageProperty}}. For details see ${error.log.reference}." />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="waitFor" uri="http://metaeffekt.org/schema/dcc/package/core"
+        description="Wait that a nested criteria, or fail on timeout.">
+
+        <attribute name="interval" default="2000" />
+        <attribute name="timeout" default="120000" />
+        <attribute name="timeoutMessage" />
+
+        <element name="condition" optional="false" />
+        <element name="query" optional="false" />
+
+        <sequential>
+            <local name="success" />
+            <local name="break" />
+            <local name="iterator" />
+            <local name="timestamp" />
+
+            <!-- NOTE
+                This fancy invocation fixes the reference timestamp for the timeout and
+                also produces a iterator sequence containing a list of indexes (1,2,3,...)
+                The length of the sequence is timeout/interval
+             -->
+            <core:timestamp 
+                timestampPropertyName="timestamp"
+                timeout="@{timeout}" interval="@{interval}" iteratorPropertyName="iterator" />
+
+            <for list="${iterator}" param="index">
+                <sequential>
+                    <if>
+                        <not>
+                            <or>
+                                <isset property="success" />
+                                <isset property="break" />
+                            </or>
+                        </not>
+                        <then>
+                            <query />
+                            <if>
+                                <condition />
+                                <then>
+                                    <property name="success" value="true" />
+                                </then>
+                                <else>
+                                    <if>
+                                        <core:timeout started="${timestamp}" timeout="@{timeout}" />
+                                        <then>
+                                            <property name="break" value="true" />
+                                        </then>
+                                        <else>
+                                            <sleep milliseconds="@{interval}" />
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                        </then>
+                        <else>
+                            <!-- NOTE
+                                    do nothing in the break/success case. Ant will complete the
+                                    iterator sequence without doing anything
+                                    
+                                    This can only be improved with a custom WaitFor java 
+                                    implementation. That supports nested query elements.
+                             -->
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+
+            <!-- detect timeout / unsuccessful execution -->
+            <if>
+                <or>
+                    <not>
+                        <isset property="success" />
+                    </not>
+                    <isset property="break" />
+                </or>
+                <then>
+                    <fail message="@{timeoutMessage}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="startProcess" uri="http://metaeffekt.org/schema/dcc/package/core" >
+        <attribute name="name" default="Process [${dcc.unit.id}]" />
+        <attribute name="timeout" default="300000" />
+        <attribute name="interval" default="2000" />
+
+        <element name="queryUnitStatus" optional="false" />
+
+        <element name="checkPrerequisites"  optional="true" />
+        <element name="cleanupBeforeStart"  optional="true" />
+        <element name="checkConflicts" optional="true" />
+        <element name="start" optional="false" />
+
+        <element name="unitStartedCondition"  optional="false" />
+        <element name="processStartedCondition"  optional="false" />
+
+        <sequential>
+            <queryUnitStatus />
+            <if>
+                <processStartedCondition />
+                <then>
+                    <core:debug>
+                        <core:log level="DEBUG" message="@{name} process already started!" />
+                    </core:debug>
+                </then>
+                <else>
+                    <checkPrerequisites />
+                    <cleanupBeforeStart />
+                    <checkConflicts />
+                    <start />
+                    <core:waitFor timeoutMessage="Starting of @{name} timed out!" timeout="@{timeout}" interval="@{interval}">
+                        <condition>
+                            <and>
+                                <processStartedCondition />
+                                <unitStartedCondition />
+                            </and>
+                        </condition>
+                        <query>
+                            <queryUnitStatus />
+                        </query>
+                    </core:waitFor>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="stopProcess" uri="http://metaeffekt.org/schema/dcc/package/core" >
+        <attribute name="name" default="Process [${dcc.unit.id}]" />
+        <attribute name="timeout" default="300000" />
+        <element name="queryUnitStatus" />
+        <element name="stop" />
+        <element name="processStoppedCondition" />
+
+        <sequential>
+            <trycatch>
+                <try>
+                    <stop />
+                </try>
+                <finally>
+                    <core:waitFor timeoutMessage="Stopping @{name} timed out!" timeout="@{timeout}">
+                        <query>
+                            <queryUnitStatus />
+                        </query>
+                        <condition>
+                            <processStoppedCondition />
+                        </condition>
+                    </core:waitFor>
+                </finally>
+            </trycatch>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="debug" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <element name="doInDebugMode" implicit="true"/>
+        <sequential>
+            <if>
+                <istrue value="${dcc.debug.mode}" />
+                <then>
+                    <doInDebugMode />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="checkEndpointAvailable" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="name" />
+        <attribute name="hostName" />
+        <attribute name="port" />
+        <attribute name="scheme" />
+        <attribute name="context" />
+        <sequential>
+            <if>
+                <socket server="@{hostName}" port="@{port}" />
+                <else>
+                    <fail message="@{name} (@{context}) not listening on socket @{hostName}:@{port}." />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="log-error" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="message" />
+        <attribute name="reference" default="" />
+        <attribute name="unit" default="${dcc.unit.id}" />
+        <attribute name="command" default="${dcc.command}" />
+        <sequential>
+            <local name="time" />
+            <local name="_trimmedMessage" />
+            <local name="__trimmedMessage" />
+            <tstamp>
+                <format property="time" pattern="yyyy-MM-dd' 'HH:mm:ss,SSS"/>
+            </tstamp>
+
+            <propertyregex property="__trimmedMessage" input="@{message}" regexp="\s\s+" replace="${line.separator}" global="true" />
+            <property name="__trimmedMessage" value="@{message}" />
+
+            <propertyregex property="_trimmedMessage" input="${__trimmedMessage}" regexp="\.$" replace="" />
+            <property name="_trimmedMessage" value="${__trimmedMessage}" />
+
+            <echo level="error" message="@{unit}:@{command} ${_trimmedMessage}. See also ${execution.log}.${line.separator}" />
+            <echo file="${execution.log}" message="${time} ERROR @{unit}:@{command} ${_trimmedMessage}${line.separator}" append="true" />
+            <!-- NOTE: the error log is supposed to be machine readable in the future -->
+            <echo file="${error.log}" message="${time} ERROR @{unit}:@{command} ${_trimmedMessage}${line.separator}" append="true" />
+
+            <if>
+                <isset property="@{reference}" />
+                <then>
+                    <!-- additionally log the reference (error object) -->
+                    <echo level="error" message="@{reference}" />
+                    <echo file="${execution.log}" message="${time} ERROR @{unit}:@{command} @{reference}${line.separator}" append="true" />
+                    <echo file="${error.log}" message="${time} ERROR @{unit}:@{command} @{reference}${line.separator}" append="true" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="log" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="message" />
+        <attribute name="unit" default="${dcc.unit.id}" />
+        <attribute name="command" default="${dcc.command}" />
+        <attribute name="level" default="INFO" />
+        <attribute name="format" default="true" />
+        <sequential>
+            <local name="time" />
+            <local name="_trimmedMessage" />
+            <local name="_antLevel" />
+            <if>
+                <equals arg1="@{level}" arg2="INFO" />
+                <then>
+                    <property name="_antLevel" value="info"/>
+                </then>
+            </if>
+            <if>
+                <equals arg1="@{level}" arg2="WARN" />
+                <then>
+                    <property name="_antLevel" value="warn"/>
+                </then>
+            </if>
+            <if>
+                <equals arg1="@{level}" arg2="DEBUG" />
+                <then>
+                    <property name="_antLevel" value="debug"/>
+                </then>
+            </if>
+            <if>
+                <equals arg1="@{level}" arg2="TRACE" />
+                <then>
+                    <property name="_antLevel" value="verbose"/>
+                </then>
+            </if>
+            <tstamp>
+                <format property="time" pattern="yyyy-MM-dd' 'HH:mm:ss,SSS"/>
+            </tstamp>
+            <if>
+                <istrue value="@{format}" />
+                <then>
+                    <propertyregex property="_trimmedMessage"
+                       input="@{message}" regexp="\s\s+" replace="${line.separator}" global="true" />
+                </then>
+            </if>
+            <property name="_trimmedMessage" value="@{message}" />
+            <echo level="${_antLevel}" message="@{unit}:@{command} ${_trimmedMessage}${line.separator}" />
+            <echo file="${execution.log}" message="${time} @{level}  @{unit}:@{command} ${_trimmedMessage}${line.separator}" append="true" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="handleFailure" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="failOnError" default="true" />
+        <element name="body" implicit="yes" />
+        <sequential>
+            <local name="error" />
+            <local name="reference" />
+            <trycatch property="error" reference="reference">
+                <try>
+                    <body />
+                </try>
+                <catch>
+                    <log-error message="${error}" reference="${reference}" />
+                    <if>
+                        <istrue value="@{failOnError}" />
+                        <then>
+                            <if>
+                                <isset property="${reference}" />
+                                <then>
+                                    <fail message="${error}: ${reference}" />
+                                </then>
+                                <else>
+                                    <fail message="${error}" />
+                                </else>
+                            </if>
+                        </then>
+                    </if>
+                </catch>
+            </trycatch>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="doForOs" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <element name="windows" optional="false" />
+        <element name="linux" optional="false" />
+        <sequential>
+            <if>
+                <os family="dos" />
+                <then>
+                    <windows />
+                </then>
+                <else>
+                    <linux />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="propertyForOs" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="name" />
+        <attribute name="windowsValue" />
+        <attribute name="linuxValue" />
+        <sequential>
+            <core:doForOs>
+                <windows>
+                    <property name="@{name}" value="@{windowsValue}"/>
+                </windows>
+                <linux>
+                    <property name="@{name}" value="@{linuxValue}"/>
+                </linux>
+            </core:doForOs>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="defineGlobalEnvironment" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <sequential>
+            <core:canonicalizePath pathProperty="dcc.target.dir" />
+            <core:canonicalizePath pathProperty="dcc.java.home" />
+
+            <property name="dcc.app.dir" value="${dcc.target.dir}/app" />
+            <property name="dcc.data.dir" value="${dcc.target.dir}/data" />
+            <property name="dcc.config.dir" value="${dcc.target.dir}/config" />
+            <property name="dcc.logs.dir" value="${dcc.target.dir}/logs" />
+
+            <property name="dcc.install.dir" value="${dcc.target.dir}/install" />
+            <property name="dcc.install.tmp.dir" value="${dcc.install.dir}/tmp" />
+            <property name="dcc.status.dir" value="${dcc.install.tmp.dir}/status" />
+
+            <!-- establish common basic folder structure (no unit specific folders yet) -->
+            <core:ensurePathExists path="${dcc.target.dir}" />
+            <core:ensurePathExists path="${dcc.app.dir}" />
+            <core:ensurePathExists path="${dcc.data.dir}" />
+            <core:ensurePathExists path="${dcc.config.dir}" />
+
+            <!-- Revise usage of this folder: for the time being we do not create it
+            <core:ensurePathExists path="${dcc.install.dir}" />
+            -->
+        </sequential>
+    </macrodef>
+
+    <macrodef name="defineUnitEnvironment" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <sequential>
+            <!-- unit properties -->
+            <property name="dcc.unit.app.dir" value="${dcc.app.dir}/${dcc.unit.id}" />
+            <property name="dcc.unit.data.dir" value="${dcc.data.dir}/${dcc.unit.id}" />
+            <property name="dcc.unit.config.dir" value="${dcc.config.dir}/${dcc.unit.id}" />
+            <property name="dcc.unit.tmp.dir" value="${dcc.unit.config.dir}/tmp" />
+            <property name="dcc.unit.status.dir" value="${dcc.unit.config.dir}/status" />
+            <property name="dcc.unit.logs.dir" value="${dcc.logs.dir}/${dcc.unit.id}" />
+
+            <!-- unit log files -->
+            <!-- FIXME: use dcc prefix to isolate properties -->
+            <property name="dcc.command" value="command"/>
+            <property name="execution.log" value="${dcc.unit.logs.dir}/${dcc.command}.log"/>
+            <property name="error.log" value="${dcc.unit.logs.dir}/${dcc.command}-error.log"/>
+            <property name="dcc.unit.log.reference" value="&lt;logs.dir&gt;/${dcc.unit.id}"/>
+            <property name="error.log.reference" value="${log.reference}/${dcc.command}-error.log"/>
+
+            <!-- try to elimate usage of these properties -->
+            <core:overwriteProperty name="dcc.install.dir" value="${dcc.unit.tmp.dir}/install" />
+            <core:overwriteProperty name="dcc.install.tmp.dir" value="${dcc.unit.tmp.dir}" />
+            <core:overwriteProperty  name="dcc.status.dir" value="${dcc.unit.status.dir}" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="loadUnitProperties" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <sequential>
+            <!-- load unit-specific properties -->
+            <property file="${dcc.execution.properties}" />
+
+            <!-- load unit-specific prereq properties -->
+            <property file="${dcc.prerequisites.properties}" prefix="verify"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="validateEnvironment" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <sequential>
+            <core:expectProperty property="dcc.target.dir" />
+            <core:expectProperty property="dcc.java.home" />
+            <core:expectProperty property="dcc.deployment.id" />
+            <core:expectProperty property="dcc.unit.id" />
+
+            <!-- check input property files are available (not yet loaded) -->
+            <core:expectProperty property="dcc.execution.properties" />
+            <core:expectFile file="${dcc.execution.properties}" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="conditionalProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="name" />
+        <attribute name="property" />
+        <attribute name="default" />
+        <sequential>
+            <if>
+                <isset property="@{property}" />
+                <then>
+                    <property name="@{name}" value="${@{property}}" />
+                </then>
+                <else>
+                    <property name="@{name}" value="@{default}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="checkMemoryPrerequisites" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <!-- based on the "runtime-template" assertions -->
+        <sequential>
+            <core:verifyFreePhysicalMemoryCapacity requiredCapacityProperty="verify.memory.physical.min" />
+            <core:verifyFreeVirtualMemoryCapacity requiredCapacityProperty="verify.memory.virtual.max" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="killProcess" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="pid"/>
+        <attribute name="force" default="false" />
+        <sequential>
+            <core:doForOs>
+                <windows>
+                    <if>
+                        <istrue value="@{force}" />
+                        <then>
+                            <exec executable="taskkill">
+                                <arg value="/pid" />
+                                <arg value="@{pid}" />
+                                <arg value="/f" />
+                            </exec>
+                        </then>
+                        <else>
+                            <exec executable="taskkill">
+                                <arg value="/pid" />
+                                <arg value="@{pid}" />
+                            </exec>
+                        </else>
+                    </if>
+                </windows>
+                <linux>
+                    <if>
+                        <istrue value="@{force}" />
+                        <then>
+                            <exec executable="kill">
+                                <arg value="-9" />
+                                <arg value="@{pid}"/>
+                            </exec>
+                        </then>
+                        <else>
+                            <exec executable="kill">
+                                <arg value="@{pid}"/>
+                            </exec>
+                        </else>
+                    </if>
+                </linux>
+            </core:doForOs>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="deleteDirIfExists" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="dir"/>
+        <sequential>
+            <if>
+                <available file="@{dir}" type="dir" />
+                <then>
+                    <delete dir="@{dir}" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="appendToList" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="property" />
+        <attribute name="value" />
+        <attribute name="separator" default=", " />
+        <sequential>
+            <if>
+                <isset property="@{property}" />
+                <then>
+                    <core:overwriteProperty name="@{property}" value="${@{property}}@{separator}@{value}" />
+                </then>
+                <else>
+                    <core:overwriteProperty name="@{property}" value="@{value}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="createContributionTruststore" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="unitId" default="${dcc.unit.id}" />
+        <attribute name="truststoreFile" />
+        <attribute name="truststorePassword" />
+        <attribute name="unitCertFile" default="" />
+        <attribute name="trustContributionSequence" default="${dcc.unit.contribution.trust.config.iterator.sequence}" />
+        <attribute name="trustSourceContributionSequence" default="${dcc.unit.contribution.trust.source.config.iterator.sequence}" />
+        <sequential>
+
+            <!-- we trust the system that is specified by the cert in the file. This may be a root cert -->
+            <if>
+                <available file="@{unitCertFile}" />
+                <then>
+                    <core:createTruststore truststoreFile="@{truststoreFile}" password="@{truststorePassword}">
+                        <core:certEntry alias="@{unitId}" certificateFile="@{unitCertFile}" />
+                    </core:createTruststore>
+                </then>
+            </if>
+
+            <!-- establish trust relationships using trust contributions -->
+            <for list="@{trustContributionSequence}" param="prefix">
+                <sequential>
+                    <core:createTruststore truststoreFile="@{truststoreFile}" password="@{truststorePassword}">
+                        <core:certEntry alias="${@{prefix}.cert.alias}" certificateFile="${@{prefix}.cert.file}" />
+                    </core:createTruststore>
+                </sequential>
+            </for>
+
+            <!-- establish trust relationships using trust source contributions -->
+            <for list="@{trustSourceContributionSequence}" param="prefix">
+                <sequential>
+                    <core:sortFiles dir="${@{prefix}.cert.path}" includes="**/*.cert.pem" resultProperty="cert.files"/>
+                    <for list="${cert.files}" param="cert.file" delimiter=";">
+                        <sequential>
+                            <local name="alias" />
+                            <propertyregex property="alias" input="@{cert.file}"
+                                regexp="\.cert\.pem" replace="" casesensitive="false" />
+                            <core:createTruststore truststoreFile="@{truststoreFile}" password="@{truststorePassword}">
+                                <core:certEntry alias="${@{prefix}.cert.alias.prefix}${alias}" certificateFile="${@{prefix}.cert.path}/@{cert.file}" />
+                            </core:createTruststore>
+                        </sequential>
+                    </for>
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>

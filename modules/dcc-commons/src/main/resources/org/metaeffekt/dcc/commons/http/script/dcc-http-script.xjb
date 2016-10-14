@@ -1,0 +1,32 @@
+<jxb:bindings 
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    version="2.0">
+    
+    <jxb:bindings schemaLocation="dcc-http-script-1.2.xsd">
+
+        <!-- define package -->
+        <jxb:schemaBindings>
+            <jxb:package name="org.metaeffekt.dcc.commons.http.script" />
+        </jxb:schemaBindings>
+
+        <!-- implement serializable interface -->
+<!--         <jxb:globalBindings> -->
+<!--             <xjc:serializable uid="1" /> -->
+<!--         </jxb:globalBindings> -->
+
+        <!-- remove type suffix from generated class names -->
+        <jxb:bindings node="//xs:complexType[@name='serverType']">
+            <jxb:class name="Server" />
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='commandType']">
+            <jxb:class name="Command" />
+        </jxb:bindings>
+        <jxb:bindings node="//xs:complexType[@name='credentialsType']">
+            <jxb:class name="Credentials"/>
+        </jxb:bindings>
+
+    </jxb:bindings>
+</jxb:bindings>

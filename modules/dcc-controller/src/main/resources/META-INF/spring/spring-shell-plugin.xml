@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:component-scan base-package="org.metaeffekt.dcc.shell" />
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="locations">
+            <list>
+                <value>classpath:META-INF/default-dcc-shell.properties</value>
+                <value>classpath:dcc-shell.properties</value>
+            </list>
+        </property>
+
+    </bean>
+
+    <bean id="executionContext" class="org.metaeffekt.dcc.controller.execution.ExecutionContext">
+        <constructor-arg>
+            <bean class="org.metaeffekt.dcc.controller.execution.SSLConfiguration">
+                <constructor-arg value="${dcc.shell.ssl.keystore.path}" />
+                <constructor-arg value="${dcc.shell.ssl.keystore.password}" />
+                <constructor-arg value="${dcc.shell.ssl.truststore.path}" />
+                <constructor-arg value="${dcc.shell.ssl.truststore.password}" />
+            </bean>
+        </constructor-arg>
+    </bean>
+
+</beans>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile
+        http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-test-deployment-profile</id>
+
+    <type>
+        <deployment>
+            <id>dcc-test</id>
+            <properties location="deployment.properties" />
+        </deployment>
+    </type>
+    
+    <description>Deployment profile of the test solution</description>
+
+    <!-- import the solution profile to be deployed -->
+    <import resource="dcc-test-solution-profile.xml" />
+    
+</profile>
