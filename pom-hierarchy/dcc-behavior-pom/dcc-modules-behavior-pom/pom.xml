@@ -101,19 +101,6 @@
                         </execution>
                         <!-- support sources for debugging with custom artifacts -->
                         <execution>
-                            <id>publish-runtime-sources-artifact</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>publish-artifact-overwrite</goal>
-                            </goals>
-                            <configuration>
-                                <sourceQualifier>sources</sourceQualifier>
-                                <targetQualifier>runtime-sources</targetQualifier>
-                                <attachArtifact>true</attachArtifact>
-                            </configuration>
-                        </execution>
-                        
-                        <execution>
                             <!-- Some dcc modules contain a src/main/config folder to transport configuration 
                                  without implicitly including it into the runtime artifacts. -->
                             <id>package-config</id>
@@ -277,7 +264,7 @@
                                 </execution>
                                 <execution>
                                     <id>publish-api-sources-artifact</id>
-                                    <phase>verify</phase>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>publish-artifact-overwrite</goal>
                                     </goals>

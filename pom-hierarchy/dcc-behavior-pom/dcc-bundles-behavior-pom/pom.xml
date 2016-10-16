@@ -103,7 +103,7 @@
                     <executions>
                         <execution>
                             <id>ehi-bundle-packaging</id>
-                            <phase>verify</phase>
+                            <phase>package</phase>
                             <goals>
                                 <goal>publish-artifact</goal>
                             </goals>
@@ -213,7 +213,7 @@
                             <executions>
                                 <execution>
                                     <id>aggregate-package-content</id>
-                                    <phase>package</phase>
+                                    <phase>process-resources</phase>
                                     <goals>
                                         <goal>copy-resources</goal>
                                     </goals>
@@ -240,7 +240,7 @@
                             <executions>
                                 <execution>
                                     <id>package-package</id>
-                                    <phase>verify</phase>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>publish-artifact</goal>
                                     </goals>

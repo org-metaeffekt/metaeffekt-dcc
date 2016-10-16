@@ -15,6 +15,35 @@
         <relativePath />
     </parent>
 
+    <organization>
+        <name>metaeffekt GmbH</name>
+        <url>http://metaeffekt.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/org-metaeffekt/metaeffekt-dcc.git</connection>
+        <developerConnection>scm:git:ssh://github.com:org-metaeffekt/metaeffekt-dcc.git</developerConnection>
+        <url>https://github.com/org-metaeffekt/metaeffekt-dcc.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <email>contact@metaeffekt.org</email>
+            <organization>metaeffekt GmbH</organization>
+            <organizationUrl>http://metaeffekt.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <inceptionYear>2016</inceptionYear>
+
     <properties>
         <artifact.inventory.enabled>true</artifact.inventory.enabled>
         <artifact.inventory.version>0.1.0-SNAPSHOT</artifact.inventory.version>
