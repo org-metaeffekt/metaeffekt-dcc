@@ -402,16 +402,16 @@
 
                     <!-- test whether we know the output format -->
                     <if>
-                        <matches string="${netstat.result}" pattern=" ([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                        <matches string="${netstat.result}" pattern=" ([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
                         <then>
                             <if>
                                 <or>
                                     <!-- matches must include 'local address' and 'foreign address' separated by whitespaces -->
-                                    <matches string="${netstat.result}" pattern=" (0\.0\.0\.0:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
-                                    <matches string="${netstat.result}" pattern=" (127\.0\.0\.1:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                                    <matches string="${netstat.result}" pattern=" (0\.0\.0\.0:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
+                                    <matches string="${netstat.result}" pattern=" (127\.0\.0\.1:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
 
                                     <!-- this match is required to support IPv6 formatting -->
-                                    <matches string="${netstat.result}" pattern=" (:::@{port})\s*(:::\*)\s*(LISTEN)" multiline="true" casesensitive="false" />
+                                    <matches string="${netstat.result}" pattern=" (:::@{port})\s*(:::\*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
                                 </or>
                                 <then>
                                     <overwriteProperty name="@{resultProperty}" value="true" />
