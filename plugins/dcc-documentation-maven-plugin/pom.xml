@@ -10,7 +10,7 @@
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-plugins-behavior-pom</artifactId>
         <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-plugins-behavior-pom</relativePath>
-        <version>0.1.0</version>
+        <version>0.2-SNAPSHOT</version>
     </parent>
 
     <build>
