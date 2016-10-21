@@ -62,9 +62,7 @@
         <module>packages</module>
         <module>assemblies</module>
         <module>plugins</module>
-        <!-- disabling for 0.1.0
         <module>reference</module>
-        -->
     </modules>
 
     <build>
