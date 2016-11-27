@@ -98,6 +98,13 @@ public class ApplyVelocityTemplateTaskTest {
         assertEquals("req3", p.getProperty("requisition.2.0"));
         assertEquals("req4", p.getProperty("requisition.2.1"));
         assertEquals("req5", p.getProperty("requisition.2.2"));
+
+        assertEquals("req5", p.getProperty("requisition.2.2"));
+
+        assertEquals("This is a string.", p.getProperty("property.from.xpath.1"));
+        assertEquals("This is a string attribute.", p.getProperty("property.from.xpath.2"));
+        assertEquals("This is a string attribute.", p.getProperty("property.from.xpath.3"));
+        assertEquals("a default, which is used", p.getProperty("property.from.xpath.4"));
     }
 
 }

@@ -134,15 +134,16 @@ public class UnitDependencies {
 
             @Override
             public int compare(Id<UnitId> o1, Id<UnitId> o2) {
-
-                if (matrix.get(o1).contains(o2)) {
+                final List<Id<UnitId>> ids1 = matrix.get(o1);
+                final List<Id<UnitId>> ids2 = matrix.get(o2);
+                if (ids1 != null && ids1.contains(o2)) {
                     return -1;
-                }
-                else if (matrix.get(o2).contains(o1)) {
-                    return 1;
-                }
-                else {
-                    return 0;
+                } else {
+                    if (ids2 != null && ids2.contains(o1)) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 }
             }
         });
@@ -155,14 +156,16 @@ public class UnitDependencies {
             @Override
             public int compare(ConfigurationUnit o1, ConfigurationUnit o2) {
 
-                if (matrix.get(o1.getId()).contains(o2.getId())) {
+                final List<Id<UnitId>> ids1 = matrix.get(o1.getId());
+                final List<Id<UnitId>> ids2 = matrix.get(o2.getId());
+                if (ids1 != null && ids1.contains(o2.getId())) {
                     return -1;
-                }
-                else if (matrix.get(o2.getId()).contains(o1.getId())) {
-                    return 1;
-                }
-                else {
-                    return 0;
+                } else {
+                    if (ids2 != null && ids2.contains(o1.getId())) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 }
             }
         });

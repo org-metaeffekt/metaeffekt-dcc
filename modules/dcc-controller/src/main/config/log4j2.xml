@@ -27,7 +27,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="org.metaeffekt.core.common.kernel.ant.log.ant.log.LoggingProjectAdapter" level="ERROR"/>
+        <Logger name="org.metaeffekt.core.common.kernel.ant.log.LoggingProjectAdapter" level="ERROR"/>
         <Logger name="org.metaeffekt.dcc" level="INFO"/>
         <Logger name="org.metaeffekt.dcc.commons.spring.xml.ProfileApplicationContext" level="ERROR"/>
         <Logger name="org.metaeffekt.dcc.docgenerator" level="ERROR"/>

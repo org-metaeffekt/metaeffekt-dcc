@@ -58,7 +58,7 @@ fi
 #DEBUG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
 ANSI="-Droo.console.ansi=true"
-java $DEBUG -Xmx1024m -Dis.apple.terminal=$APPLE_TERMINAL $JLINE_TERMINAL $ANSI -cp "$DCC_CP" org.metaeffekt.dcc.shell.DccShell "$@"
+java $DEBUG -Xmx1024m -Duser.language=en -Dis.apple.terminal=$APPLE_TERMINAL $JLINE_TERMINAL $ANSI -cp "$DCC_CP" org.metaeffekt.dcc.shell.DccShell "$@"
 SHELL_EXIT_CODE=$?
 # echo DCC exited with code ${SHELL_EXIT_CODE}
 exit ${SHELL_EXIT_CODE}

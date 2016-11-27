@@ -110,6 +110,7 @@ public class ApplyVelocityTemplateTask extends Task {
         context.put("StringUtils", StringUtils.class);
         context.put("FileUtil", FileUtil.class);
         context.put("UrlUtils", new UrlUtils());
+        context.put("xpath", new XPathProvider());
 
         addConcreteExtensionSequence(DCC_UNIT_CONTRIBUTION_ITERATOR_SEQUENCE_REGEX, context,
                 "ContributionIteratorSequence", properties);
@@ -200,8 +201,6 @@ public class ApplyVelocityTemplateTask extends Task {
         }
         return list;
     }
-
-
 
     private <T> T notNull(T parameter, String label) {
         if (parameter == null) {

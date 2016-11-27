@@ -12,13 +12,15 @@
     <parent>
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-application</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2.0</version>
         <relativePath>../</relativePath>
     </parent>
 
     <modules>
+        <!--
         <module>dcc-ref-bundle-thirdparty</module>
         <module>dcc-ref-bundle-modules</module>
+        -->
     </modules>
 
 </project>

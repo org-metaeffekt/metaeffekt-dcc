@@ -18,6 +18,14 @@
                 <exclude>bin/*</exclude>
                 <exclude>work/**/*</exclude>
                 <exclude>expected/**/*</exclude>
+                <exclude>doc/dcc-*/**/*</exclude>
+                <exclude>doc/dcc-*</exclude>
+                <exclude>doc/index.html</exclude>
+
+                <exclude>solution.properties</exclude>
+                <exclude>deployment.properties</exclude>
+                <exclude>dcc-test-*-profile.xml</exclude>
+                <exclude>**/*.dcc</exclude>
             </excludes>
         </fileSet>
         <fileSet>
