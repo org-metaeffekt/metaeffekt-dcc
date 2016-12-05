@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>host-inference-profile</id>
+    
+    <type>
+        <deployment>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+
+    <capability-definition id="host">
+        <description>Capability defining a physical host with hostname and/or IP address.</description>
+        <attribute-key key="name">
+            <description>
+                The host name. Use either the IP or the fully qualified DNS name of
+                a host. Please note that the DNS name will not be analyzed or resolved. In
+                particular two DNS names pointing to the same physical host will be treated as
+                separate entities. In this case conflicts on host resource level (ports) can not
+                be detected early in the installation procedure. The fully qualified name (host
+                name with full domain information) is required when other resources (like i.e.
+                certificates) are host/domain bound.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="order">
+    </capability-definition>
+
+    <capability-definition id="agent.endpoint">
+        <description>
+            Capability defining a DCC enabled host with a DCC Agent installation running on
+            a specific port.
+        </description>
+        <inherit definitionRef="host" />
+        <attribute-key key="port">
+            <description>The IP port of the DCC Agent.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <unit id="host-template" abstract="true">
+        <description>Abstract unit defining a template for a host.</description>
+        <required-capability id="order" multipleBindingsAllowed="true" identifiesHost="false" optional="true"/>
+        <provided-capability id="host" />
+        <mappings>
+            <mapping targetCapabilityId="host">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="agent-host-template" abstract="true" extends="host-template" package="dcc-core">
+        <description>Template unit defining a template for hosts running a DCC Agent.</description>
+        <provided-capability id="agent.endpoint" />
+        <command type="initialize"/>
+        <command type="clean"/>
+        <command type="verify">
+            <capability id="agent.endpoint" />
+        </command>
+
+        <attributes>
+            <attribute key="agent.port" value="33036" description="The agent port."/>
+        </attributes>
+
+        <mappings>
+            <mapping targetCapabilityId="agent.endpoint">
+                <map-unit-attributes/>
+                <expression attributeKey="port" value="${agent.port}" />
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="host-01" extends="agent-host-template" >
+        <attributes>
+            <attribute key="name" value="localhost"/>
+        </attributes>
+    </unit>
+
+    <unit id="host-02" extends="agent-host-template" >
+        <attributes>
+            <attribute key="name" value="localhost"/>
+        </attributes>
+    </unit>
+
+    <binding>
+        <source unitRef="host-01" capabilityId="host"/>
+        <target unitRef="host-02" capabilityId="order"/>
+    </binding>
+
+</profile>

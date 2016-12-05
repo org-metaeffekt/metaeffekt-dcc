@@ -58,11 +58,16 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     }
 
     @Override
-    protected void doExecute(boolean force, Id<UnitId> limitToUnitId) {
+    protected void doExecute(final boolean force, final boolean parallel, final Id<UnitId> limitToUnitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
         List<ConfigurationUnit> units = selectUnitsWithCommandOrdered(getCommandVerb());
         boolean unitFound = false;
-        
+
+        // parallel processing approach
+        // - collect units that are execute in a ordered list
+        // - analyze dependencies; independent units (to be defined) are broken is separate lists
+        // - process lists in parallel; within the lists in sequence
+
         for (ConfigurationUnit unit : units) {
             final Id<UnitId> unitId = unit.getId();
             if (limitToUnitId == null || unitId.equals(limitToUnitId)) {

@@ -31,20 +31,46 @@ public interface Command {
 
     /**
      * Execute the command.
+     *
+     * @param force Enforces the execution of the command. Otherwise the command may be skipped if
+     *    the underlying engine determines that it not required.
+     * @throws IOException Throws {@link IOException} as commands usually produces effect in the
+     *    filesystem.
+     */
+    void execute(boolean force) throws IOException;
+
+    /**
+     * Execute the command.
+     *
+     * @param force Enforces the execution of the command. Otherwise the command may be skipped if
+     *    the underlying engine determines that it not required.
+     * @param unitId The unitId can be used to restrict the command to a particular unit. If the
+     *   unitId is omitted (<code>null</code>) the command will be executed to all units that
+     *   provide the command.
+     *
+     * @throws IOException Throws {@link IOException} as commands usually produces effect in the
+     *    filesystem.
+     */
+    void execute(boolean force,  Id<UnitId> unitId) throws IOException;
+
+    /**
+     * Execute the command.
      * 
      * @param force Enforces the execution of the command. Otherwise the command may be skipped if
      *    the underlying engine determines that it not required.
+     * @param parallel When true enabled parallel processing of the command.
      *    
      * @throws IOException Throws {@link IOException} as commands usually produces effect in the 
      *    filesystem.
      */
-    void execute(boolean force) throws IOException;
+    void execute(boolean force, boolean parallel) throws IOException;
     
     /**
      * Execute the command.
      * 
      * @param force Enforces the execution of the command. Otherwise the command may be skipped if
      *    the underlying engine determines that it not required.
+     * @param parallel When true enabled parallel processing of the command.
      * @param unitId The unitId can be used to restrict the command to a particular unit. If the
      *   unitId is omitted (<code>null</code>) the command will be executed to all units that
      *   provide the command.
@@ -52,7 +78,7 @@ public interface Command {
      * @throws IOException Throws {@link IOException} as commands usually produces effect in the 
      *    filesystem.
      */
-    void execute(boolean force, Id<UnitId> unitId) throws IOException;
+    void execute(boolean force, boolean parallel, Id<UnitId> unitId) throws IOException;
     
     /**
      * Commands can be skipped, in case they have already been executed. Whether a skip is possible

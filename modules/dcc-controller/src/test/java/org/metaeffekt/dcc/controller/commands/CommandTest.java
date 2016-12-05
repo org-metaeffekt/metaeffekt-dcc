@@ -73,7 +73,7 @@ public class CommandTest {
         PropertiesHolder propertiesHolder = executionContext.getPropertiesHolder();
         propertiesHolder.setProperty(TestProfiles.PROVIDED_HOST_CAPABILITY, PROPERTY_KEY, PROPERTY_VALUE);
 
-        testCommand.execute(true);
+        testCommand.execute(true, false);
 
         assertTrue(testCommand.executed);
         assertEquals(1, testCommand.executedUnits.size());
@@ -94,7 +94,7 @@ public class CommandTest {
 
         executionContext.setProfile(TestProfiles.EMPTY_PROFILE);
 
-        testCommand.execute(true);
+        testCommand.execute(true, false);
 
         assertTrue(testCommand.executed);
         assertEquals(0, testCommand.executedUnits.size());

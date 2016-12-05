@@ -36,13 +36,15 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
     }
 
     @Override
-    protected void doExecute(boolean force, Id<UnitId> unitId) {
+    protected void doExecute(boolean force, final boolean parallel, Id<UnitId> unitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
         if (unitId == null) {
             // do for all hosts
             Collection<Id<HostName>> hosts = getExecutionContext().getHostsExecutors().keySet();
-            for (Id<HostName> host : hosts) {
-                doExecuteForHost(host, force);
+            if (parallel) {
+                hosts.parallelStream().forEach(h -> doExecuteForHost(h, force));
+            } else {
+                hosts.stream().forEach(h -> doExecuteForHost(h, force));
             }
         } else {
             // reduce the handling to the host hosting the unit

@@ -47,19 +47,29 @@ abstract class AbstractCommand implements Command {
 
     @Override
     public void execute(boolean force) {
-        execute(force, null);
+        execute(force, false, null);
+    }
+
+    @Override
+    public void execute(boolean force, boolean parallel) {
+        execute(force, parallel, null);
     }
 
     @Override
     public void execute(boolean force, Id<UnitId> unitId) {
+        execute(force, false, unitId);
+    }
+
+    @Override
+    public void execute(boolean force, boolean parallel, Id<UnitId> unitId) {
         executionContext.prepareForExecution();
         beforeExecution();
         long timestamp = System.currentTimeMillis();
-        doExecute(force, unitId);
+        doExecute(force, parallel, unitId);
         afterSuccessfulExecution("", String.format("[%s]", getCommandVerb()), timestamp);
     }
 
-    protected abstract void doExecute(boolean force, Id<UnitId> unitId);
+    protected abstract void doExecute(boolean force, boolean parallel, Id<UnitId> unitId);
 
     protected abstract Commands getCommandVerb();
 

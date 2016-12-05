@@ -20,5 +20,6 @@ public interface Constants {
 
     static final String HELP_UNITID = "Execute command for a specific unit";
     static final String HELP_FORCE = "Execute regardless of actual command state";
+    static final String HELP_PARALLEL = "Enables parallel execution for independent units.";
     
 }

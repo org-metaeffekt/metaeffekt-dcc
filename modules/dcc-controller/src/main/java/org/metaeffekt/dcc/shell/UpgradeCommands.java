@@ -16,6 +16,7 @@
 package org.metaeffekt.dcc.shell;
 
 import static org.metaeffekt.dcc.shell.Constants.HELP_FORCE;
+import static org.metaeffekt.dcc.shell.Constants.HELP_PARALLEL;
 import static org.metaeffekt.dcc.shell.Constants.HELP_UNITID;
 
 import java.io.File;
@@ -92,42 +93,50 @@ public class UpgradeCommands extends AbstractExecutionCommands {
     public void upgradeResources(
             @CliOption(key = "location", mandatory = true, help = "The location of the upgrade properties, which contain the necessary configuration.") File upgradePropertiesFile,
             @CliOption(key = "force", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true",  help = HELP_FORCE)
-            final boolean force, 
+            final boolean force,
+            @CliOption(key = "parallel", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true", help = HELP_PARALLEL)
+            final boolean parallel,
             @CliOption(key = "unitId", mandatory = false, optionContext = UnitCapabilityIdConverter.USE_UNIT_ID_COMPLETION, help = HELP_UNITID)
             String unitId
             ) {
         
-        executeCommand(new UpgradeResourcesCommand(executionContext, upgradePropertiesFile), force, false, unitId);
+        executeCommand(new UpgradeResourcesCommand(executionContext, upgradePropertiesFile), force, parallel, false, unitId);
     }
     
     @CliCommand(value = "execute upgrade-prepare", help = "Triggers or processes data-level upgrade manipulations in a compatible fashion. Does not require any downtime.")
     public void executeUpgradePrepare(
             @CliOption(key = "force", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true",  help = HELP_FORCE)
-            final boolean force, 
+            final boolean force,
+            @CliOption(key = "parallel", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true", help = HELP_PARALLEL)
+            final boolean parallel,
             @CliOption(key = "unitId", mandatory = false, optionContext = UnitCapabilityIdConverter.USE_UNIT_ID_COMPLETION, help = HELP_UNITID)
             String unitId
             ) {
-        executeCommand(new NamedCommand(Commands.UPGRADE_PREPARE, executionContext), force, false, unitId);
+        executeCommand(new NamedCommand(Commands.UPGRADE_PREPARE, executionContext), force, parallel, false, unitId);
     }
 
     @CliCommand(value = "execute upgrade", help = "Triggers or processes data-level upgrade manipulations in a compatible fashion. Does not require any downtime.")
     public void executeUpgrade(
             @CliOption(key = "force", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true",  help = HELP_FORCE)
-            final boolean force, 
+            final boolean force,
+            @CliOption(key = "parallel", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true", help = HELP_PARALLEL)
+            final boolean parallel,
             @CliOption(key = "unitId", mandatory = false, optionContext = UnitCapabilityIdConverter.USE_UNIT_ID_COMPLETION, help = HELP_UNITID)
             String unitId
             ) {
-        executeCommand(new NamedCommand(Commands.UPGRADE, executionContext), force, false, unitId);
+        executeCommand(new NamedCommand(Commands.UPGRADE, executionContext), force, parallel, false, unitId);
     }
 
     @CliCommand(value = "execute upgrade-finalize", help = "Triggers or processes data-level upgrade manipulations in a compatible fashion. Does not require any downtime.")
     public void executeUpgradeFinalize(
             @CliOption(key = "force", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true",  help = HELP_FORCE)
-            final boolean force, 
+            final boolean force,
+            @CliOption(key = "parallel", mandatory = false, unspecifiedDefaultValue = "false", specifiedDefaultValue = "true", help = HELP_PARALLEL)
+            final boolean parallel,
             @CliOption(key = "unitId", mandatory = false, optionContext = UnitCapabilityIdConverter.USE_UNIT_ID_COMPLETION, help = HELP_UNITID)
             String unitId
             ) {
-        executeCommand(new NamedCommand(Commands.UPGRADE_FINALIZE, executionContext), force, false, unitId);
+        executeCommand(new NamedCommand(Commands.UPGRADE_FINALIZE, executionContext), force, parallel, false, unitId);
     }
 
 }

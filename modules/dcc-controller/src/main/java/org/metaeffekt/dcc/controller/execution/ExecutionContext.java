@@ -242,7 +242,6 @@ public class ExecutionContext {
     }
 
     public Id<UnitId> mapUnitToHostUnit(ConfigurationUnit unit, Map<Id<UnitId>, Id<HostName>> agentsHostsMappings) {
-        
         final Id<UnitId> unitId = unit.getId();
 
         // first the upstream dependencies are analyzed
@@ -254,6 +253,11 @@ public class ExecutionContext {
             if (agentId.equals(unitId) || (dependencies != null && dependencies.contains(agentId))) {
                 mappedHostUnitIds.add(agentId);
             }
+        }
+
+        if (mappedHostUnitIds.contains(unitId)) {
+            // the unit is a host unit itself
+            return unitId;
         }
         
         if (mappedHostUnitIds.size() == 1) {

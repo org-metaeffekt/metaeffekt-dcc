@@ -47,17 +47,17 @@ public abstract class AbstractExecutionCommands implements CommandMarker {
         return executionContext.containsProfile() && executionContext.getProfile().getType() == Profile.Type.DEPLOYMENT;
     }
 
-    protected void executeCommand(final Command command, final boolean force, final boolean forceInitializeExecutors, final String unitId) {
-        executeCommand(command, force, forceInitializeExecutors, Id.createUnitId(unitId));
+    protected void executeCommand(final Command command, final boolean force, final boolean parallel, final boolean forceInitializeExecutors, final String unitId) {
+        executeCommand(command, force, parallel, forceInitializeExecutors, Id.createUnitId(unitId));
     }
 
-    protected void executeCommand(final Command command, final boolean force, final boolean forceInitializeExecutors, final Id<UnitId> unitId) {
+    protected void executeCommand(final Command command, final boolean force, final boolean parallel, final boolean forceInitializeExecutors, final Id<UnitId> unitId) {
         try {
             // ensure the executionContext is ready for command execution
             prepareForExecution(command, forceInitializeExecutors);
             
             // execute the command
-            command.execute(force || executionContext.isForce(), unitId);
+            command.execute(force || executionContext.isForce(), parallel, unitId);
             
             retrieveLogs(command, unitId);
         } catch (RuntimeException | IOException e) {
