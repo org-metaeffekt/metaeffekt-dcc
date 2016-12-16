@@ -34,8 +34,8 @@ public class HostInferenceTest {
     @Ignore
     @Test
     public void testHostInference() throws IOException {
-        final File baseFolder = new File("/Volumes/USB/ntip");
-        final File testProfileFile = new File(baseFolder, "profiles/nts-control-deployment-profile.xml");
+        final File baseFolder = new File("/Volumes/USB/xxx");
+        final File testProfileFile = new File(baseFolder, "profiles/xxx-deployment-profile.xml");
         Profile profile = ProfileParser.parse(testProfileFile);
         profile.setSolutionDir(baseFolder);
         PropertiesHolder propertiesHolder = profile.createPropertiesHolder(true);

@@ -48,7 +48,11 @@ public class DependencyGraphCalculatingBeanFactoryPostProcessor implements
 
         Profile profile = (Profile) beanFactory.getBean(
             DCCConfigurationBeanDefinitionParser.THE_ONE_TRUE_PROFILE_BEAN_NAME);
+
         profile.setUnitDependencies(unitDependencies);
+
+        // NOTE: here further static information can be precomputed and added
+        //  - eg: precomputed order list for command execution
 
     }
 

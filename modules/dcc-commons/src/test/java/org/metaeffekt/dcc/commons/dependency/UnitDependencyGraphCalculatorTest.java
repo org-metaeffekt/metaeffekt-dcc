@@ -62,7 +62,6 @@ public class UnitDependencyGraphCalculatorTest {
                         TestProfiles.CONFIGURATION_UNIT_03));
         allBindingFactories.add(toBindingFactoryBean(binding));
         calculator = new UnitDependencyGraphCalculator(allBindingFactories);
-
         calculator.calculate();
     }
     
@@ -87,7 +86,7 @@ public class UnitDependencyGraphCalculatorTest {
         
         assertEquals(3, downstreamMatrix.keySet().size());
         List<Id<UnitId>> downstreamOfUnit1 = downstreamMatrix.get(TestProfiles.CONFIGURATION_UNIT_01.getId());
-        assertTrue(downstreamOfUnit1.isEmpty());        
+        assertTrue(downstreamOfUnit1.isEmpty());
         List<Id<UnitId>> downstreamOfUnit2 = downstreamMatrix.get(TestProfiles.CONFIGURATION_UNIT_02.getId());
         assertTrue(downstreamOfUnit2.contains(TestProfiles.CONFIGURATION_UNIT_01.getId()));
         List<Id<UnitId>> downstreamOfUnit3 = downstreamMatrix.get(TestProfiles.CONFIGURATION_UNIT_03.getId());

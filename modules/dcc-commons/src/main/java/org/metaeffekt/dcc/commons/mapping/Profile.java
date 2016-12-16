@@ -61,7 +61,7 @@ public class Profile implements Documented {
 
     private File origin;
 
-    private UnitDependencies unitDependencies = UnitDependencies.NO_DEPENDENCIES;
+    private UnitDependencies unitDependencies = new UnitDependencies();
 
     private final List<Assert> asserts = new ArrayList<Assert>();
 
@@ -185,22 +185,6 @@ public class Profile implements Documented {
             matchingBindings.add(binding);
         }
         return matchingBindings;
-    }
-
-    @Deprecated
-    public List<ConfigurationUnit> findUnitWithProvidedCapababilityDefinition(String capabilityDefinitionId) {
-        return findUnitsWithProvidedCapabilityDefinition(capabilityDefinitionId);
-    }
-
-    public List<ConfigurationUnit> findUnitsDefinedCommand(Commands commandId) {
-        List<ConfigurationUnit> units = new ArrayList<>();
-        for (ConfigurationUnit unit : this.units.values()) {
-            if (!unit.isAbstract() && unit.getCommand(commandId) != null) {
-                units.add(unit);
-            }
-        }
-
-        return units;
     }
 
     public List<ConfigurationUnit> findUnitsWithProvidedCapabilityDefinition(String capabilityDefinitionId) {

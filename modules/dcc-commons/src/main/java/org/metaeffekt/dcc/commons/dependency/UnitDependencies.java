@@ -15,33 +15,27 @@
  */
 package org.metaeffekt.dcc.commons.dependency;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.metaeffekt.dcc.commons.domain.Id;
 import org.metaeffekt.dcc.commons.domain.Type.CapabilityId;
 import org.metaeffekt.dcc.commons.domain.Type.UnitId;
+import org.metaeffekt.dcc.commons.exception.CyclicBindingException;
 import org.metaeffekt.dcc.commons.mapping.ConfigurationUnit;
 
 public class UnitDependencies {
 
-    public static final UnitDependencies NO_DEPENDENCIES = new NoDependencies();
+    private Map<Id<UnitId>, List<Id<UnitId>>> upstreamMatrix;
+    private Map<Id<UnitId>, List<Id<UnitId>>> downstreamMatrix;
 
-    private final Map<Id<UnitId>, List<Id<UnitId>>> upstreamMatrix;
-    private final Map<Id<UnitId>, List<Id<UnitId>>> downstreamMatrix;
     private Map<String, List<Id<UnitId>>> upstreamCapabilityMatrix;
     private Map<String, List<Id<UnitId>>> downstreamCapabilityMatrix;
 
-    UnitDependencies(Map<Id<UnitId>, List<Id<UnitId>>> upstreamMatrix, Map<Id<UnitId>, List<Id<UnitId>>> downstreamMatrix,
-                     Map<String, List<Id<UnitId>>> upstreamCapabilityMatrix, Map<String, List<Id<UnitId>>> downstreamCapabilityMatrix) {
-        this.upstreamMatrix = upstreamMatrix;
-        this.downstreamMatrix = downstreamMatrix;
-        this.upstreamCapabilityMatrix = upstreamCapabilityMatrix;
-        this.downstreamCapabilityMatrix = downstreamCapabilityMatrix;
+    public UnitDependencies() {
+        this.upstreamMatrix = new HashMap<>();
+        this.downstreamMatrix = new HashMap<>();
+        this.upstreamCapabilityMatrix = new HashMap<>();
+        this.downstreamCapabilityMatrix = new HashMap<>();
     }
 
     public Map<Id<UnitId>, List<Id<UnitId>>> getUpstreamMatrix() {
@@ -68,17 +62,12 @@ public class UnitDependencies {
         List<Id<UnitId>> result = downstreamCapabilityMatrix.get(key);
         if (result == null) {
             return Collections.emptyList();
-        }
-        else {
+        } else {
             return Collections.unmodifiableList(result);
         }
     }
-
-    public void sortUpstream(List<ConfigurationUnit> units) {
-        sort(units, upstreamMatrix);
-    }
     
-    public void sortDownstream(List<ConfigurationUnit> units) {
+    public void sort(List<ConfigurationUnit> units) {
         final Map<Id<UnitId>, ConfigurationUnit> idUnitMap = new HashMap<>();
         final Map<Id<UnitId>, List<Id<UnitId>>> idListMap = new HashMap<>();
         final Map<Id<UnitId>, List<Id<UnitId>>> downstreamMatrix = getDownstreamMatrix();
@@ -90,7 +79,7 @@ public class UnitDependencies {
         for (ConfigurationUnit unit : units) {
             List<Id<UnitId>> list = idListMap.get(unit.getId());
             if (list == null) {
-                list = new ArrayList<>();
+                list = new LinkedList<>();
                 idListMap.put(unit.getId(), list);
             }
 
@@ -118,9 +107,81 @@ public class UnitDependencies {
         
         sort(units, downstreamMatrix);
     }
-    
-    public void sortIdsUpstream(List<Id<UnitId>> unitIds) {
-        sortIds(unitIds, upstreamMatrix);
+
+    /**
+     * Evaluates the given unitList for groups of {@link ConfigurationUnit}s that can be parallelized. The current
+     * implementation analyzes the upstream dependencies.
+     *
+     * @param unitList The list of units to analyze.
+     * @return A list of lists. The first level can be executed in any order. Within the second level the order must be
+     *   respected.
+     */
+    public List<List<ConfigurationUnit>> evaluateDependencyGroups(List<ConfigurationUnit> unitList) {
+        List<List<ConfigurationUnit>> groupList = new LinkedList<>();
+
+        HashSet<Id<UnitId>> consumed = new HashSet<>();
+
+        sort(unitList);
+
+        for (int i = 0; i < unitList.size(); i++) {
+            ConfigurationUnit unitA = unitList.get(i);
+
+            // check whether unitA was already processed
+            if (consumed.contains(unitA.getId())) {
+                continue;
+            }
+
+            // create a group for unitA and add it to the result data structure
+            List<ConfigurationUnit> unitGroup = new LinkedList<>();
+            unitGroup.add(unitA);
+            groupList.add(unitGroup);
+
+            List<Id<UnitId>> groupIdList = new LinkedList<>();
+            groupIdList.add(unitA.getId());
+
+            List<Id<UnitId>> excludedList = new LinkedList<>();
+
+            // evaluate unitList with respect to unitA
+            for (int j = i + 1; j < unitList.size(); j++) {
+                ConfigurationUnit unitB = unitList.get(j);
+
+                if (consumed.contains(unitB.getId())) {
+                    continue;
+                }
+
+                // check whether unit unitB is dependent on unit unitA
+                if (dependsOnAny(unitB.getId(), groupIdList)) {
+                    // keep; cannot be parallel to unitA
+                    excludedList.add(unitB.getId());
+                } else {
+                    if (dependsOnAny(unitB.getId(), excludedList)) {
+                        // skip
+                    } else {
+                        // unit unitB is independent of unitA and can be parallelized with unitA
+                        consumed.add(unitB.getId());
+                        unitGroup.add(unitB);
+                        groupIdList.add(unitB.getId());
+                    }
+                }
+            }
+        }
+        return groupList;
+    }
+
+    /**
+     * Evaluates whether unitId depends on any other unitId in unitIdList.
+     * @param unitId
+     * @param unitIdList
+     * @return Returns {@code true} in case unitId depends on any unitId in unitIdList.
+     */
+    private boolean dependsOnAny(Id<UnitId> unitId, List<Id<UnitId>> unitIdList) {
+        for (Id<UnitId> u: unitIdList) {
+            final List<Id<UnitId>> ids = upstreamMatrix.get(unitId);
+            if (ids != null && ids.contains(u)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public void sortIdsDownstream(List<Id<UnitId>> unitIds) {
@@ -129,7 +190,7 @@ public class UnitDependencies {
     
 
     private void sortIds(List<Id<UnitId>> units, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
-        
+
         Collections.sort(units, new Comparator<Id<UnitId>>() {
 
             @Override
@@ -182,4 +243,92 @@ public class UnitDependencies {
                 + ", downstreamCapabilityMatrix=" + downstreamCapabilityMatrix + "]";
     }
 
+    void addDependency(ConfigurationUnit sourceUnit, ConfigurationUnit targetUnitId) {
+        addDependency(sourceUnit.getId(), targetUnitId.getId());
+    }
+
+    void addDependency(Id<UnitId> sourceUnitId, Id<UnitId> targetUnitId) {
+        addDependency(targetUnitId, sourceUnitId, upstreamMatrix);
+        addDependency(sourceUnitId, targetUnitId, downstreamMatrix);
+    }
+
+    private void addDependency(Id<UnitId> unitB, Id<UnitId> unitA, Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
+        List<Id<UnitId>> upstreamList = matrix.get(unitB);
+        if (upstreamList == null) {
+            upstreamList = new LinkedList<>();
+            matrix.put(unitB, upstreamList);
+        }
+        upstreamList.add(unitA);
+
+        // create also empty list
+        upstreamList = matrix.get(unitA);
+        if (upstreamList == null) {
+            upstreamList = new LinkedList<>();
+            matrix.put(unitA, upstreamList);
+        }
+
+    }
+
+    void addBinding(Id<UnitId> sourceUnitId, Id<CapabilityId> sourceCapabilityId,
+                    Id<UnitId> targetUnitId, Id<CapabilityId> targetCapabilityId) {
+
+        addDependency(sourceUnitId, targetUnitId);
+
+        addToCapabilityMatrix(upstreamCapabilityMatrix, targetUnitId, targetCapabilityId, sourceUnitId);
+        addToCapabilityMatrix(downstreamCapabilityMatrix, sourceUnitId, sourceCapabilityId, targetUnitId);
+    }
+
+    private void addToCapabilityMatrix(Map<String, List<Id<UnitId>>> matrix, Id<UnitId> targetUnitId, Id<CapabilityId> targetCapabilityId, Id<UnitId> sourceUnitId) {
+        String targetKey = UnitDependencies.createKey(targetUnitId, targetCapabilityId);
+        if (!matrix.keySet().contains(targetKey)) {
+            List<Id<UnitId>> upstreamUnits = new LinkedList<>();
+            upstreamUnits.add(sourceUnitId);
+            matrix.put(targetKey, upstreamUnits);
+        } else {
+            List<Id<UnitId>> upstreamUnits = matrix.get(targetKey);
+            if (!upstreamUnits.contains(sourceUnitId)) {
+                upstreamUnits.add(sourceUnitId);
+            }
+        }
+    }
+
+    public void resolveTransitiveDependencies() {
+        resolveTransitiveDependencies(upstreamMatrix);
+        resolveTransitiveDependencies(downstreamMatrix);
+    }
+
+    private void resolveTransitiveDependencies(final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
+        for (Id<UnitId> unit : matrix.keySet()) {
+            for (Id<UnitId> other : matrix.keySet()) {
+                if (unit.equals(other)) {continue;}
+
+                List<Id<UnitId>> units = matrix.get(other);
+                if (units != null && units.contains(unit)) {
+                    List<Id<UnitId>> dependenciesToAdd = matrix.get(unit);
+                    for (Id<UnitId> dep : new LinkedList<>(dependenciesToAdd)) {
+                        if (!units.contains(dep)) {
+                            units.add(dep);
+                        }
+                    }
+                }
+            }
+        }
+        checkForCycle(matrix);
+    }
+
+    private void checkForCycle(Map<Id<UnitId>, List<Id<UnitId>>> graph) {
+        Set<String> cycles = new HashSet<>();
+        for (Id<UnitId> key : graph.keySet()) {
+            if (graph.get(key).contains(key)) {
+                LinkedList<Id<UnitId>> deps = new LinkedList<>(graph.get(key));
+                Collections.sort(deps);
+                cycles.add(deps.toString());
+            }
+        }
+
+        if (!cycles.isEmpty()) {
+            throw new CyclicBindingException(cycles);
+        }
+
+    }
 }

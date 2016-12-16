@@ -18,11 +18,9 @@ package org.metaeffekt.dcc.commons.dependency;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,25 +41,10 @@ public class UnitDependenciesTest {
     
     @Before
     public void prepare() {
-        Map<Id<UnitId>, List<Id<UnitId>>> upstreamMatrix = new HashMap<>();
-        List<Id<UnitId>> u1ups = new LinkedList<>();
-        u1ups.add(u2.getId());
-        List<Id<UnitId>> u2ups = new LinkedList<>();
-        u2ups.add(u3.getId());
-        List<Id<UnitId>> u3ups = new LinkedList<>();
-        upstreamMatrix.put(u1.getId(), u1ups );
-        upstreamMatrix.put(u2.getId(), u2ups );
-        upstreamMatrix.put(u3.getId(), u3ups );
-        
-        Map<Id<UnitId>, List<Id<UnitId>>> downstreamMatrix= new HashMap<>();
-        List<Id<UnitId>> u1ds = new LinkedList<>();
-        List<Id<UnitId>> u2ds = new LinkedList<>();
-        u2ds.add(u1.getId());
-        List<Id<UnitId>> u3ds = new LinkedList<>();
-        u3ds.add(u2.getId());
-        downstreamMatrix.put(u1.getId(), u1ds );
-        downstreamMatrix.put(u2.getId(), u2ds );
-        downstreamMatrix.put(u3.getId(), u3ds );
+        unitDependencies = new UnitDependencies();
+
+        unitDependencies.addBinding(u2.getId(), Id.createCapabilityId("c1"), u1.getId(), Id.createCapabilityId("c1"));
+        unitDependencies.addBinding(u3.getId(), Id.createCapabilityId("c3"), u2.getId(), Id.createCapabilityId("c3"));
 
         units = new LinkedList<ConfigurationUnit>();
         units.add(u2);
@@ -70,40 +53,81 @@ public class UnitDependenciesTest {
 
         Map<String, List<Id<UnitId>>> upstreamCapabilityMatrix = new HashMap<>();
         Map<String, List<Id<UnitId>>> downstreamCapabilityMatrix = new HashMap<>();
-
-        List<Id<UnitId>> capUnits = new LinkedList<>();
-        capUnits.add(u2.getId());
-        upstreamCapabilityMatrix.put("u1#c1", capUnits);
-
-        unitDependencies = new UnitDependencies(upstreamMatrix, downstreamMatrix, upstreamCapabilityMatrix, downstreamCapabilityMatrix);
     }
-    
 
     @Test
     public void testSorting() {
-
-        
         assertEquals(u2, units.get(0));
         assertEquals(u1, units.get(1));
         assertEquals(u3, units.get(2));
         
-        unitDependencies.sortUpstream(units);
-        
-        assertEquals(u1, units.get(0));
-        assertEquals(u2, units.get(1));
-        assertEquals(u3, units.get(2));
-        
-        unitDependencies.sortDownstream(units);
-        
+        unitDependencies.sort(units);
+
         assertEquals(u3, units.get(0));
         assertEquals(u2, units.get(1));
         assertEquals(u1, units.get(2));
-        
+    }
+
+    @Test
+    public void testEvaluateDependencyGroups() {
+        ConfigurationUnit unitA = new ConfigurationUnit(Id.createUnitId("A"));
+        ConfigurationUnit unitB = new ConfigurationUnit(Id.createUnitId("B"));
+        ConfigurationUnit unitC = new ConfigurationUnit(Id.createUnitId("C"));
+        ConfigurationUnit unitD = new ConfigurationUnit(Id.createUnitId("D"));
+        ConfigurationUnit unitE = new ConfigurationUnit(Id.createUnitId("E"));
+        ConfigurationUnit unitF = new ConfigurationUnit(Id.createUnitId("F"));
+        ConfigurationUnit unitG = new ConfigurationUnit(Id.createUnitId("G"));
+
+        UnitDependencies unitDependencies = new UnitDependencies();
+
+        unitDependencies.addDependency(unitA, unitB);
+        unitDependencies.addDependency(unitA, unitC);
+        unitDependencies.addDependency(unitC, unitD);
+        unitDependencies.addDependency(unitA, unitE);
+        unitDependencies.addDependency(unitE, unitF);
+
+        unitDependencies.resolveTransitiveDependencies();
+
+        List<ConfigurationUnit> allUnits = new LinkedList<>();
+        allUnits.add(unitB);
+        allUnits.add(unitC);
+        allUnits.add(unitE);
+        allUnits.add(unitF);
+        allUnits.add(unitG);
+        allUnits.add(unitA);
+        allUnits.add(unitD);
+
+        unitDependencies.sort(allUnits);
+
+        System.out.println("Sorted upstream:");
+        for (ConfigurationUnit unit : allUnits) {
+            System.out.print(unit.getId() + " ");
+        }
+        System.out.println();
+
+        final List<List<ConfigurationUnit>> unitGroups = unitDependencies.evaluateDependencyGroups(allUnits);
+        System.out.println("(Independent) dependency groups:");
+        for (List<ConfigurationUnit> groupList : unitGroups) {
+            unitDependencies.sort(groupList);
+            for (ConfigurationUnit unit : groupList) {
+                System.out.print(unit.getId() + " ");
+            }
+            System.out.println();
+        }
+
+        Assert.assertTrue(unitGroups.get(0).contains(unitA));
+        Assert.assertTrue(unitGroups.get(0).contains(unitG));
+
+        Assert.assertTrue(unitGroups.get(1).contains(unitB));
+        Assert.assertTrue(unitGroups.get(1).contains(unitC));
+        Assert.assertTrue(unitGroups.get(1).contains(unitE));
+
+        Assert.assertTrue(unitGroups.get(2).contains(unitD));
+        Assert.assertTrue(unitGroups.get(2).contains(unitF));
     }
 
     @Test
     public void getDirectUpstreamUnits() {
-
         List<Id<UnitId>> unitsDependendingOnU1C1 = unitDependencies.getDirectUpstreamUnits(u1.getId(), Id.createCapabilityId("c1"));
         assertNotNull(unitsDependendingOnU1C1);
         assertEquals(1, unitsDependendingOnU1C1.size());

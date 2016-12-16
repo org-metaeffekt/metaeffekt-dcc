@@ -60,39 +60,46 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     @Override
     protected void doExecute(final boolean force, final boolean parallel, final Id<UnitId> limitToUnitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
-        List<ConfigurationUnit> units = selectUnitsWithCommandOrdered(getCommandVerb());
-        boolean unitFound = false;
+        List<ConfigurationUnit> units = getExecutionContext().getProfile().getUnits(false);
+        boolean[] unitFound = new boolean[1];
+        unitFound[0] = false;
 
-        // parallel processing approach
-        // - collect units that are execute in a ordered list
-        // - analyze dependencies; independent units (to be defined) are broken is separate lists
-        // - process lists in parallel; within the lists in sequence
+        UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
+        final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
 
-        for (ConfigurationUnit unit : units) {
-            final Id<UnitId> unitId = unit.getId();
+        for (List<ConfigurationUnit> group : groupLists) {
+            if (parallel) {
+                group.parallelStream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
+            } else {
+                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
+            }
+        }
+
+        if (limitToUnitId != null && !unitFound[0]) {
+            throw new IllegalArgumentException(String.format(
+                "  Command [%s] not executable for unit [%s]. Either the unit does not exist or the command does not" +
+                " apply for the unit.", getCommandVerb(), limitToUnitId));
+        }
+    }
+
+    private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit) {
+        final Id<UnitId> unitId = unit.getId();
+        if (unit.getCommand(getCommandVerb()) != null) {
             if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
-                unitFound = true;
+                unitFound[0] = true;
                 prepareProperties(unit);
                 if (isExecutionRequired(force, unitId, getCommandVerb())) {
-                    LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(),
-                            unitId);
+                    LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(), unitId);
                     long timestamp = System.currentTimeMillis();
                     doExecuteCommand(unit);
-                    
+
                     updateStatus(unitId);
                     afterSuccessfulUnitExecution(unit, timestamp);
                 } else {
                     LOG.info("  Skipping command [{}] for unit [{}] as it already has been executed.",
-                        getCommandVerb(), unitId);
+                            getCommandVerb(), unitId);
                 }
             }
-        }
-
-        if (limitToUnitId != null && !unitFound) {
-            throw new IllegalArgumentException(String.format(
-                "  Command [%s] not executable for unit [%s]. " + 
-                "Either the unit does not exist or the command does not apply for the unit.",
-                getCommandVerb(), limitToUnitId));
         }
     }
 
@@ -138,17 +145,6 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         
         PropertyUtils.writeToFile(p, file, comment.toString());
         return file;
-    }
-
-    protected List<ConfigurationUnit> selectUnitsWithCommandOrdered(Commands commandId) {
-        List<ConfigurationUnit> unitsWithCommandDefinition =
-            getExecutionContext().getProfile().findUnitsDefinedCommand(commandId);
-
-        UnitDependencies unitDependencies =
-            getExecutionContext().getProfile().getUnitDependencies();
-        unitDependencies.sortDownstream(unitsWithCommandDefinition);
-        unitsWithCommandDefinition = processUnitsList(unitsWithCommandDefinition);
-        return unitsWithCommandDefinition;
     }
 
     protected void prepareProperties(ConfigurationUnit unit) {

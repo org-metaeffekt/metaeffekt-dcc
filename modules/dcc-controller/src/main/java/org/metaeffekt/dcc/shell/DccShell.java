@@ -105,7 +105,8 @@ public class DccShell {
         }
 
         final long duration = System.currentTimeMillis() - startTimestamp;
-        LOG.info("Terminating shell at {}. Execution time: {}.{} seconds.", new Date(), duration / 1000, duration % 1000);
+        LOG.info("Terminating shell at {} with exit code {}. Execution time: {}.{} seconds.",
+                new Date(), exitShellRequest.getExitCode(), duration / 1000, duration % 1000);
 
         System.exit(exitShellRequest.getExitCode());
     }

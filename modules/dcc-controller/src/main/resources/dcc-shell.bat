@@ -13,7 +13,8 @@ for %%a in ("lib\*.jar") do set DCC_CP=!DCC_CP!%%a;
 set DCC_CP=config;%DCC_CP%
 
 java -Xmx1024m -Dflash.message.disabled=false -Duser.language=en -Djline.nobell=true -Droo.console.ansi=true -cp "%DCC_CP%" org.metaeffekt.dcc.shell.DccShell %*
-set SHELL_EXIT_CODE = %ERRORLEVEL%
+set SHELL_EXIT_CODE=%ERRORLEVEL%
 
 :end
+# echo DCC exited with code %SHELL_EXIT_CODE%
 exit /B %SHELL_EXIT_CODE%
