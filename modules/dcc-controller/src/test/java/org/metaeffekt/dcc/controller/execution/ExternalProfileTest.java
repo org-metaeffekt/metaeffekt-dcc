@@ -24,18 +24,20 @@ import org.metaeffekt.dcc.commons.mapping.Profile;
 import org.metaeffekt.dcc.commons.mapping.PropertiesHolder;
 import org.metaeffekt.dcc.commons.spring.xml.ProfileParser;
 import org.metaeffekt.dcc.controller.commands.InitializeCommand;
+import org.metaeffekt.dcc.controller.commands.InitializeResourcesCommand;
+import org.metaeffekt.dcc.controller.commands.InstallCommand;
 import org.metaeffekt.dcc.controller.commands.VerifyCommand;
 
 import java.io.File;
 import java.io.IOException;
 
-public class HostInferenceTest {
+public class ExternalProfileTest {
 
     @Ignore
     @Test
     public void testHostInference() throws IOException {
-        final File baseFolder = new File("/Volumes/USB/xxx");
-        final File testProfileFile = new File(baseFolder, "profiles/xxx-deployment-profile.xml");
+        final File baseFolder = new File("/Volumes/USB/<solution-dir>");
+        final File testProfileFile = new File(baseFolder, "<profile-file>");
         Profile profile = ProfileParser.parse(testProfileFile);
         profile.setSolutionDir(baseFolder);
         PropertiesHolder propertiesHolder = profile.createPropertiesHolder(true);
@@ -44,12 +46,16 @@ public class HostInferenceTest {
 
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setProfile(profile);
-        executionContext.setTargetBaseDir(new File("target/test-solution/host-inference"));
+        executionContext.setTargetBaseDir(new File("/Volumes/USB/thales/ntip"));
         executionContext.setSolutionDir(profile.getSolutionDir());
 
-        new InitializeCommand(executionContext).execute(true, true);
+        boolean parallel = true;
 
-        new VerifyCommand(executionContext).execute(true, false);
+        new InitializeResourcesCommand(executionContext).execute(true);
+        new InitializeCommand(executionContext).execute(true, parallel);
+
+        new VerifyCommand(executionContext).execute(true, parallel);
+        new InstallCommand(executionContext).execute(true, parallel);
     }
 
 }

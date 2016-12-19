@@ -109,22 +109,24 @@ public class UnitDependencies {
     }
 
     /**
-     * Evaluates the given unitList for groups of {@link ConfigurationUnit}s that can be parallelized. The current
-     * implementation analyzes the upstream dependencies.
+     * Evaluates the given unitList for groups of {@link ConfigurationUnit}s that can be executed concurrently. The
+     * current implementation analyzes the upstream dependencies. The result needs to be executed in the given order
+     * on first level. The units in the second level are independent and can be ordered arbitrarily in terms of
+     * execution.
      *
      * @param unitList The list of units to analyze.
-     * @return A list of lists. The first level can be executed in any order. Within the second level the order must be
-     *   respected.
+     * @return A list of lists. The first level must be executed in the given order. Within the second level the units
+     *   are independent and can be executed in any order. In particular, these can be executed concurrently.
      */
-    public List<List<ConfigurationUnit>> evaluateDependencyGroups(List<ConfigurationUnit> unitList) {
-        List<List<ConfigurationUnit>> groupList = new LinkedList<>();
+    public List<List<ConfigurationUnit>> evaluateDependencyGroups(final List<ConfigurationUnit> unitList) {
+        final List<List<ConfigurationUnit>> groupList = new LinkedList<>();
+        final HashSet<Id<UnitId>> consumed = new HashSet<>();
 
-        HashSet<Id<UnitId>> consumed = new HashSet<>();
-
+        // the algorithm requires that the units are sorted (downstream)
         sort(unitList);
 
         for (int i = 0; i < unitList.size(); i++) {
-            ConfigurationUnit unitA = unitList.get(i);
+            final ConfigurationUnit unitA = unitList.get(i);
 
             // check whether unitA was already processed
             if (consumed.contains(unitA.getId())) {
@@ -132,18 +134,18 @@ public class UnitDependencies {
             }
 
             // create a group for unitA and add it to the result data structure
-            List<ConfigurationUnit> unitGroup = new LinkedList<>();
+            final List<ConfigurationUnit> unitGroup = new LinkedList<>();
             unitGroup.add(unitA);
             groupList.add(unitGroup);
 
-            List<Id<UnitId>> groupIdList = new LinkedList<>();
+            final List<Id<UnitId>> groupIdList = new LinkedList<>();
             groupIdList.add(unitA.getId());
 
-            List<Id<UnitId>> excludedList = new LinkedList<>();
+            final List<Id<UnitId>> excludedList = new LinkedList<>();
 
-            // evaluate unitList with respect to unitA
+            // evaluate unitList with respect to unitA; collect those, which are independent of A
             for (int j = i + 1; j < unitList.size(); j++) {
-                ConfigurationUnit unitB = unitList.get(j);
+                final ConfigurationUnit unitB = unitList.get(j);
 
                 if (consumed.contains(unitB.getId())) {
                     continue;
@@ -170,12 +172,13 @@ public class UnitDependencies {
 
     /**
      * Evaluates whether unitId depends on any other unitId in unitIdList.
+     *
      * @param unitId
      * @param unitIdList
      * @return Returns {@code true} in case unitId depends on any unitId in unitIdList.
      */
-    private boolean dependsOnAny(Id<UnitId> unitId, List<Id<UnitId>> unitIdList) {
-        for (Id<UnitId> u: unitIdList) {
+    private boolean dependsOnAny(final Id<UnitId> unitId, final List<Id<UnitId>> unitIdList) {
+        for (final Id<UnitId> u: unitIdList) {
             final List<Id<UnitId>> ids = upstreamMatrix.get(unitId);
             if (ids != null && ids.contains(u)) {
                 return true;
@@ -184,11 +187,6 @@ public class UnitDependencies {
         return false;
     }
     
-    public void sortIdsDownstream(List<Id<UnitId>> unitIds) {
-        sortIds(unitIds, downstreamMatrix);
-    }
-    
-
     private void sortIds(List<Id<UnitId>> units, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
 
         Collections.sort(units, new Comparator<Id<UnitId>>() {
@@ -325,10 +323,9 @@ public class UnitDependencies {
                 cycles.add(deps.toString());
             }
         }
-
         if (!cycles.isEmpty()) {
             throw new CyclicBindingException(cycles);
         }
-
     }
+
 }

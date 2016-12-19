@@ -32,8 +32,8 @@ public class NamedReverseCommand extends NamedCommand  {
     }
 
     @Override
-    protected List<ConfigurationUnit> processUnitsList(List<ConfigurationUnit> commandInstallUnits) {
-        return Lists.reverse(commandInstallUnits);
+    protected boolean isReversive() {
+        return true;
     }
 
 }

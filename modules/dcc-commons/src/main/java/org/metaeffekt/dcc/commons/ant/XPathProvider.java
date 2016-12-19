@@ -31,12 +31,12 @@ import java.util.Map;
  */
 public class XPathProvider {
 
-    private static final DocumentBuilderFactory factory;
-    private static final DocumentBuilder builder;
-    private static final XPathFactory xPathfactory;
-    private static final XPath xpath;
+    private final DocumentBuilderFactory factory;
+    private final DocumentBuilder builder;
+    private final XPathFactory xPathfactory;
+    private final XPath xpath;
 
-    static {
+    public XPathProvider() {
         try {
             factory = DocumentBuilderFactory.newInstance();
             builder = factory.newDocumentBuilder();

@@ -17,10 +17,7 @@ package org.metaeffekt.dcc.controller.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -61,12 +58,22 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     protected void doExecute(final boolean force, final boolean parallel, final Id<UnitId> limitToUnitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
         List<ConfigurationUnit> units = getExecutionContext().getProfile().getUnits(false);
+
         boolean[] unitFound = new boolean[1];
         unitFound[0] = false;
 
         UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
         final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
 
+        // some commands require to execute the command in reverse order (eg. stop command)
+        if (isReversive()) {
+            Collections.reverse(groupLists);
+        }
+
+        // FIXME: proposal for improvements:
+        // - filter the units for those that need to be processed; then operate on filtered list
+        // - handle state update separately (sequential, not concurrent); remove synchronized on updateStatus
+        // - currently we rely on parallel stream regarding concurrent execution. Is this adequate?
         for (List<ConfigurationUnit> group : groupLists) {
             if (parallel) {
                 group.parallelStream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
@@ -111,7 +118,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         getExecutor(unit).execute(getCommandVerb(), unit);
     }
 
-    protected void afterSuccessfulUnitExecution(ConfigurationUnit unit, long startTimestamp) {
+    protected synchronized void afterSuccessfulUnitExecution(ConfigurationUnit unit, long startTimestamp) {
         super.afterSuccessfulExecution("  ", String.format("[%s] for unit [%s]", getCommandVerb(), unit.getId()), startTimestamp);
     }
 
@@ -123,8 +130,8 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    protected List<ConfigurationUnit> processUnitsList(List<ConfigurationUnit> commandInstallUnits) {
-        return commandInstallUnits;
+    protected boolean isReversive() {
+        return false;
     }
 
     protected File exportPropertiesFile(Properties p, ConfigurationUnit unit, CommandDefinition command, String classifier)
@@ -304,7 +311,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    protected void updateStatus(final Id<UnitId> unitId) {
+    protected synchronized void updateStatus(final Id<UnitId> unitId) {
         if (!isLocal()) {
             final Executor executorForUnit = getExecutionContext().getExecutorForUnitIfExists(unitId);
             if (executorForUnit != null) {

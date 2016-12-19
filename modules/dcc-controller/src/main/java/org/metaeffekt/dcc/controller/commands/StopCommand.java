@@ -15,6 +15,7 @@
  */
 package org.metaeffekt.dcc.controller.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -37,8 +38,8 @@ public class StopCommand extends AbstractUnitBasedCommand {
     }
 
     @Override
-    protected List<ConfigurationUnit> processUnitsList(List<ConfigurationUnit> commandInstallUnits) {
-        return Lists.reverse(commandInstallUnits);
+    protected boolean isReversive() {
+        return true;
     }
     
     @Override

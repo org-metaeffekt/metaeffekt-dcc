@@ -36,12 +36,12 @@ public class UninstallCommand extends AbstractUnitBasedCommand {
     public Commands getCommandVerb() {
         return Commands.UNINSTALL;
     }
-    
+
     @Override
-    protected List<ConfigurationUnit> processUnitsList(List<ConfigurationUnit> commandInstallUnits) {
-        return Lists.reverse(commandInstallUnits);
+    protected boolean isReversive() {
+        return true;
     }
-    
+
     @Override
     public boolean allowsToBeSkipped() {
         return false;
