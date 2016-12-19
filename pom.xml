@@ -5,7 +5,7 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-application</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4.0</version>
     <packaging>pom</packaging>
 
     <name>metaeffekt-dcc</name>
@@ -52,7 +52,7 @@
         <artifact.inventory.enabled>true</artifact.inventory.enabled>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <ae.core.version>0.1.0</ae.core.version>
-        <dcc.version>0.4-SNAPSHOT</dcc.version>
+        <dcc.version>0.4.0</dcc.version>
     </properties>
 
     <modules>
