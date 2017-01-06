@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>test-deployment-profile</id>
+
+    <type>
+        <deployment>
+            <properties location="test-deployment.properties"/>
+        </deployment>
+    </type>
+
+    <capability-definition id="test">
+        <attribute-key key="key" default="default-value" />
+    </capability-definition>
+
+    <import resource="test-aspect-profile.xml" var="001" />
+    <import resource="test-aspect-profile.xml" var="002" />
+    <import resource="test-aspect-profile.xml" var="003" />
+
+    <unit id="main">
+        <required-capability id="test" multipleBindingsAllowed="true" />
+    </unit>
+
+</profile>

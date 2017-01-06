@@ -16,6 +16,7 @@
 package org.metaeffekt.dcc.controller.execution;
 
 
+import org.apache.tools.ant.taskdefs.Delete;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,8 +37,8 @@ public class ExternalProfileTest {
     @Ignore
     @Test
     public void testHostInference() throws IOException {
-        final File baseFolder = new File("/Volumes/USB/<solution-dir>");
-        final File testProfileFile = new File(baseFolder, "<profile-file>");
+        final File baseFolder = new File("/Volumes/USB/thales/ntip-distribution-5.3.0-SNAPSHOT/ntip");
+        final File testProfileFile = new File(baseFolder, "profiles/nts-control-deployment-profile.xml");
         Profile profile = ProfileParser.parse(testProfileFile);
         profile.setSolutionDir(baseFolder);
         PropertiesHolder propertiesHolder = profile.createPropertiesHolder(true);
@@ -46,16 +47,30 @@ public class ExternalProfileTest {
 
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setProfile(profile);
-        executionContext.setTargetBaseDir(new File("/Volumes/USB/thales/ntip"));
+        executionContext.setTargetBaseDir(new File("/Users/kklein/workspace/temp"));
         executionContext.setSolutionDir(profile.getSolutionDir());
 
         boolean parallel = true;
 
+        deleteDir(new File(baseFolder, "work"));
+        deleteDir(executionContext.getTargetBaseDir());
+
+        System.setProperty("dcc.remote.simulation", "true");
+
         new InitializeResourcesCommand(executionContext).execute(true);
-        new InitializeCommand(executionContext).execute(true, parallel);
+        new InitializeCommand(executionContext).execute(true);
 
         new VerifyCommand(executionContext).execute(true, parallel);
         new InstallCommand(executionContext).execute(true, parallel);
+
+        deleteDir(new File(baseFolder, "work"));
+        deleteDir(executionContext.getTargetBaseDir());
+    }
+
+    private void deleteDir(File work) {
+        Delete delete = new Delete();
+        delete.setDir(work);
+        delete.execute();
     }
 
 }

@@ -934,15 +934,16 @@
             <property name="dcc.install.tmp.dir" value="${dcc.install.dir}/tmp" />
             <property name="dcc.status.dir" value="${dcc.install.tmp.dir}/status" />
 
-            <!-- establish common basic folder structure (no unit specific folders yet) -->
+            <!-- establish minimal folder structure (no unit specific folders yet) -->
             <core:ensurePathExists path="${dcc.target.dir}" />
-            <core:ensurePathExists path="${dcc.app.dir}" />
-            <core:ensurePathExists path="${dcc.data.dir}" />
             <core:ensurePathExists path="${dcc.config.dir}" />
 
-            <!-- Revise usage of this folder: for the time being we do not create it
-            <core:ensurePathExists path="${dcc.install.dir}" />
+            <!-- Note that app and data dir are initially not created. Depending on the script these structure may
+                mot be used anyways. It is left to the responsibility of the package to create these folders.
+                Further the log directory is also not created here. This is again the responsibility of the package
+                scripts.
             -->
+
         </sequential>
     </macrodef>
 

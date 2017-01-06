@@ -20,6 +20,7 @@
         <attribute-key key="key3" default="default3" />
         <attribute-key key="key4" />
         <attribute-key key="key5" />
+        <attribute-key key="key6" default=""/>
     </capability-definition>
     
     <unit id="unit-with-capability">

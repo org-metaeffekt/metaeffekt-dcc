@@ -48,41 +48,43 @@ public class LocalExecutor extends BaseExecutor implements Executor {
     public LocalExecutor(ExecutionContext executionContext, boolean mixedMode) {
         super(executionContext);
 
-        if (!mixedMode) {
-            // we support that the local destination dir can be specified in the deployment properties
-            String localDestincationDir = null;
-            final Properties deploymentProperties = getExecutionContext().getDeploymentProperties();
-            if (deploymentProperties != null) {
-                localDestincationDir = deploymentProperties.getProperty(LOCAL_DEPLOYMENT_TARGET_DIR);
-            }
-            // In case the value is not set in the deployment properties, look in the environment for developer convenience
-            if (localDestincationDir == null) {
-                localDestincationDir = System.getenv(ENV_LOCAL_DEPLOYMENT_TARGET_DIR);
-            }
+        // FIXME: we need to move this code into the executor itself
+        if (getExecutionContext().getTargetBaseDir() == null) {
+            if (!mixedMode) {
+                // we support that the local destination dir can be specified in the deployment properties
+                String localDestinationDir = null;
+                final Properties deploymentProperties = getExecutionContext().getDeploymentProperties();
+                if (deploymentProperties != null) {
+                    localDestinationDir = deploymentProperties.getProperty(LOCAL_DEPLOYMENT_TARGET_DIR);
+                }
+                // In case the value is not set in the deployment properties, look in the environment for developer convenience
+                if (localDestinationDir == null) {
+                    localDestinationDir = System.getenv(ENV_LOCAL_DEPLOYMENT_TARGET_DIR);
+                }
 
-            if (localDestincationDir == null) {
-                LOG.debug("Cannot determine the target location of the deployment. Developers can provide a default value "+
-                          "by providing the environment variable [" + ENV_LOCAL_DEPLOYMENT_TARGET_DIR + "]. Bear in mind, "+
-                          "it will be overwritten by the setting in the deployment properties.");
-                // in case deployment properties are specified and the above property is not
-                // set an exception is raised
-                IllegalStateException e = new IllegalStateException(
-                        "Cannot determine the target location of the deployment. Make sure to "
-                                + "specify the property [" + LOCAL_DEPLOYMENT_TARGET_DIR + "] in the "
-                                + "deployment properties to enable local deployments.");
-                e.printStackTrace();
-                throw e;
-            } 
-            getExecutionContext().setTargetBaseDir(new File(localDestincationDir));
-        } else {
-            // mixed mode means that all target host are contacted using the agent (remote). Local commands 
-            // nevertheless use the LocalExecutor.
-            
-            // in order to provide all required paths for temporary folders and status tracking the following
-            // setting is used
-            final File workDir = new File(executionContext.getSolutionDir(), DccConstants.WORK_SUB_DIRECTORY);
-            final File workTargetDir = new File(workDir, "local");
-            getExecutionContext().setTargetBaseDir(workTargetDir);
+                if (localDestinationDir == null) {
+                    LOG.debug("Cannot determine the target location of the deployment. Developers can provide a default value " +
+                            "by providing the environment variable [" + ENV_LOCAL_DEPLOYMENT_TARGET_DIR + "]. Bear in mind, " +
+                            "it will be overwritten by the setting in the deployment properties.");
+                    // in case deployment properties are specified and the above property is not
+                    // set an exception is raised
+                    IllegalStateException e = new IllegalStateException(
+                            "Cannot determine the target location of the deployment. Make sure to "
+                                    + "specify the property [" + LOCAL_DEPLOYMENT_TARGET_DIR + "] in the "
+                                    + "deployment properties to enable local deployments.");
+                    throw e;
+                }
+                getExecutionContext().setTargetBaseDir(new File(localDestinationDir));
+            } else {
+                // mixed mode means that all target host are contacted using the agent (remote). Local commands
+                // nevertheless use the LocalExecutor.
+
+                // in order to provide all required paths for temporary folders and status tracking the following
+                // setting is used
+                final File workDir = new File(executionContext.getSolutionDir(), DccConstants.WORK_SUB_DIRECTORY);
+                final File workTargetDir = new File(workDir, "local");
+                getExecutionContext().setTargetBaseDir(workTargetDir);
+            }
         }
     }
 

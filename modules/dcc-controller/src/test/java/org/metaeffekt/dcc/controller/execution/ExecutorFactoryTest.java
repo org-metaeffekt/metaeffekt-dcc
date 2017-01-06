@@ -62,6 +62,7 @@ public class ExecutorFactoryTest {
 
     @Test(expected = IllegalStateException.class)
     public void executorForLocalhostNoLocalDestination() {
+        executionContext.setTargetBaseDir(null);
         executionContext.getPropertiesHolder().setProperty(TestProfiles.PROVIDED_HOST_CAPABILITY, "name", "localhost");
         executionContext.getDeploymentProperties().remove(LocalExecutor.LOCAL_DEPLOYMENT_TARGET_DIR); // IllegalState
 
@@ -71,6 +72,7 @@ public class ExecutorFactoryTest {
 
     @Test(expected = IllegalStateException.class)
     public void executorFor127001NoLocalDestination() {
+        executionContext.setTargetBaseDir(null);
         executionContext.getPropertiesHolder().setProperty(TestProfiles.PROVIDED_HOST_CAPABILITY, "name", "127.0.0.1");
         executionContext.getDeploymentProperties().remove(LocalExecutor.LOCAL_DEPLOYMENT_TARGET_DIR); // IllegalState
 

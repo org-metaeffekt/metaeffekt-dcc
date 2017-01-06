@@ -45,8 +45,11 @@ import org.metaeffekt.dcc.commons.properties.SortedProperties;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
 
 /**
+ * Base implementation of the {@link AbstractCommand} class for unit-based executions.
+ *
  * @author Alexander D.
  * @author Jochen K.
+ * @author Karsten Klein
  */
 abstract class AbstractUnitBasedCommand extends AbstractCommand {
 
@@ -70,7 +73,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
             Collections.reverse(groupLists);
         }
 
-        // FIXME: proposal for improvements:
+        // NOTE: proposal for improvements:
         // - filter the units for those that need to be processed; then operate on filtered list
         // - handle state update separately (sequential, not concurrent); remove synchronized on updateStatus
         // - currently we rely on parallel stream regarding concurrent execution. Is this adequate?
@@ -99,26 +102,22 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
                     LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(), unitId);
                     long timestamp = System.currentTimeMillis();
                     doExecuteCommand(unit);
-
                     updateStatus(unitId);
                     afterSuccessfulUnitExecution(unit, timestamp);
                 } else {
                     LOG.info("  Skipping command [{}] for unit [{}] as it already has been executed.",
                             getCommandVerb(), unitId);
+                    updateStatus(unitId);
                 }
             }
         }
-    }
-
-    protected Executor getExecutor(Id<UnitId> unitId) {
-        return getExecutionContext().getExecutorForUnit(unitId);
     }
 
     protected void doExecuteCommand(ConfigurationUnit unit) {
         getExecutor(unit).execute(getCommandVerb(), unit);
     }
 
-    protected synchronized void afterSuccessfulUnitExecution(ConfigurationUnit unit, long startTimestamp) {
+    protected void afterSuccessfulUnitExecution(ConfigurationUnit unit, long startTimestamp) {
         super.afterSuccessfulExecution("  ", String.format("[%s] for unit [%s]", getCommandVerb(), unit.getId()), startTimestamp);
     }
 
@@ -287,7 +286,6 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         if (StringUtils.isBlank(prefix)) {
             return key;
         }
-
         return prefix.trim() + "." + key;
     }
 
@@ -295,11 +293,9 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         if (force) {
             return true;
         } 
-
         if (!allowsToBeSkipped()) {
             return true;
         }
-
         if (!isLocal()) {
             Id<HostName> hostForUnit = getExecutionContext().getHostForUnit(unitId);
             updateStatus(unitId);
@@ -311,11 +307,13 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    protected synchronized void updateStatus(final Id<UnitId> unitId) {
+    protected void updateStatus(final Id<UnitId> unitId) {
         if (!isLocal()) {
             final Executor executorForUnit = getExecutionContext().getExecutorForUnitIfExists(unitId);
             if (executorForUnit != null) {
-                executorForUnit.retrieveUpdatedState();
+                synchronized (executorForUnit) {
+                    executorForUnit.retrieveUpdatedState();
+                }
             }
         }
     }

@@ -47,9 +47,9 @@ import org.metaeffekt.dcc.commons.mapping.PropertiesHolder;
 import org.metaeffekt.dcc.commons.mapping.RequiredCapability;
 import org.metaeffekt.dcc.controller.DccControllerConstants;
 
-//FIXME move to dcc-commons (resolve compile time dependency to ExecutorFactory)
-// FIXME-KKL this class is rather a command execution context. The unitsExecutors themselves should be
-//  able to cope with the ScriptExecutionContext. Split.
+// FIXME move to dcc-commons (resolve compile time dependency to ExecutorFactory)
+// FIXME-KKL this class is rather a command execution context.
+//  The unitsExecutors themselves should be able to cope with the ScriptExecutionContext. Split.
 /**
  * @author Douglas B.
  */
@@ -220,8 +220,7 @@ public class ExecutionContext {
             unitsHosts = new HashMap<>();
             unitToUnitHosts = new HashMap<>();
             
-            List<ConfigurationUnit> agents = 
-                profile.findUnitsWithProvidedCapabilityDefinition("agent.endpoint");
+            List<ConfigurationUnit> agents = profile.findUnitsWithProvidedCapabilityDefinition("agent.endpoint");
             if (agents != null) {
                 Map<Id<UnitId>, Id<HostName>> agentsHostsMappings = createExecutorsForHosts(agents);
                 mapAllUnitsToHosts(agentsHostsMappings);

@@ -98,7 +98,12 @@ public class UnitDependencies {
         
         // reorder the units based on the ordered lists
         for (List<Id<UnitId>> ids : idListMap.values()) {
-            sortIds(ids, downstreamMatrix);
+            try {
+                sortIds(ids, downstreamMatrix);
+            } catch (Exception e) {
+                // ignore contract violations; needs further investigation
+                e.printStackTrace();
+            }
             for (Id<UnitId> id : ids) {
                 units.remove(idUnitMap.get(id));
                 units.add(idUnitMap.get(id));

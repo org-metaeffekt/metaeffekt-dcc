@@ -39,8 +39,7 @@ import org.metaeffekt.dcc.commons.mapping.ConfigurationUnit;
 import org.metaeffekt.dcc.commons.mapping.Profile;
 import org.metaeffekt.dcc.commons.properties.SortedProperties;
 
-public class ProfileFactoryBean extends AbstractFactoryBean<Profile> implements
-        ApplicationContextAware {
+public class ProfileFactoryBean extends AbstractFactoryBean<Profile> implements ApplicationContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileFactoryBean.class);
 
@@ -146,5 +145,7 @@ public class ProfileFactoryBean extends AbstractFactoryBean<Profile> implements
     public void setSolutionDir(File solutionDir) {
         this.solutionDir = solutionDir;
     }
-    
+
+
+
 }

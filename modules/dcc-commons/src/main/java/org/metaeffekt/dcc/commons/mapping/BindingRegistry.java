@@ -31,9 +31,6 @@ import org.metaeffekt.dcc.commons.domain.Type.CapabilityId;
 import org.metaeffekt.dcc.commons.domain.Type.UnitId;
 import org.metaeffekt.dcc.commons.spring.xml.BindingFactoryBean;
 
-/**
- * Proudly crafted by i001450 on 12.08.14.
- */
 public class BindingRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindingRegistry.class);
@@ -49,27 +46,17 @@ public class BindingRegistry {
     }
 
     public void register(String providedCapabilityId, String requiredCapabilityId) {
-
-        synchronized (this) {
-            doRegister(prov2Req, providedCapabilityId, requiredCapabilityId);
-            doRegister(req2Prov, requiredCapabilityId, providedCapabilityId);
-        }
+        doRegister(prov2Req, providedCapabilityId, requiredCapabilityId);
+        doRegister(req2Prov, requiredCapabilityId, providedCapabilityId);
     }
 
     public boolean hasRequiredCapabilityBindings(String reqCapUniqueId) {
-
-        Set<String> boundProvidedCapabilities;
-        synchronized (this) {
-            boundProvidedCapabilities = req2Prov.get(reqCapUniqueId);
-        }
+        Set<String> boundProvidedCapabilities = req2Prov.get(reqCapUniqueId);
         return boundProvidedCapabilities != null && !boundProvidedCapabilities.isEmpty();
     }
 
     public Set<String> providedCapabilitiesBoundTo(String reqCapUniqueId) {
-        Set<String> provCabs = null;
-        synchronized (this) {
-            provCabs = req2Prov.get(reqCapUniqueId);
-        }
+        Set<String> provCabs = req2Prov.get(reqCapUniqueId);
         if (provCabs != null) {
             return Collections.unmodifiableSet(provCabs);
         } else {

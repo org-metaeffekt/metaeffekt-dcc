@@ -26,8 +26,11 @@ import org.metaeffekt.dcc.commons.execution.Executor;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
 
 /**
+ * Base implementation of the {@link AbstractCommand} class for host-based executions.
+ *
  * @author Alexander D.
  * @author Jochen K.
+ * @author Karsten Klein
  */
 public abstract class AbstractHostBasedCommand extends AbstractCommand {
 
@@ -60,9 +63,15 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
 
     private void doExecuteForHost(Id<HostName> host, boolean force) {
         if (isExecutionRequired(force, host, getCommandVerb())) {
+            long timestamp = System.currentTimeMillis();
             doExecuteCommand(getExecutionContext().getExecutorForHost(host));
+            updateStatus(host);
+            afterSuccessfulUnitExecution(timestamp);
+        } else {
+            LOG.info("Skipping command [{}] for host [{}] as it already has been executed.",
+                    getCommandVerb(), host);
+            updateStatus(host);
         }
-        updateStatus(host);
     }
 
     protected abstract void doExecuteCommand(Executor executor);
@@ -78,7 +87,10 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
     }
 
     private void updateStatus(Id<HostName> host) {
-        getExecutionContext().getExecutorForHost(host).retrieveUpdatedState();
+        final Executor executorForHost = getExecutionContext().getExecutorForHost(host);
+        synchronized (executorForHost) {
+            executorForHost.retrieveUpdatedState();
+        }
     }
     
     protected void afterSuccessfulUnitExecution(long startTimestamp) {

@@ -148,8 +148,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     protected AbstractBeanDefinition parseInternal(Element profileElement, ParserContext parserContext) {
         
         BeanDefinitionRegistry registry = parserContext.getRegistry();
-        
-        registerProcessedImportsResettingBeanFactoryPostProcessor(registry);
+
         registerAutoBindBeanFactoryPostProcessorIfRequired(profileElement, registry);
         registerDependencyGraphCalculatingBeanFactoryPostProcessor(registry);
         registerProfileValidationBeanFactoryPostProcessor(registry);
@@ -157,7 +156,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
 
         String profileElementId = extractProfileId(profileElement);
         String deploymentId = extractDeploymentId(profileElement, parserContext);
-        String profileElementDescription = extractDescription(profileElement);
+        String profileElementDescription = extractDescription(profileElement, registry);
         String solutionPropertiesPath = extractSolutionPropertiesPath(profileElement, parserContext);
         String deploymentPropertiesPath = extractDeploymentPropertiesPath(profileElement, parserContext);
         File origin = determineOrigin(profileElementId, parserContext);
@@ -218,7 +217,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     }
 
     private void parseAndRegisterGlobalAsserts(Element profileElement, BeanDefinitionRegistry registry) {
-        final ManagedList<AbstractBeanDefinition> asserts = parseAsserts(profileElement);
+        final ManagedList<AbstractBeanDefinition> asserts = parseAsserts(profileElement, registry);
         for (AbstractBeanDefinition def : asserts) {
             //TODO generate unique name
             registry.registerBeanDefinition(UUID.randomUUID().toString(), def);
@@ -292,19 +291,13 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
 
     private String extractAttributeFromOptionalElement(Element parentElement, ParserContext parserContext, String elementName, String attributeName) {
         Element childElement = DomUtils.getChildElementByTagName(parentElement, elementName);
-        return childElement != null ? childElement.getAttribute(attributeName) : StringUtils.EMPTY;
+        return childElement != null ? parseString(childElement, attributeName, null, parserContext.getRegistry()) : StringUtils.EMPTY;
     }
 
-    private String extractDescription(Element element) {
+    private String extractDescription(Element element, BeanDefinitionRegistry registry) {
         String description = DomUtils.getChildElementValueByTagName(element, ELEMENT_DESCRIPTION);
-        return description!=null?description:"";
-    }
-
-    private void registerProcessedImportsResettingBeanFactoryPostProcessor(BeanDefinitionRegistry registry) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                .genericBeanDefinition(ProcessedImportsResettingBeanFactoryPostProcessor.class);
-        registry.registerBeanDefinition("processedImportsResettingBeanFactoryPostProcessor",
-                builder.getBeanDefinition());
+        description = description != null ? description : "";
+        return replaceVariables(registry, description);
     }
 
     private void registerDependencyGraphCalculatingBeanFactoryPostProcessor(BeanDefinitionRegistry registry) {
@@ -394,14 +387,14 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     private void parseAndRegisterSingleCapabilityDefinition(
             Element capabilityDefElement, File origin, ParserContext parserContext, BeanDefinitionRegistry registry) {
 
-        String capabilityDefId = extractMandatoryIdAttributeFromElement(capabilityDefElement, "CapabilityDefinition");
+        String capabilityDefId = extractMandatoryIdAttributeFromElement(capabilityDefElement, "CapabilityDefinition", registry);
 
-        String description = extractDescription(capabilityDefElement);
+        String description = extractDescription(capabilityDefElement, registry);
 
         String abstractString = capabilityDefElement.getAttribute(PROPERTY_UNIT_ABSTRACT);
         boolean _abstract = StringUtils.equals("true", abstractString)?true:false;
 
-        List<CapabilityDefinitionReference> ancestors = parseInheritDefinitionElements(capabilityDefElement);
+        List<CapabilityDefinitionReference> ancestors = parseInheritDefinitionElements(capabilityDefElement, registry);
         ManagedList<AttributeKey> attributeKeysList = parseAttributeKeyElements(capabilityDefElement, parserContext);
 
         BeanDefinitionBuilder capabilityBeanDefBuilder = BeanDefinitionBuilder.rootBeanDefinition(CapabilityDefinition.class);
@@ -415,22 +408,33 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         registry.registerBeanDefinition(createCapabilityDefBeanName(capabilityDefId), capabilityBeanDefBuilder.getBeanDefinition());
     }
 
-    private String extractMandatoryIdAttributeFromElement(Element element, String elementName) {
+    private String extractMandatoryIdAttributeFromElement(Element element, String elementName, BeanDefinitionRegistry registry) {
         String idAttribute = element.getAttribute(ID_ATTRIBUTE);
         if (StringUtils.isBlank(idAttribute)) {
             throw new BeanCreationException(String.format("%s is defined with a blank ID.", elementName));
         }
-        return idAttribute;
+        return replaceVariables(registry, idAttribute);
     }
 
-    private List<CapabilityDefinitionReference> parseInheritDefinitionElements(Element capabilityDefElement) {
+    private String replaceVariables(BeanDefinitionRegistry registry, String string) {
+        if (string != null && string.contains("${")) {
+            final Properties properties = ImportBeanDefinitionParser.getParsingContextProperties(registry);
+            final Set<String> names = properties.stringPropertyNames();
+            for (String key : names) {
+                string = string.replaceAll("\\$\\{"+key+"\\}", properties.getProperty(key));
+            }
+        }
+        return string;
+    }
+
+    private List<CapabilityDefinitionReference> parseInheritDefinitionElements(Element capabilityDefElement, BeanDefinitionRegistry registry) {
 
         Set<CapabilityDefinitionReference> distinctAncestors = new HashSet<>();
 
         List<Element> inheritElements = DomUtils.getChildElementsByTagName(capabilityDefElement, ELEMENT_INHERIT_DEF);
         for (Element inheritElement : inheritElements) {
             String referencedCapabilityId = inheritElement.getAttribute(ATTRIBUTE_CAPABILITY_DEFINITION_REF);
-            String prefix = inheritElement.getAttribute(ATTRIBUTE_PREFIX);
+            String prefix = parseString(inheritElement, ATTRIBUTE_PREFIX, null, registry);
 
             CapabilityDefinitionReference capRef = new CapabilityDefinitionReference(referencedCapabilityId, prefix);
             distinctAncestors.add(capRef);
@@ -449,11 +453,8 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         for (Element attributeKey : attributeKeyElements) {
             String key = attributeKey.getAttribute(ATTRIBUTE_ATTRIBUTE_KEY_KEY);
             File origin = determineOrigin(key, parserContext);
-            String description = extractDescription(attributeKey);
-            String defaultValue = attributeKey.getAttribute(ATTRIBUTE_KEY_DEFAULT);
-            if (StringUtils.isEmpty(defaultValue)) {
-                defaultValue = null;
-            }
+            String description = extractDescription(attributeKey, parserContext.getRegistry());
+            String defaultValue = parseString(attributeKey, ATTRIBUTE_KEY_DEFAULT, null, parserContext.getRegistry());
             boolean optional = Boolean.valueOf(attributeKey.getAttribute(ATTRIBUTE_KEY_OPTIONAL));
             if (StringUtils.isNotBlank(key)) {
                 attributeKeys.add(new AttributeKey(key, origin, description, optional, defaultValue));
@@ -473,17 +474,18 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         List<Element> unitElements = DomUtils.getChildElementsByTagName(profileElement, ELEMENT_UNIT);
         for (Element unitElement : unitElements) {
             // first retrieve all XML attributes of the Unit element
-            String unitId = extractMandatoryIdAttributeFromElement(unitElement, "Unit");
-            @SuppressWarnings("unused") String unitType = unitElement.getAttribute(ATTRIBUTE_UNIT_TYPE);  // TODO: currently not used as there is nowhere to set this on a ConfigurationUnit 
+            String unitId = extractMandatoryIdAttributeFromElement(unitElement, "Unit", registry);
+            // TODO: currently not used as there is nowhere to set this on a ConfigurationUnit
+            @SuppressWarnings("unused") String unitType = unitElement.getAttribute(ATTRIBUTE_UNIT_TYPE);
             boolean unitIsAbstract = Boolean.valueOf(unitElement.getAttribute(ATTRIBUTE_UNIT_ABSTRACT));
-            String unitExtends = unitElement.getAttribute(ATTRIBUTE_UNIT_EXTENDS);
+            String unitExtends = parseString(unitElement, ATTRIBUTE_UNIT_EXTENDS, null, registry);
 
             ManagedList<AbstractBeanDefinition> requiredCapabilityReferences = parseRequiredCapabilities(unitElement, unitId, registry);
             ManagedList<AbstractBeanDefinition> providedCapabilityReferences = parseProvidedCapabilities(unitElement, unitId, registry);
             ManagedList<Attribute> attributes = parseAttributesElement(unitElement, parserContext);
-            ManagedList<AbstractBeanDefinition> mappings = parseMappingsElement(unitElement, unitId);
-            ManagedList<AbstractBeanDefinition> commands = parseCommands(unitElement, unitId);
-            ManagedList<AbstractBeanDefinition> asserts = parseAsserts(unitElement);
+            ManagedList<AbstractBeanDefinition> mappings = parseMappingsElement(unitElement, unitId, registry);
+            ManagedList<AbstractBeanDefinition> commands = parseCommands(unitElement, unitId, registry);
+            ManagedList<AbstractBeanDefinition> asserts = parseAsserts(unitElement, registry);
 
             BeanDefinitionBuilder unitBeanDefBuilder = null;
             if (StringUtils.isNotBlank(unitExtends)) {
@@ -501,7 +503,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
                 unitBeanDefBuilder = BeanDefinitionBuilder.rootBeanDefinition(ConfigurationUnit.class);
             }
 
-            String description = extractDescription(unitElement);
+            String description = extractDescription(unitElement, registry);
 
             unitBeanDefBuilder.setAbstract(false);
             unitBeanDefBuilder.addPropertyValue(PROPERTY_ORIGIN, origin);
@@ -523,22 +525,22 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         
     }
 
-    private ManagedList<AbstractBeanDefinition> parseAsserts(Element parentElement) {
+    private ManagedList<AbstractBeanDefinition> parseAsserts(Element parentElement, BeanDefinitionRegistry registry) {
         final ManagedList<AbstractBeanDefinition> asserts = new ManagedList<>();
         final List<Element> assertsElements =
             DomUtils.getChildElementsByTagName(parentElement, ELEMENT_ASSERTS);
 
         for (Element assertsElement : assertsElements) {
-            parseUniqueAsserts(asserts, assertsElement);
-            parsePrerequisitesAsserts(asserts, assertsElement);
-            parseIsTrueAsserts(asserts, assertsElement);
+            parseUniqueAsserts(asserts, assertsElement, registry);
+            parsePrerequisitesAsserts(asserts, assertsElement, registry);
+            parseIsTrueAsserts(asserts, assertsElement, registry);
         }
 
         return asserts;
     }
 
     private void parsePrerequisitesAsserts(final ManagedList<AbstractBeanDefinition> asserts,
-            Element assertsElement) {
+            Element assertsElement, BeanDefinitionRegistry registry) {
         final List<Element> uniqueAsserts =
             DomUtils.getChildElementsByTagName(assertsElement, "prerequisite");
 
@@ -546,41 +548,41 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
             final BeanDefinitionBuilder assertBeanDefBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(PrerequisiteAssert.class);
             assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("key"));
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("value"));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "value", null, registry));
             asserts.add(assertBeanDefBuilder.getBeanDefinition());
         }
     }
 
     private void parseUniqueAsserts(final ManagedList<AbstractBeanDefinition> asserts,
-            Element assertsElement) {
+            Element assertsElement, BeanDefinitionRegistry registry) {
         final List<Element> uniqueAsserts =
                 DomUtils.getChildElementsByTagName(assertsElement, "unique");
         
         for (Element uniqueAssert : uniqueAsserts) {
             final BeanDefinitionBuilder assertBeanDefBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(UniqueAssert.class);
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("value"));
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("enabled"));
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("message"));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "value", null, registry));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "enabled", null, registry));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "message", null, registry));
             asserts.add(assertBeanDefBuilder.getBeanDefinition());
         }
     }
 
     private void parseIsTrueAsserts(final ManagedList<AbstractBeanDefinition> asserts,
-            Element assertsElement) {
+            Element assertsElement, BeanDefinitionRegistry registry) {
         final List<Element> uniqueAsserts =
                 DomUtils.getChildElementsByTagName(assertsElement, "is-true");
         
         for (Element uniqueAssert : uniqueAsserts) {
             final BeanDefinitionBuilder assertBeanDefBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(IsTrueAssert.class);
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("value"));
-            assertBeanDefBuilder.addConstructorArgValue(uniqueAssert.getAttribute("message"));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "value", null, registry));
+            assertBeanDefBuilder.addConstructorArgValue(parseString(uniqueAssert, "message", null, registry));
             asserts.add(assertBeanDefBuilder.getBeanDefinition());
         }
     }
 
-    private ManagedList<AbstractBeanDefinition> parseCommands(Element unitElement, String unitId) {
+    private ManagedList<AbstractBeanDefinition> parseCommands(Element unitElement, String unitId, BeanDefinitionRegistry registry) {
         ManagedList<AbstractBeanDefinition> commands = new ManagedList<>();
         List<Element> commandElements = DomUtils.getChildElementsByTagName(unitElement, ELEMENT_UNIT_COMMAND);
 
@@ -608,12 +610,12 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
                 commandBeanDefBuilder.addConstructorArgValue(packageId);
 
                 final List<CapabilityDefinitionReference> capabilities =
-                    parseCommandCapabilities(commandElement);
+                    parseCommandCapabilities(commandElement, registry);
                 final List<CapabilityDefinitionExtensionReference> contributions =
-                    parseCommandContributions(commandElement);
+                    parseCommandContributions(commandElement, registry);
                 final List<CapabilityDefinitionExtensionReference> requisitions =
-                    parseCommandRequisitions(commandElement);
-                final List<Provision> provisions = parseCommandProvisions(commandElement);
+                    parseCommandRequisitions(commandElement, registry);
+                final List<Provision> provisions = parseCommandProvisions(commandElement, registry);
 
                 commandBeanDefBuilder.addPropertyValue(PROPERTY_CAPABILITIES, capabilities);
                 commandBeanDefBuilder.addPropertyValue(PROPERTY_CONTRIBUTIONS, contributions);
@@ -657,7 +659,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         return packageId;
     }
 
-    private List<CapabilityDefinitionReference> parseCommandCapabilities(Element commandElement) {
+    private List<CapabilityDefinitionReference> parseCommandCapabilities(Element commandElement, BeanDefinitionRegistry registry) {
         final List<CapabilityDefinitionReference> parsedReferences = new ArrayList<>();
 
         final List<Element> matchedElements =
@@ -665,7 +667,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         for (Element element : matchedElements) {
             final CapabilityDefinitionReference ref =
                 parseCapabilityDefinitionReferenceFromElement(new CapabilityDefinitionReference(),
-                        element, "id", DccConstants.CAPABILITY);
+                        element, "id", DccConstants.CAPABILITY, registry);
             if (ref != null) {
                 parsedReferences.add(ref);
             }
@@ -676,9 +678,9 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
 
     private <T extends CapabilityDefinitionReference> T parseCapabilityDefinitionReferenceFromElement(
             T template,
-            Element element, String idColumnName, String elementName) {
+            Element element, String idColumnName, String elementName, BeanDefinitionRegistry registry) {
         final String textContent = element.getTextContent();
-        final String id = element.getAttribute(idColumnName);
+        final String id = parseString(element, idColumnName, null, registry);
         final boolean isTextContentEmpty = StringUtils.isEmpty(textContent);
         final boolean isIdAttributeEmpty = StringUtils.isEmpty(id);
 
@@ -692,7 +694,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
 
         final String capabilityRef = isIdAttributeEmpty ? textContent : id;
 
-        final String prefixText = element.getAttribute("prefix");
+        final String prefixText = parseString(element, "prefix", null, registry);
         final String prefix = StringUtils.isEmpty(prefixText) ? null : prefixText;
 
         template.setPrefix(prefix);
@@ -702,14 +704,14 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     }
 
     private List<CapabilityDefinitionExtensionReference> parseCommandContributions(
-            Element commandElement) {
+            Element commandElement, BeanDefinitionRegistry registry) {
         final List<CapabilityDefinitionExtensionReference> parsedReferences = new ArrayList<>();
 
         final List<Element> matchedElements =
             DomUtils.getChildElementsByTagName(commandElement, DccConstants.CONTRIBUTION);
         for (Element element : matchedElements) {
             final CapabilityDefinitionExtensionReference ref =
-                parseCapabilityDefinitionExtensionReferences(element, DccConstants.CONTRIBUTION);
+                parseCapabilityDefinitionExtensionReferences(element, DccConstants.CONTRIBUTION, registry);
             if (ref != null) {
                 parsedReferences.add(ref);
             }
@@ -719,7 +721,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     }
 
     private List<Provision> parseCommandProvisions(
-            Element commandElement) {
+            Element commandElement, BeanDefinitionRegistry registry) {
         final List<Provision> parsedReferences = new ArrayList<>();
 
         final List<Element> matchedElements =
@@ -728,9 +730,8 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
             final CapabilityDefinitionExtensionReference ref =
                 parseCapabilityDefinitionReferenceFromElement(
                         new CapabilityDefinitionExtensionReference(), 
-                        element, 
-                        "capabilityId",
-                        DccConstants.PROVISION);
+                        element, "capabilityId",
+                        DccConstants.PROVISION, registry);
 
             final List<ProvisionRestriction> restrictions = parseProvisionRestrictions(element);
             
@@ -759,14 +760,14 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     }
 
     private List<CapabilityDefinitionExtensionReference> parseCommandRequisitions(
-            Element commandElement) {
+            Element commandElement, BeanDefinitionRegistry registry) {
         final List<CapabilityDefinitionExtensionReference> parsedReferences = new ArrayList<>();
         
         final List<Element> matchedElements =
                 DomUtils.getChildElementsByTagName(commandElement, DccConstants.REQUISITION);
         for (Element element : matchedElements) {
             final CapabilityDefinitionExtensionReference ref =
-                    parseCapabilityDefinitionExtensionReferences(element, DccConstants.REQUISITION);
+                    parseCapabilityDefinitionExtensionReferences(element, DccConstants.REQUISITION, registry);
             if (ref != null) {
                 if (StringUtils.isEmpty(ref.getBoundToCapabilityId())) {
                     // Only valid for requisitions
@@ -781,17 +782,17 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     }
 
     private CapabilityDefinitionExtensionReference parseCapabilityDefinitionExtensionReferences(
-            Element element, String elementName) {
+            Element element, String elementName, BeanDefinitionRegistry registry) {
         final CapabilityDefinitionExtensionReference ref =
             parseCapabilityDefinitionReferenceFromElement(
                     new CapabilityDefinitionExtensionReference(), element, "capabilityId",
-                    elementName);
+                    elementName, registry);
 
         if (ref == null) {
             return null;
         }
 
-        final String boundToCapabilityRefText = element.getAttribute("boundTo");
+        final String boundToCapabilityRefText = parseString(element, "boundTo", null, registry);
         final String boundToCapabilityRef =
             StringUtils.isEmpty(boundToCapabilityRefText) ? null : boundToCapabilityRefText;
 
@@ -800,13 +801,13 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         return ref;
     }
 
-    private ManagedList<AbstractBeanDefinition> parseMappingsElement(Element unitElement, String unitId) {
+    private ManagedList<AbstractBeanDefinition> parseMappingsElement(Element unitElement, String unitId, BeanDefinitionRegistry registry) {
         ManagedList<AbstractBeanDefinition> mappings = new ManagedList<>();
         Element mappingsElement = DomUtils.getChildElementByTagName(unitElement, ELEMENT_UNIT_MAPPINGS);
         if (mappingsElement != null) {
             List<Element> mappingElements = DomUtils.getChildElementsByTagName(mappingsElement, "mapping");
             for (Element mappingElement : mappingElements) {
-                String targetCapabilityId = mappingElement.getAttribute("targetCapabilityId");
+                String targetCapabilityId = parseString(mappingElement, "targetCapabilityId", null, registry);
 
                 BeanDefinitionBuilder mappingBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(Mapping.class);
                 mappingBeanDefBuilder.addConstructorArgValue(Id.createCapabilityId(targetCapabilityId));
@@ -815,8 +816,8 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
 
                 Element mapUnitAttributesElement = DomUtils.getChildElementByTagName(mappingElement, "map-unit-attributes");
                 if (mapUnitAttributesElement != null) {
-                    String sourcePrefix = mapUnitAttributesElement.getAttribute("sourcePrefix");
-                    String targetPrefix = mapUnitAttributesElement.getAttribute("targetPrefix");
+                    String sourcePrefix = parseString(mapUnitAttributesElement, "sourcePrefix", null, registry);
+                    String targetPrefix = parseString(mapUnitAttributesElement, "targetPrefix", null, registry);
                     UnitToCapabilityAttributeMapper mapper = new UnitToCapabilityAttributeMapper(sourcePrefix, targetPrefix);
                     mappers.add(mapper);
                 }
@@ -825,9 +826,9 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
                 List<Element> mapAllElements = DomUtils.getChildElementsByTagName(mappingElement, "map-all");
                 for (Element mapAllElement : mapAllElements) {
                     Id<CapabilityId> sourceCapabilityId =
-                        Id.createCapabilityId(mapAllElement.getAttribute("sourceCapabilityId"));
-                    String sourcePrefix = mapAllElement.getAttribute("sourcePrefix");
-                    String targetPrefix = mapAllElement.getAttribute("targetPrefix");
+                        Id.createCapabilityId(parseString(mapAllElement, "sourceCapabilityId", null, registry));
+                    String sourcePrefix = parseString(mapAllElement, "sourcePrefix", null, registry);
+                    String targetPrefix = parseString(mapAllElement, "targetPrefix", null, registry);
                     SourceToTargetCapabilityAttributeMapper mapper =
                         new SourceToTargetCapabilityAttributeMapper(sourceCapabilityId, sourcePrefix, targetPrefix);
                     mappers.add(mapper);
@@ -837,7 +838,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
                 List<Element> expressionElements = DomUtils.getChildElementsByTagName(mappingElement, "expression");
                 for (Element expressionElement : expressionElements) {
                     String attributeKey = expressionElement.getAttribute("attributeKey");
-                    String value = parseValue(expressionElement);
+                    String value = parseString(expressionElement, "value", null, registry);
                     ExpressionAttributeMapper mapper = new ExpressionAttributeMapper(attributeKey, value);
                     mappers.add(mapper);
                 }
@@ -855,17 +856,18 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
     private ManagedList<Attribute> parseAttributesElement(Element unitElement, ParserContext parserContext) {
         ManagedList<Attribute> attributes = new ManagedList<>();
         Element attributesElement = DomUtils.getChildElementByTagName(unitElement, ELEMENT_UNIT_ATTRIBUTES);
+        final BeanDefinitionRegistry registry = parserContext.getRegistry();
         if (attributesElement != null) {
             List<Element> attributeElements = DomUtils.getChildElementsByTagName(attributesElement, ELEMENT_UNIT_ATTRIBUTES_ATTRIBUTE);
             for (Element attributeElement : attributeElements) {
                 String key = attributeElement.getAttribute("key");
-                String description = attributeElement.getAttribute("description");
+                String description = parseString(attributeElement, "description", null, registry);
                 String typeString = attributeElement.getAttribute("type");
                 AttributeType type = null;
                 if (!StringUtils.isEmpty(typeString)) {
                     type = AttributeType.valueOf(typeString.toUpperCase(Locale.ENGLISH));
                 }
-                String value = parseValue(attributeElement);
+                String value = parseString(attributeElement, "value", null, registry);
                 File origin = determineOrigin(key, parserContext);
 
                 Attribute att = new Attribute(key, value, origin);
@@ -877,7 +879,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         return attributes;
     }
 
-    private String parseString(Element element, String name, String defaultValue) {
+    private String parseString(Element element, String name, String defaultValue, BeanDefinitionRegistry registry) {
         String result = defaultValue;
         if (element.hasAttribute(name)) {
             result = element.getAttribute(name);
@@ -886,45 +888,37 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
             if (!StringUtils.isBlank(result)) {
                 // we trim...
                 result = result.trim();
+
+                // FIXME: what if this is international
+                // in any case we remove multiple spaces
+                result = result.replaceAll("  *", " ");
             }
         }
-        
-        return result;
+
+        return replaceVariables(registry, result);
     }
     
-    private String parseValue(Element elementWithValueAttribute) {
-        String result = parseString(elementWithValueAttribute, "value", null);
-
-        if (result != null) {
-            // in any case we remove multiple spaces
-            result = result.replaceAll("  *", " "); // FIXME: value could also be password !
-        }
-        return result;
-    }
-
     private ManagedList<AbstractBeanDefinition> parseRequiredCapabilities(Element unitElement, String unitId, BeanDefinitionRegistry registry) {
-
         ManagedList<AbstractBeanDefinition> reqCapReferences = new ManagedList<>();
         List<Element> reqCapElements = DomUtils.getChildElementsByTagName(unitElement, ELEMENT_UNIT_REQUIRED_CAPABILITY);
 
         for (Element reqCapElement : reqCapElements) {
-            String capabilityId = extractMandatoryIdAttributeFromElement(reqCapElement, "Capability");
+            String capabilityId = extractMandatoryIdAttributeFromElement(reqCapElement, "Capability", registry);
             boolean optionalFlag = Boolean.valueOf(reqCapElement.getAttribute(ATTRIBUTE_KEY_OPTIONAL));
             boolean multipleBindingsAllowedFlag = Boolean.valueOf(reqCapElement.getAttribute(ATTRIBUTE_KEY_MULTIPLE_BINDINGS));
             boolean identifiesHost = Boolean.valueOf(reqCapElement.getAttribute(ATTRIBUTE_KEY_IDENTIFIES_HOST));
 
-            BeanDefinitionBuilder capabilityBeanDefBuilder = createGenericCapabilityBuilder(capabilityId, reqCapElement, RequiredCapability.class);
-            capabilityBeanDefBuilder.addPropertyValue(ATTRIBUTE_KEY_OPTIONAL, optionalFlag);
-            capabilityBeanDefBuilder.addPropertyValue(ATTRIBUTE_KEY_MULTIPLE_BINDINGS, multipleBindingsAllowedFlag);
-            capabilityBeanDefBuilder.addPropertyValue(ATTRIBUTE_IDENTIFIES_HOST, identifiesHost);
+            BeanDefinitionBuilder builder = createGenericCapabilityBuilder(capabilityId, reqCapElement, RequiredCapability.class);
+            builder.addPropertyValue(ATTRIBUTE_KEY_OPTIONAL, optionalFlag);
+            builder.addPropertyValue(ATTRIBUTE_KEY_MULTIPLE_BINDINGS, multipleBindingsAllowedFlag);
+            builder.addPropertyValue(ATTRIBUTE_IDENTIFIES_HOST, identifiesHost);
 
             String capabilityBeanName = generateCapabilityBeanName(unitId, capabilityId);
-            registry.registerBeanDefinition(capabilityBeanName, capabilityBeanDefBuilder.getBeanDefinition());
+            registry.registerBeanDefinition(capabilityBeanName, builder.getBeanDefinition());
 
-            reqCapReferences.add(capabilityBeanDefBuilder.getBeanDefinition());
+            reqCapReferences.add(builder.getBeanDefinition());
         }
         return reqCapReferences;
-
     }
 
     private ManagedList<AbstractBeanDefinition> parseProvidedCapabilities(Element unitElement, String unitId, BeanDefinitionRegistry registry) {
@@ -933,7 +927,7 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
         List<Element> provCapElements = DomUtils.getChildElementsByTagName(unitElement, ELEMENT_UNIT_PROVIDED_CAPABILITY);
         
         for (Element provCapElement : provCapElements) {
-            String capabilityId = extractMandatoryIdAttributeFromElement(provCapElement, "Capability");
+            String capabilityId = extractMandatoryIdAttributeFromElement(provCapElement, "Capability", registry);
             BeanDefinitionBuilder capabilityBeanDefBuilder = createGenericCapabilityBuilder(capabilityId, provCapElement, Capability.class);
             String capabilityBeanName = generateCapabilityBeanName(unitId, capabilityId);
             registry.registerBeanDefinition(capabilityBeanName, capabilityBeanDefBuilder.getBeanDefinition());
@@ -975,17 +969,17 @@ public class DCCConfigurationBeanDefinitionParser extends AbstractBeanDefinition
             Element sourceElement = DomUtils.getChildElementByTagName(bindingElement, ELEMENT_BINDING_SOURCE);
             Element targetElement = DomUtils.getChildElementByTagName(bindingElement, ELEMENT_BINDING_TARGET);
 
-            String sourceUnitRef = sourceElement.getAttribute("unitRef");
-            String sourceCapabilityId = sourceElement.getAttribute("capabilityId");
-            String targetUnitRef = targetElement.getAttribute("unitRef");
-            String targetCapabilityId = targetElement.getAttribute("capabilityId");
+            String sourceUnitRef = parseString(sourceElement, "unitRef", null, registry);
+            String sourceCapabilityId = parseString(sourceElement, "capabilityId", null, registry);
+            String targetUnitRef = parseString(targetElement, "unitRef", null, registry);
+            String targetCapabilityId = parseString(targetElement, "capabilityId", null, registry);
             
             // convention: if target capabilityId is omitted then use the source capability id
             if (StringUtils.isEmpty(targetCapabilityId)) {
                 targetCapabilityId = sourceCapabilityId;
             }
 
-            String description = extractDescription(bindingElement);
+            String description = extractDescription(bindingElement, registry);
 
             BeanDefinitionBuilder bindingBeanBuilder = BeanDefinitionBuilder.genericBeanDefinition(BindingFactoryBean.class);
             bindingBeanBuilder.addPropertyValue(PROPERTY_ORIGIN, origin);

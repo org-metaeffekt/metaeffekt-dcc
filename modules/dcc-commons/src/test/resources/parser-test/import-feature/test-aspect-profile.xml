@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://metaeffekt.org/schema/dcc/profile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>profile-template</id>
+
+    <unit id="unit-${var}">
+        <description>This unit is instantiated multiple times. This unit uses $var="${var}"</description>
+        <provided-capability id="test" />
+        <attributes>
+            <attribute key="attribute" value="${var}"/>
+        </attributes>
+        <asserts>
+            <unique value="${var}" message="${var} must be unique."/>
+        </asserts>
+    </unit>
+
+    <binding>
+        <source unitRef="unit-${var}" capabilityId="test"/>
+        <target unitRef="main"/>
+    </binding>
+
+</profile>

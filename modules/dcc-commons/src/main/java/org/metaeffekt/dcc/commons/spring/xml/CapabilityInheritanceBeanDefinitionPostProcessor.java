@@ -41,7 +41,6 @@ public class CapabilityInheritanceBeanDefinitionPostProcessor implements BeanDef
 
     List<String> definitionRefsInProgress = new ArrayList<>();
 
-
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         List<String> definitionNamesToProcess = new ArrayList<>();
@@ -119,7 +118,7 @@ public class CapabilityInheritanceBeanDefinitionPostProcessor implements BeanDef
 
     private AttributeKey prefixAttributeKeyIfAppropriate(AttributeKey attributeKey, String prefix) {
         StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotEmpty(prefix.trim())) {
+        if (prefix != null && StringUtils.isNotEmpty(prefix.trim())) {
             builder.append(prefix);
             builder.append(".");
         }

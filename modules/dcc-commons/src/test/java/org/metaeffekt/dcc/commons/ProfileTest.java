@@ -55,6 +55,7 @@ public class ProfileTest {
         Assert.assertEquals("default3", propertiesHolder.getProperty("unit-with-capability/test.capability", "key3"));
         Assert.assertEquals("overwrite4", propertiesHolder.getProperty("unit-with-capability/test.capability", "key4"));
         Assert.assertEquals("attribute5", propertiesHolder.getProperty("unit-with-capability/test.capability", "key5"));
+        Assert.assertEquals("", propertiesHolder.getProperty("unit-with-capability/test.capability", "key6"));
     }
 
     @Test

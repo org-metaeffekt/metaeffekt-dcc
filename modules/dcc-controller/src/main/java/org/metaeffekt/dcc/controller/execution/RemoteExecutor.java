@@ -563,7 +563,8 @@ public class RemoteExecutor extends BaseExecutor implements Executor {
     private static interface Callback {
         void process(HttpResponse response);
     }
-    
+
+    @Override
     public String getDisplayName() {
         String host = null;
         if (hostBasedEndpointUriBuilder != null) {

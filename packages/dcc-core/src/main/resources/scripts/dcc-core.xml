@@ -21,6 +21,7 @@
         <core:verifyPathLength path="${dcc.target.dir}" 
             windowsMaxLengthProperty="verify.path.length.max.windows" 
             linuxMaxLengthProperty="verify.path.length.max.linux" />
+
         <core:verifyPathContainsNoWhitespaces path="${dcc.target.dir}" />
         
         <core:verifyJavaVersion />

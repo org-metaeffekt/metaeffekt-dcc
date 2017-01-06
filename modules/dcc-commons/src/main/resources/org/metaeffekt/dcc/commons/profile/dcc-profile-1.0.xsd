@@ -151,6 +151,14 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="var" type="xsd:string" use="optional" >
+            <xsd:annotation>
+                <xsd:documentation>
+                    The value of the variable is bound to a predefined variable $var that can be used when parsing the
+                    profile.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
 
     <xsd:complexType name="propertyHolderType">
