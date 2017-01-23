@@ -73,7 +73,7 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public abstract void purge();
 
-    protected void cleanFolders(File... folders) {
+    protected synchronized void cleanFolders(File... folders) {
         for (File folder : folders) {
             if (folder.exists()) {
                 try {

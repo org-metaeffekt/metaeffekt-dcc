@@ -105,9 +105,9 @@ public class ExecuteProfileCommands extends AbstractExecutionCommands {
         //   - Do we want to make the evaluate and verify independent commands?
         
         // evaluate templates is enforced independent of force flag (DCC-403)
-        executeCommand(new EvaluateTemplatesCommand(executionContext), true, parallel, false, unitId);
+        executeCommand(new EvaluateTemplatesCommand(executionContext), true, false, false, unitId);
         
-        executeCommand(new InitializeResourcesCommand(executionContext), force, parallel, false, unitId);
+        executeCommand(new InitializeResourcesCommand(executionContext), force, false, false, unitId);
         executeCommand(new InitializeCommand(executionContext), force, parallel, true, unitId);
         executeCommand(new VerifyCommand(executionContext), force, parallel, false, unitId);
     }
