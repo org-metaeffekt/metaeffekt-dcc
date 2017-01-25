@@ -145,14 +145,14 @@
         </classpath>
     </taskdef>
 
-    <taskdef name="queryPidByPort" classname="org.metaeffekt.dcc.commons.ant.QueryPidByPortTask"
+    <taskdef name="queryPidByPortTask" classname="org.metaeffekt.dcc.commons.ant.QueryPidByPortTask"
              uri="http://metaeffekt.org/schema/dcc/package/core">
         <classpath>
             <path refid="dcc.default.classpath" />
         </classpath>
     </taskdef>
 
-    <taskdef name="queryPidByCommand" classname="org.metaeffekt.dcc.commons.ant.QueryPidByCommandTask"
+    <taskdef name="queryPidByCommandTask" classname="org.metaeffekt.dcc.commons.ant.QueryPidByCommandTask"
              uri="http://metaeffekt.org/schema/dcc/package/core">
         <classpath>
             <path refid="dcc.default.classpath" />

@@ -25,7 +25,9 @@ import java.io.IOException;
 
 public class QueryPidByPortTaskTest {
 
-    public static final File FILE_WINDOWS = new File("src/test/resources/query-inputs/netstat-samples/windows-netstat_de.txt");
+    public static final File FILE_WINDOWS_01 = new File("src/test/resources/query-inputs/netstat-samples/windows-netstat-01_de.txt");
+    public static final File FILE_WINDOWS_02 = new File("src/test/resources/query-inputs/netstat-samples/windows-netstat-02_de.txt");
+
     public static final String ENCODING_WINDOWS_1252 = "windows-1252";
 
     @Test
@@ -33,7 +35,7 @@ public class QueryPidByPortTaskTest {
         QueryPidByPortTask task = createTask();
         task.setPort("50857");
 
-        String input = FileUtils.readFileToString(FILE_WINDOWS, ENCODING_WINDOWS_1252);
+        String input = FileUtils.readFileToString(FILE_WINDOWS_01, ENCODING_WINDOWS_1252);
         task.setInput(input);
         task.execute();
 
@@ -46,7 +48,7 @@ public class QueryPidByPortTaskTest {
         QueryPidByPortTask task = createTask();
         task.setPort("508");
 
-        String input = FileUtils.readFileToString(FILE_WINDOWS, ENCODING_WINDOWS_1252);
+        String input = FileUtils.readFileToString(FILE_WINDOWS_01, ENCODING_WINDOWS_1252);
         task.setInput(input);
         task.execute();
 
@@ -59,7 +61,7 @@ public class QueryPidByPortTaskTest {
         QueryPidByPortTask task = createTask();
         task.setPort("518");
 
-        String input = FileUtils.readFileToString(FILE_WINDOWS, ENCODING_WINDOWS_1252);
+        String input = FileUtils.readFileToString(FILE_WINDOWS_01, ENCODING_WINDOWS_1252);
         task.setInput(input);
         task.execute();
 
@@ -72,13 +74,27 @@ public class QueryPidByPortTaskTest {
         QueryPidByPortTask task = createTask();
         task.setPort("52857");
 
-        String input = FileUtils.readFileToString(FILE_WINDOWS, ENCODING_WINDOWS_1252);
+        String input = FileUtils.readFileToString(FILE_WINDOWS_01, ENCODING_WINDOWS_1252);
         task.setInput(input);
 
         task.execute();
 
         final String pid = task.getProject().getProperty(task.getResultProperty());
         Assert.assertEquals("4549", pid);
+    }
+
+    @Test
+    public void test_netstatIncludesPortInToAddress() throws IOException {
+        QueryPidByPortTask task = createTask();
+        task.setPort("8090");
+
+        String input = FileUtils.readFileToString(FILE_WINDOWS_02, ENCODING_WINDOWS_1252);
+        task.setInput(input);
+
+        task.execute();
+
+        final String pid = task.getProject().getProperty(task.getResultProperty());
+        Assert.assertEquals("-1", pid);
     }
 
     private QueryPidByPortTask createTask() {

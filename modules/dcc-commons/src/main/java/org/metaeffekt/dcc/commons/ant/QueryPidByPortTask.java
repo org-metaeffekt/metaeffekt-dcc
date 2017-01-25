@@ -65,8 +65,10 @@ public class QueryPidByPortTask extends Task {
         Validate.notEmpty(port, "Attribute port must be set!");
         Validate.notEmpty(resultProperty, "Attribute resultProperty must be set!");
 
+        final Pattern portMatcher = Pattern.compile("\\:([0-9]+)_");
+        final Pattern pidPattern = Pattern.compile(".*_([0-9]+)_");
+
         final List<String> lines = new ArrayList<>();
-        String header = null;
 
         // iterate lines and perform prefiltering by port
         try (Scanner scanner = new Scanner(input)) {
@@ -82,6 +84,18 @@ public class QueryPidByPortTask extends Task {
                 if (!line.startsWith("_" + protocol.toLowerCase())) {
                     continue;
                 }
+
+                // the line contains from and to address; we must skip the line, when out port is used in the
+                // two address. This also makes us completely independent of the connection status (which is
+                // internationalized and even contains umlauts in german.
+                final Matcher matcher = portMatcher.matcher(line);
+                if (matcher.find()) {
+                    final String firstPort = matcher.group(1);
+                    if (!port.equals(firstPort)) {
+                        continue;
+                    }
+                }
+
                 if (line.contains("_" + ip + ":" + port + "_")) {
                     lines.add(line);
                     continue;
@@ -102,13 +116,16 @@ public class QueryPidByPortTask extends Task {
         }
 
         for (String line : lines) {
-            Pattern pidPattern = Pattern.compile(".*_([0-9]+)_");
             Matcher matcher = pidPattern.matcher(line);
             final boolean foundMatch = matcher.find();
             if (foundMatch) {
                 final String pid = matcher.group(1);
-                PropertyUtils.setProperty(resultProperty, pid, PropertyUtils.PROPERTY_PROJECT_LEVEL, getProject());
-                return;
+
+                // we nevertheless get a null pid, we skip the line here
+                if (!"0".equals(pid)) {
+                    PropertyUtils.setProperty(resultProperty, pid, PropertyUtils.PROPERTY_PROJECT_LEVEL, getProject());
+                    return;
+                }
             }
         }
         PropertyUtils.setProperty(resultProperty, "-1", PropertyUtils.PROPERTY_PROJECT_LEVEL, getProject());

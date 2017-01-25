@@ -391,8 +391,7 @@
                         </windows>
                         <linux>
                             <exec executable="netstat" outputproperty="netstat.result" failonerror="false">
-                                <arg line="-anp"/>
-                                <arg line="--@{protocol}"/>
+                                <arg line="-anlp @{protocol}"/>
                             </exec>
                         </linux>
                     </core:doForOs>
@@ -404,11 +403,14 @@
                     <if>
                         <matches string="${netstat.result}" pattern=" ([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
                         <then>
+                            <local name="hostRegExp" />
+                            <propertyregex property="hostRegExp" input="@{host}" regexp="\." replace="\\." />
                             <if>
                                 <or>
                                     <!-- matches must include 'local address' and 'foreign address' separated by whitespaces -->
                                     <matches string="${netstat.result}" pattern=" (0\.0\.0\.0:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
                                     <matches string="${netstat.result}" pattern=" (127\.0\.0\.1:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
+                                    <matches string="${netstat.result}" pattern=" (${hostRegExp}:@{port})\s*([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9\*]*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
 
                                     <!-- this match is required to support IPv6 formatting -->
                                     <matches string="${netstat.result}" pattern=" (:::@{port})\s*(:::\*)\s*([a-zA-Z]*)" multiline="true" casesensitive="false" />
@@ -692,11 +694,10 @@
             <if>
                 <processStartedCondition />
                 <then>
-                    <core:debug>
-                        <core:log level="DEBUG" message="@{name} process already started!" />
-                    </core:debug>
+                    <core:log level="INFO" message="@{name} process already started! Skipping start." />
                 </then>
                 <else>
+                    <queryUnitStatus />
                     <checkPrerequisites />
                     <cleanupBeforeStart />
                     <checkConflicts />
@@ -717,27 +718,73 @@
         </sequential>
     </macrodef>
 
+    <!--
+        Macro that stops a process in a coordinated fashion.
+    -->
     <macrodef name="stopProcess" uri="http://metaeffekt.org/schema/dcc/package/core" >
+        <!-- Attribute name is used for logging purposes. Represents a display name of the process. -->
         <attribute name="name" default="Process [${dcc.unit.id}]" />
-        <attribute name="timeout" default="300000" />
+        <!-- Attribute timeout defines the timeout in milliseconds. If the process does not terminiate within this
+             period the procedure escalates this to the next level. The process will be attempted to be killed.
+        -->
+        <attribute name="timeout" default="60000" />
+        <!-- Attribute timeoutAfterKill is a secondary timeout. If the stop action was already escalated to killing
+             the process this is the timeout until an error is produced. The procedure was then not able to kill the
+             process or free the associated resources completely.
+        -->
+        <attribute name="timeoutAfterKill" default="10000" />
+        <!-- The queryUnitStatus element enables to analyze the environment. The element usually is meant to produce
+             information (as properties in the ant project or in the filesystem) that can be consumed by other elements
+             to determine whether a process is running or occupying resources. Unit is milliseconds.
+        -->
         <element name="queryUnitStatus" />
+        <!-- Element stop specifies the stop actions. Usually a dedicated shutdown mechanism or a kill signal is used
+             to enable a graceful terminiation of a process. -->
         <element name="stop" />
+        <!-- In case the effects of the stop element cannot be completed (process cannot terminiate gracefully within
+             the period specified by the timeout attribute the terminiation is escalated to killing the process.
+             The stop action is executed once. There is no repetitive attempt during the waiting period.
+         -->
+        <element name="kill" />
+        <!-- The element processStoppedCondition defines a condition that evaluates whether the process is stopped. The
+             evaluation usually consumes the information produced by the queryUnitStatus element.
+             The kill action is executed once. There is no repetitive attempt during the waiting period.
+        -->
         <element name="processStoppedCondition" />
 
         <sequential>
             <trycatch>
                 <try>
+                    <queryUnitStatus />
+                    <!-- Execute stop action. If the action itself files the error will be propagated. -->
                     <stop />
                 </try>
                 <finally>
-                    <core:waitFor timeoutMessage="Stopping @{name} timed out!" timeout="@{timeout}">
-                        <query>
-                            <queryUnitStatus />
-                        </query>
-                        <condition>
-                            <processStoppedCondition />
-                        </condition>
-                    </core:waitFor>
+                    <!-- Wait for the effects of the stop action. -->
+                    <trycatch>
+                        <try>
+                            <core:waitFor timeoutMessage="Stopping @{name} timed out!" timeout="@{timeout}">
+                                <query>
+                                    <queryUnitStatus />
+                                </query>
+                                <condition>
+                                    <processStoppedCondition />
+                                </condition>
+                            </core:waitFor>
+                        </try>
+                        <catch>
+                            <!-- Wait period exceeded: execute kill action and wait for stop a second period -->
+                            <kill />
+                            <core:waitFor timeoutMessage="Stopping @{name} timed out!" timeout="@{timeoutAfterKill}">
+                                <query>
+                                    <queryUnitStatus />
+                                </query>
+                                <condition>
+                                    <processStoppedCondition />
+                                </condition>
+                            </core:waitFor>
+                        </catch>
+                    </trycatch>
                 </finally>
             </trycatch>
         </sequential>
@@ -859,6 +906,7 @@
 
     <macrodef name="handleFailure" uri="http://metaeffekt.org/schema/dcc/package/core">
         <attribute name="failOnError" default="true" />
+        <attribute name="message" default="" />
         <element name="body" implicit="yes" />
         <sequential>
             <local name="error" />
@@ -875,10 +923,10 @@
                             <if>
                                 <isset property="${reference}" />
                                 <then>
-                                    <fail message="${error}: ${reference}" />
+                                    <fail message="${error}: ${reference} (@{message})" />
                                 </then>
                                 <else>
-                                    <fail message="${error}" />
+                                    <fail message="${error} (@{message})" />
                                 </else>
                             </if>
                         </then>
@@ -934,16 +982,15 @@
             <property name="dcc.install.tmp.dir" value="${dcc.install.dir}/tmp" />
             <property name="dcc.status.dir" value="${dcc.install.tmp.dir}/status" />
 
-            <!-- establish minimal folder structure (no unit specific folders yet) -->
+            <!-- establish basic folder structure (no unit specific folders yet) -->
             <core:ensurePathExists path="${dcc.target.dir}" />
             <core:ensurePathExists path="${dcc.config.dir}" />
 
             <!-- Note that app and data dir are initially not created. Depending on the script these structure may
-                mot be used anyways. It is left to the responsibility of the package to create these folders.
+                not be used anyways. It is left to the responsibility of the package to create these folders.
                 Further the log directory is also not created here. This is again the responsibility of the package
                 scripts.
             -->
-
         </sequential>
     </macrodef>
 
@@ -1024,42 +1071,52 @@
         <attribute name="pid"/>
         <attribute name="force" default="false" />
         <sequential>
-            <core:doForOs>
-                <windows>
-                    <if>
-                        <istrue value="@{force}" />
-                        <then>
-                            <exec executable="taskkill">
-                                <arg value="/pid" />
-                                <arg value="@{pid}" />
-                                <arg value="/f" />
-                            </exec>
-                        </then>
-                        <else>
-                            <exec executable="taskkill">
-                                <arg value="/pid" />
-                                <arg value="@{pid}" />
-                            </exec>
-                        </else>
-                    </if>
-                </windows>
-                <linux>
-                    <if>
-                        <istrue value="@{force}" />
-                        <then>
-                            <exec executable="kill">
-                                <arg value="-9" />
-                                <arg value="@{pid}"/>
-                            </exec>
-                        </then>
-                        <else>
-                            <exec executable="kill">
-                                <arg value="@{pid}"/>
-                            </exec>
-                        </else>
-                    </if>
-                </linux>
-            </core:doForOs>
+            <if>
+                <not>
+                    <or>
+                	       <equals arg1="@{pid}" arg2="-1" />
+                	       <equals arg1="@{pid}" arg2="0" />
+                	   </or>
+                </not>
+                <then>
+                    <core:doForOs>
+                        <windows>
+                            <if>
+                                <istrue value="@{force}" />
+                                <then>
+                                    <exec executable="taskkill">
+                                        <arg value="/pid" />
+                                        <arg value="@{pid}" />
+                                        <arg value="/f" />
+                                    </exec>
+                                </then>
+                                <else>
+                                    <exec executable="taskkill">
+                                        <arg value="/pid" />
+                                        <arg value="@{pid}" />
+                                    </exec>
+                                </else>
+                            </if>
+                        </windows>
+                        <linux>
+                            <if>
+                                <istrue value="@{force}" />
+                                <then>
+                                    <exec executable="kill">
+                                        <arg value="-9" />
+                                        <arg value="@{pid}"/>
+                                    </exec>
+                                </then>
+                                <else>
+                                    <exec executable="kill">
+                                        <arg value="@{pid}"/>
+                                    </exec>
+                                </else>
+                            </if>
+                        </linux>
+                    </core:doForOs>
+                </then>
+            </if>
         </sequential>
     </macrodef>
 
@@ -1137,6 +1194,92 @@
                 </sequential>
             </for>
 
+        </sequential>
+    </macrodef>
+
+    <macrodef name="queryPidByPort" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="host" default="0.0.0.0" />
+        <attribute name="port" />
+        <attribute name="protocol" default="tcp" />
+        <attribute name="resultProperty" />
+        <sequential>
+            <overwriteProperty name="@{resultProperty}" value="" />
+
+            <local name="netstat.result" />
+            <core:doForOs>
+                <windows>
+                    <exec executable="netstat" outputproperty="netstat.result" failonerror="false">
+                        <arg line="-a"/>
+                        <arg line="-n"/>
+                        <arg line="-o"/>
+                        <arg line="-p @{protocol}"/>
+                    </exec>
+                </windows>
+                <linux>
+                    <!-- the p option differs on the different linux systems. In most cases p means programm. On BSD
+                         netstat p means protocol (e.g. MacOSX/Darwin). Needs further investigation / reference cases. -->
+                    <exec executable="netstat" outputproperty="netstat.result" failonerror="false">
+                        <arg line="-anlp @{protocol}"/>
+                    </exec>
+                </linux>
+            </core:doForOs>
+            <core:debug>
+                <echo message="${netstat.result}" />
+            </core:debug>
+
+            <core:queryPidByPortTask input="${netstat.result}" ip="@{host}" port="@{port}" protocol="@{protocol}" resultProperty="@{resultProperty}" />
+
+        </sequential>
+    </macrodef>
+
+    <macrodef name="queryPidByCommandLine" uri="http://metaeffekt.org/schema/dcc/package/core" >
+        <!-- Attribute exec contains the executable to restrict the results. E.g. 'java'. -->
+        <attribute name="exec" />
+        <!-- Attribute commandLine contains the command line to search for. May use % for wildcard search. -->
+        <attribute name="commandLine" />
+        <attribute name="resultProperty" default="pid" />
+        <sequential>
+            <local name="process.query.result" />
+            <local name="process.id" />
+            <core:doForOs>
+                <windows>
+                    <!-- use wmic to query process information -->
+                    <exec executable="wmic" outputproperty="process.query.result"
+                        inputstring="process where &quot;CommandLine like '@{commandLine}'&quot; get processId">
+                    </exec>
+                </windows>
+                <linux>
+                    <exec executable="ps" outputproperty="process.query.result">
+                        <arg line="-aww" />
+                        <arg line="-o" />
+                        <arg line="pid=,command=" />
+                    </exec>
+                </linux>
+            </core:doForOs>
+            <core:debug>
+                <echo message="${process.query.result}" />
+            </core:debug>
+            <core:queryPidByCommand input="${process.query.result}" executable="@{exec}" command="@{commandLine}" resultProperty="@{resultProperty}" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="applyVelocityTemplates" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="includes" default="*.vt" />
+        <attribute name="templateDir" />
+        <attribute name="targetDir" />
+        <sequential>
+            <for param="file">
+                <path>
+                    <fileset dir="@{templateDir}" includes="@{includes}" />
+                </path>
+                <sequential>
+                    <local name="targetName" />
+                    <propertyregex property="targetName" input="@{file}" regexp="^(.*)[/\\](.*)\.vt" select="\2" />
+                    <core:applyVelocityTemplate targetFile="@{targetDir}/${targetName}"
+                        templateFile="@{templateDir}/${targetName}.vt"
+                        propertyFile="${dcc.execution.properties}" />
+                </sequential>
+            </for>
         </sequential>
     </macrodef>
 
