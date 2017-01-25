@@ -98,13 +98,8 @@ public class UnitDependencies {
         
         // reorder the units based on the ordered lists
         for (List<Id<UnitId>> ids : idListMap.values()) {
-            try {
-                sortIds(ids, downstreamMatrix);
-            } catch (Exception e) {
-                // ignore contract violations; needs further investigation
-                e.printStackTrace();
-            }
-            for (Id<UnitId> id : ids) {
+            final List<Id<UnitId>> sortedIds = sortIds(ids, downstreamMatrix);
+            for (Id<UnitId> id : sortedIds) {
                 units.remove(idUnitMap.get(id));
                 units.add(idUnitMap.get(id));
             }
@@ -172,6 +167,17 @@ public class UnitDependencies {
                 }
             }
         }
+
+        // within a group the units are sorted alphanumerically
+        for (List<ConfigurationUnit> group : groupList) {
+            Collections.sort(group, new Comparator<ConfigurationUnit>() {
+                @Override
+                public int compare(ConfigurationUnit o1, ConfigurationUnit o2) {
+                    return o1.getId().compareTo(o2.getId());
+                }
+            });
+        }
+
         return groupList;
     }
 
@@ -191,48 +197,86 @@ public class UnitDependencies {
         }
         return false;
     }
-    
-    private void sortIds(List<Id<UnitId>> units, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
 
-        Collections.sort(units, new Comparator<Id<UnitId>>() {
+    private int compare(Id<UnitId> o1, Id<UnitId> o2, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
+        final List<Id<UnitId>> ids1 = matrix.get(o1);
+        final List<Id<UnitId>> ids2 = matrix.get(o2);
+        if (ids1 != null && ids1.contains(o2)) {
+            return -1;
+        } else {
+            if (ids2 != null && ids2.contains(o1)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
 
-            @Override
-            public int compare(Id<UnitId> o1, Id<UnitId> o2) {
-                final List<Id<UnitId>> ids1 = matrix.get(o1);
-                final List<Id<UnitId>> ids2 = matrix.get(o2);
-                if (ids1 != null && ids1.contains(o2)) {
-                    return -1;
+    /**
+     * Sort implementation that does not rely on symmetric compare results.
+     *
+     * @param units The units to be sorted.
+     * @param matrix The dependency matrix.
+     *
+     * @return The sorted list.
+     */
+    private List<Id<UnitId>> sortIds(List<Id<UnitId>> units, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
+        final List<Id<UnitId>> ordered = new ArrayList<>();
+        for (final Id<UnitId> unitId : units) {
+            int index = -1;
+            // find position in ordered list
+            for (int i = 0; i < ordered.size(); i++) {
+                final Id<UnitId> otherUnitId = ordered.get(i);
+                final int compare = compare(unitId, otherUnitId, matrix);
+                if (compare == -1) {
+                    index = i;
+                    break;
+                } else if (compare == 1) {
+                    // keep searching
                 } else {
-                    if (ids2 != null && ids2.contains(o1)) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                    // not dependent (on this unit), keep searching
                 }
             }
-        });
+            // in case not other units depends on the unit, just add it at the end.
+            if (index == -1) {
+                ordered.add(unitId);
+            } else {
+                // otherwise insert the unit, so that it's dependent units come after
+                ordered.add(index, unitId);
+            }
+        }
+        return ordered;
     }
     
     private void sort(List<ConfigurationUnit> units, final Map<Id<UnitId>, List<Id<UnitId>>> matrix) {
-        
-        Collections.sort(units, new Comparator<ConfigurationUnit>() {
-
-            @Override
-            public int compare(ConfigurationUnit o1, ConfigurationUnit o2) {
-
-                final List<Id<UnitId>> ids1 = matrix.get(o1.getId());
-                final List<Id<UnitId>> ids2 = matrix.get(o2.getId());
-                if (ids1 != null && ids1.contains(o2.getId())) {
-                    return -1;
+        List<ConfigurationUnit> ordered = new ArrayList<>();
+        for (ConfigurationUnit unit : units) {
+            int index = -1;
+            // find position in ordered list
+            for (int i = 0; i < ordered.size(); i++) {
+                ConfigurationUnit otherUnit = ordered.get(i);
+                final int compare = compare(unit.getId(), otherUnit.getId(), matrix);
+                if (compare == -1) {
+                    index = i;
+                    break;
+                } else if (compare == 1) {
+                    // keep searching
                 } else {
-                    if (ids2 != null && ids2.contains(o1.getId())) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                    // not dependent (on this unit), keep searching
                 }
             }
-        });
+            // in case not other units depends on the unit, just add it at the end.
+            if (index == -1) {
+                ordered.add(unit);
+            } else {
+                // otherwise insert the unit, so that it's dependent units come after
+                ordered.add(index, unit);
+            }
+        }
+
+        // replace lists internally
+        units.clear();
+        units.addAll(ordered);
     }
 
     static String createKey(Id<UnitId> unitId, Id<CapabilityId> capabilityId) {

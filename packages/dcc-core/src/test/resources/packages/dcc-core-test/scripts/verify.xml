@@ -206,7 +206,15 @@
         </if>
         
         <core:consolidateLibs metaDataDir="../../external/lib-metadata" libDir="../../external/lib"/>
-        
+
+        <!-- we do not care about the result, just checking the integration works -->
+        <local name="pid" />
+        <core:queryPidByPort input="Just a Test" ip="127.0.0.1" port="8071" protocol="tcp" resultProperty="pid" />
+
+        <!-- we do not care about the result, just checking the integration works -->
+        <local name="pid" />
+        <core:queryPidByCommand input="Just a Test" executable="java" command="some-special-parameter" resultProperty="pid" />
+
     </target>
     
 </project>

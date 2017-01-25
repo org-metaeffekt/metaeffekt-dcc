@@ -12,12 +12,12 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-modules-behavior-pom</artifactId>
-    <version>0.6.0</version>
+    <version>0.7-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
     <properties>
-        <dcc.version>0.6.0</dcc.version>
+        <dcc.version>0.7-SNAPSHOT</dcc.version>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
     </properties>
@@ -124,6 +124,44 @@
                     </executions>
                 </plugin>
 
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <header>header/apache-license-2-header.txt</header>
+                        <properties>
+                            <owner>metaeffekt.org</owner>
+                            <email>contact@metaeffekt.org</email>
+                            <year.initial>2009</year.initial>
+                            <year>2016</year>
+                        </properties>
+                        <includes>
+                            <include>**/*.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/README*</exclude>
+                            <exclude>src/test/resources/**</exclude>
+                            <exclude>src/main/resources/**</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>check-license-header</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.metaeffekt.core</groupId>
+                            <artifactId>ae-configuration</artifactId>
+                            <version>${ae.core.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     

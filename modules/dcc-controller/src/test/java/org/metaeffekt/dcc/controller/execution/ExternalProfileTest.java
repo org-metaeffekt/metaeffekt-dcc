@@ -20,7 +20,9 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.metaeffekt.dcc.commons.dependency.UnitDependencies;
 import org.metaeffekt.dcc.commons.domain.Id;
+import org.metaeffekt.dcc.commons.mapping.ConfigurationUnit;
 import org.metaeffekt.dcc.commons.mapping.Profile;
 import org.metaeffekt.dcc.commons.mapping.PropertiesHolder;
 import org.metaeffekt.dcc.commons.spring.xml.ProfileParser;
@@ -31,24 +33,37 @@ import org.metaeffekt.dcc.controller.commands.VerifyCommand;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class ExternalProfileTest {
 
     @Ignore
     @Test
     public void testHostInference() throws IOException {
-        final File baseFolder = new File("/Volumes/USB/thales/ntip-distribution-5.3.0-SNAPSHOT/ntip");
-        final File testProfileFile = new File(baseFolder, "profiles/nts-control-deployment-profile.xml");
+        final File baseFolder = new File("/Volumes/USB/...");
+        final File testProfileFile = new File(baseFolder, "profiles/...-deployment-profile.xml");
         Profile profile = ProfileParser.parse(testProfileFile);
         profile.setSolutionDir(baseFolder);
         PropertiesHolder propertiesHolder = profile.createPropertiesHolder(true);
         profile.evaluate(propertiesHolder);
-        propertiesHolder.dump();
 
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setProfile(profile);
         executionContext.setTargetBaseDir(new File("/Users/kklein/workspace/temp"));
         executionContext.setSolutionDir(profile.getSolutionDir());
+
+        if (true) {
+            List<ConfigurationUnit> units = executionContext.getProfile().getUnits(false);
+            UnitDependencies unitDependencies = executionContext.getProfile().getUnitDependencies();
+            final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
+
+            for (List<ConfigurationUnit> group : groupLists) {
+                System.out.println("Group");
+                group.stream().forEach(u -> System.out.println("  " + u.getId()));
+            }
+        }
+
+        if (true) return;
 
         boolean parallel = true;
 
@@ -61,7 +76,7 @@ public class ExternalProfileTest {
         new InitializeCommand(executionContext).execute(true);
 
         new VerifyCommand(executionContext).execute(true, parallel);
-        new InstallCommand(executionContext).execute(true, parallel);
+        // snew InstallCommand(executionContext).execute(true, parallel);
 
         deleteDir(new File(baseFolder, "work"));
         deleteDir(executionContext.getTargetBaseDir());

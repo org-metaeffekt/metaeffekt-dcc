@@ -1,0 +1,5 @@
+C:\Workspaces>wmic process where "CommandLine like '%xyzip%'" get processId, commandLine
+CommandLine                                                                                                        Name                                      ProcessId
+"C:\Program Files\Java\jre1.8.0_112\bin\javaw.exe" -jar "C:\xyz-exec.jar"                                          javaw.exe                                 9800
+"C:\Program Files\Java\jre1.8.0_112\bin\javaw.exe" -jar "C:\xyz-exec.jar -Did=xyz-4811"                            java.exe                                  11616
+wmic  process where "CommandLine like '%xyz%'" get processId, commandLine                                          WMIC.exe                                  12352

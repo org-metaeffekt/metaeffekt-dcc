@@ -1,0 +1,33 @@
+C:\Workspaces\git-libraries_ref>netstat -anop TCP
+
+Aktive Verbindungen
+
+  Proto  Lokale Adresse         Remoteadresse          Status           PID
+  TCP    0.0.0.0:135            0.0.0.0:0              ABHÖREN         948
+  TCP    0.0.0.0:445            0.0.0.0:0              ABHÖREN         4
+  TCP    0.0.0.0:2031           0.0.0.0:0              ABHÖREN         2228
+  TCP    0.0.0.0:2546           0.0.0.0:0              ABHÖREN         2228
+  TCP    0.0.0.0:2869           0.0.0.0:0              ABHÖREN         4
+  TCP    0.0.0.0:3389           0.0.0.0:0              ABHÖREN         1220
+  TCP    0.0.0.0:5432           0.0.0.0:0              ABHÖREN         2296
+  TCP    0.0.0.0:6583           0.0.0.0:0              ABHÖREN         2228
+  TCP    0.0.0.0:8080           0.0.0.0:0              ABHÖREN         9800
+  TCP    0.0.0.0:47001          0.0.0.0:0              ABHÖREN         4
+  TCP    0.0.0.0:49152          0.0.0.0:0              ABHÖREN         620
+  TCP    0.0.0.0:49153          0.0.0.0:0              ABHÖREN         164
+  TCP    0.0.0.0:49154          0.0.0.0:0              ABHÖREN         532
+  TCP    0.0.0.0:49155          0.0.0.0:0              ABHÖREN         708
+  TCP    0.0.0.0:49158          0.0.0.0:0              ABHÖREN         688
+  TCP    0.0.0.0:49159          0.0.0.0:0              ABHÖREN         3172
+  TCP    127.0.0.1:50857        0.0.0.0:0              ABHÖREN         4548
+  TCP    :::52857               :::0                   ABHÖREN         4549
+  TCP    127.0.0.1:50858        127.0.0.1:50859        HERGESTELLT     4548
+  TCP    127.0.0.1:50859        127.0.0.1:50858        HERGESTELLT     4548
+  TCP    127.0.0.1:50860        127.0.0.1:50861        HERGESTELLT     4548
+  TCP    127.0.0.1:50861        127.0.0.1:50860        HERGESTELLT     4548
+  TCP    127.0.0.1:61493        127.0.0.1:61494        HERGESTELLT     9800
+  TCP    127.0.0.1:61494        127.0.0.1:61493        HERGESTELLT     9800
+  TCP    127.0.0.1:61495        127.0.0.1:61496        HERGESTELLT     9800
+  TCP    127.0.0.1:61496        127.0.0.1:61495        HERGESTELLT     9800
+  TCP    127.0.0.1:61497        127.0.0.1:61498        HERGESTELLT     9800
+  TCP    127.0.0.1:61498        127.0.0.1:61497        HERGESTELLT     9800

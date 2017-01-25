@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-bundles-behavior-pom</artifactId>
-        <version>0.6.0</version>
+        <version>0.7-SNAPSHOT</version>
         <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-bundles-behavior-pom</relativePath>
     </parent>
 
