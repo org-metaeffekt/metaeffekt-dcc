@@ -25,8 +25,14 @@ import java.io.IOException;
 
 public class QueryPidByPortTaskTest {
 
-    public static final File FILE_WINDOWS_01 = new File("src/test/resources/query-inputs/netstat-samples/windows-netstat-01_de.txt");
-    public static final File FILE_WINDOWS_02 = new File("src/test/resources/query-inputs/netstat-samples/windows-netstat-02_de.txt");
+    public static final File TEST_FILE_DIR = new File("src/test/resources/query-inputs/netstat-samples");
+    
+    public static final File FILE_WINDOWS_01 = new File(TEST_FILE_DIR, "windows-netstat-01_de.txt");
+    public static final File FILE_WINDOWS_02 = new File(TEST_FILE_DIR, "windows-netstat-02_de.txt");
+
+    public static final File FILE_DEBIAN_01 = new File(TEST_FILE_DIR, "debian-netstat-01_de.txt");
+    public static final File FILE_DEBIAN_02 = new File(TEST_FILE_DIR, "debian-netstat-02_de.txt");
+    public static final File FILE_DEBIAN_03 = new File(TEST_FILE_DIR, "debian-netstat-03_de.txt");
 
     public static final String ENCODING_WINDOWS_1252 = "windows-1252";
 
@@ -95,6 +101,48 @@ public class QueryPidByPortTaskTest {
 
         final String pid = task.getProject().getProperty(task.getResultProperty());
         Assert.assertEquals("-1", pid);
+    }
+
+    @Test
+    public void test_netstatDebian01() throws IOException {
+        QueryPidByPortTask task = createTask();
+        task.setPort("9999");
+
+        String input = FileUtils.readFileToString(FILE_DEBIAN_01, ENCODING_WINDOWS_1252);
+        task.setInput(input);
+
+        task.execute();
+
+        final String pid = task.getProject().getProperty(task.getResultProperty());
+        Assert.assertEquals("17950", pid);
+    }
+
+    @Test
+    public void test_netstatDebian02() throws IOException {
+        QueryPidByPortTask task = createTask();
+        task.setPort("7199");
+
+        String input = FileUtils.readFileToString(FILE_DEBIAN_02, ENCODING_WINDOWS_1252);
+        task.setInput(input);
+
+        task.execute();
+
+        final String pid = task.getProject().getProperty(task.getResultProperty());
+        Assert.assertEquals("29713", pid);
+    }
+
+    @Test
+    public void test_netstatDebian03() throws IOException {
+        QueryPidByPortTask task = createTask();
+        task.setPort("8090");
+
+        String input = FileUtils.readFileToString(FILE_DEBIAN_03, ENCODING_WINDOWS_1252);
+        task.setInput(input);
+
+        task.execute();
+
+        final String pid = task.getProject().getProperty(task.getResultProperty());
+        Assert.assertEquals("5150", pid);
     }
 
     private QueryPidByPortTask createTask() {

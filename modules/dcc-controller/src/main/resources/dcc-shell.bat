@@ -16,5 +16,4 @@ java -Xmx1024m -Dflash.message.disabled=false -Duser.language=en -Djline.nobell=
 set SHELL_EXIT_CODE=%ERRORLEVEL%
 
 :end
-# echo DCC exited with code %SHELL_EXIT_CODE%
 exit /B %SHELL_EXIT_CODE%

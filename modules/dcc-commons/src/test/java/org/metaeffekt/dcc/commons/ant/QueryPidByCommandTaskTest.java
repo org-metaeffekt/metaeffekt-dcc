@@ -25,10 +25,14 @@ import java.io.IOException;
 
 public class QueryPidByCommandTaskTest {
 
-    public static final File FILE_WINDOWS = new File("src/test/resources/query-inputs/wmic-samples/wmic.txt");
-    public static final String ENCODING_WINDOWS_1252 = "windows-1252";
+    public static final File WMIC_INPUT_DIR = new File("src/test/resources/query-inputs/wmic-samples");
+    public static final File PS_INPUT_DIR = new File("src/test/resources/query-inputs/ps-samples");
 
-    public static final File FILE_MACOSX = new File("src/test/resources/query-inputs/ps-samples/macosx.txt");
+    public static final File FILE_WINDOWS = new File(WMIC_INPUT_DIR, "wmic.txt");
+    public static final File FILE_MACOSX = new File(PS_INPUT_DIR, "macosx.txt");
+    public static final File FILE_DEBIAN = new File(PS_INPUT_DIR, "debian.txt");
+
+    public static final String ENCODING_WINDOWS_1252 = "windows-1252";
     public static final String ENCODING_UTF8 = "UTF8";
 
     @Test
@@ -85,6 +89,20 @@ public class QueryPidByCommandTaskTest {
 
         final String pid = task.getProject().getProperty(task.getResultProperty());
         Assert.assertEquals("-1", pid);
+    }
+
+    @Test
+    public void test_Debian() throws IOException {
+        QueryPidByCommandTask task = createTask();
+        task.setCommand("log4j.configurationFile=/conf/etc/xyz/eac/log4j2.xml");
+        task.setExecutable("java");
+
+        String input = FileUtils.readFileToString(FILE_DEBIAN, ENCODING_UTF8);
+        task.setInput(input);
+        task.execute();
+
+        final String pid = task.getProject().getProperty(task.getResultProperty());
+        Assert.assertEquals("17950", pid);
     }
 
     private QueryPidByCommandTask createTask() {

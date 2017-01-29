@@ -75,10 +75,12 @@ public class QueryPidByPortTask extends Task {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
 
-                // to get rid of boundary issues, we prefix and suffix the line with underscores
+                // to get rid of boundary issues, we normalize the line
                 line = "_" + line.trim().toLowerCase() + "_";
-                // ... and we replace all whitepaces with underscores.
                 line = line.replaceAll("\\s+", "_");
+                line = line.replaceAll("\\/", "_");
+                line = line.replaceAll("\\[", "");
+                line = line.replaceAll("\\]", "");
 
                 // now we can use simple exact matching to identify the line(s) of interest
                 if (!line.startsWith("_" + protocol.toLowerCase())) {
@@ -95,6 +97,8 @@ public class QueryPidByPortTask extends Task {
                         continue;
                     }
                 }
+
+                System.out.println(line);
 
                 if (line.contains("_" + ip + ":" + port + "_")) {
                     lines.add(line);

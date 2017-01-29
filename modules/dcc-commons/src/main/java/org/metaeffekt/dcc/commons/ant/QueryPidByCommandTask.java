@@ -67,12 +67,15 @@ public class QueryPidByCommandTask extends Task {
         try (Scanner scanner = new Scanner(input)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                line = line.trim().toLowerCase();
 
-                if (!line.contains(executable)) {
+                // to get rid of boundary issues, we normalize the line
+                line = "_" + line.trim().toLowerCase() + "_";
+                line = line.replaceAll("\\s+", "_");
+
+                if (!line.contains(executable.toLowerCase())) {
                     continue;
                 }
-                if (line.contains(command)) {
+                if (line.contains(command.toLowerCase())) {
                     lines.add(line);
                     continue;
                 }
@@ -83,21 +86,8 @@ public class QueryPidByCommandTask extends Task {
             throw new BuildException("Multiple matches of command=" + command + " and executable=" + executable + " detected!");
         }
 
-        // match at then end of the line (wmic)
         for (String line : lines) {
-            Pattern pidPattern = Pattern.compile(".*[^0-9]([0-9]+)");
-            Matcher matcher = pidPattern.matcher(line);
-            final boolean foundMatch = matcher.find();
-            if (foundMatch) {
-                final String pid = matcher.group(1);
-                PropertyUtils.setProperty(resultProperty, pid, PropertyUtils.PROPERTY_PROJECT_LEVEL, getProject());
-                return;
-            }
-        }
-
-        // match at the beginning of the line (ps with complete command)
-        for (String line : lines) {
-            Pattern pidPattern = Pattern.compile("([0-9]+)[^0-9].*");
+            Pattern pidPattern = Pattern.compile("_([0-9]+)_");
             Matcher matcher = pidPattern.matcher(line);
             final boolean foundMatch = matcher.find();
             if (foundMatch) {

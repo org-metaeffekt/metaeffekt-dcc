@@ -1,0 +1,26 @@
+Aktive Internetverbindungen (Server und stehende Verbindungen)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 *:ssh                   *:*                     LISTEN      -
+tcp        0      0 localhost:smtp          *:*                     LISTEN      -
+tcp        0      0 *:5900                  *:*                     LISTEN      -
+tcp        0    848 172.16.92.19:ssh        172.16.5.233:53796      VERBUNDEN   -
+tcp        0      0 172.16.92.19:ssh        172.16.49.96:49516      VERBUNDEN   -
+tcp6       0      0 [::]:ssh                [::]:*                  LISTEN      -
+tcp6       0      0 localhost:smtp          [::]:*                  LISTEN      -
+tcp6       0      0 [::]:8090               [::]:*                  LISTEN      5150/java
+tcp6       0      0 [::]:5900               [::]:*                  LISTEN      -
+tcp6       0      0 [::]:http-alt           [::]:*                  LISTEN      5217/java
+udp        0      0 172.16.93.91:ntp        *:*                                 -
+udp        0      0 172.16.92.19:ntp        *:*                                 -
+udp        0      0 localhost:ntp           *:*                                 -
+udp        0      0 *:ntp                   *:*                                 -
+getnameinfo failed
+udp6       0      0 [UNKNOWN]:5010          [::]:*                              5217/java
+getnameinfo failed
+udp6       0      0 [UNKNOWN]:5020          [::]:*                              5150/java
+getnameinfo failed
+udp6       0      0 [UNKNOWN]:ntp           [::]:*                              -
+getnameinfo failed
+udp6       0      0 [UNKNOWN]:ntp           [::]:*                              -
+udp6       0      0 localhost:ntp           [::]:*                              -
+udp6       0      0 [::]:ntp                [::]:*                              -

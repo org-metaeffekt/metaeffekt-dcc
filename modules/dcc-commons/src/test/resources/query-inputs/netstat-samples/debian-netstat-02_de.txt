@@ -1,0 +1,28 @@
+Aktive Internetverbindungen (Server und stehende Verbindungen)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:61619         0.0.0.0:*               LISTEN      3240/python2.7
+tcp        0      0 0.0.0.0:61620           0.0.0.0:*               LISTEN      3240/python2.7
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3262/sshd
+tcp        0      0 172.16.95.18:7000       0.0.0.0:*               LISTEN      29713/java
+tcp        0      0 0.0.0.0:8888            0.0.0.0:*               LISTEN      3240/python2.7
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      3321/exim4
+tcp        0      0 127.0.0.1:48987         0.0.0.0:*               LISTEN      29713/java
+tcp        0      0 127.0.0.1:7199          0.0.0.0:*               LISTEN      29713/java
+tcp        0      0 172.16.95.18:7000       172.16.95.19:51171      VERBUNDEN   29713/java
+tcp        0      0 127.0.0.1:49000         127.0.0.1:48987         TIME_WAIT   -
+tcp        0      0 172.16.95.18:46593      172.16.95.19:7000       VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:7000       172.16.95.18:41224      VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:7000       172.16.95.19:54612      VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:46592      172.16.95.19:7000       VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:50063      172.16.95.19:7000       VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:41224      172.16.95.18:7000       VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:7000       172.16.95.19:51170      VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:41225      172.16.95.18:7000       VERBUNDEN   29713/java
+tcp        0      0 172.16.95.18:7000       172.16.95.18:41225      VERBUNDEN   29713/java
+tcp6       0      0 172.16.95.18:9042       :::*                    LISTEN      29713/java
+tcp6       0      0 :::22                   :::*                    LISTEN      3262/sshd
+tcp6       0      0 ::1:25                  :::*                    LISTEN      3321/exim4
+udp        0      0 172.16.95.18:123        0.0.0.0:*                           2963/ntpd
+udp        0      0 172.16.93.82:123        0.0.0.0:*                           2963/ntpd
+udp        0      0 127.0.0.1:123           0.0.0.0:*                           2963/ntpd
+udp        0      0 0.0.0.0:123             0.0.0.0:*                           2963/ntpd
