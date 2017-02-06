@@ -44,6 +44,8 @@ public class LocalExecutor extends BaseExecutor implements Executor {
 
     public static final String LOCAL_DEPLOYMENT_TARGET_DIR = DccProperties.DCC_LOCAL_DESTINATION_DIR;
     public static final String ENV_LOCAL_DEPLOYMENT_TARGET_DIR = LOCAL_DEPLOYMENT_TARGET_DIR.toUpperCase().replace(".", "_");
+
+    private final Object semaphore = new Object();
     
     public LocalExecutor(ExecutionContext executionContext, boolean mixedMode) {
         super(executionContext);
@@ -90,22 +92,28 @@ public class LocalExecutor extends BaseExecutor implements Executor {
 
     @Override
     public void purge() {
-        logCommand(PURGE);
-        cleanFolders(getExecutionContext().getTargetDir());
+        synchronized (semaphore) {
+            logCommand(PURGE);
+            cleanFolders(getExecutionContext().getTargetDir());
+        }
     }
 
     @Override
     public void clean() {
-        logCommand(CLEAN);
-        // FIXME: consolidate with base implementations. Can't this code be completely moved up
-        cleanFolders(getExecutionStateHandler().getStateCacheDirectory());
-        super.clean();
+        synchronized (semaphore) {
+            logCommand(CLEAN);
+            // FIXME: consolidate with base implementations. Can't this code be completely moved up
+            cleanFolders(getExecutionStateHandler().getStateCacheDirectory());
+            super.clean();
+        }
     }
 
     @Override
     public void initialize() {
-        logCommand(INITIALIZE);
-        initializeLocalFolders();
+        synchronized (semaphore) {
+            logCommand(INITIALIZE);
+            initializeLocalFolders();
+        }
     }
 
     @Override
@@ -115,10 +123,12 @@ public class LocalExecutor extends BaseExecutor implements Executor {
 
     @Override
     public void retrieveUpdatedState() {
-        final Id<HostName> host = Id.createHostName("localhost");
-        final Id<DeploymentId> deploymentId = getExecutionContext().getProfile().getDeploymentId();
-        InputStream consolidatedState = getExecutionStateHandler().consolidateState(deploymentId);
-        getExecutionStateHandler().updateConsolidatedState(consolidatedState, host, deploymentId);
+        synchronized (semaphore) {
+            final Id<HostName> host = Id.createHostName("localhost");
+            final Id<DeploymentId> deploymentId = getExecutionContext().getProfile().getDeploymentId();
+            InputStream consolidatedState = getExecutionStateHandler().consolidateState(deploymentId);
+            getExecutionStateHandler().updateConsolidatedState(consolidatedState, host, deploymentId);
+        }
     }
 
     @Override

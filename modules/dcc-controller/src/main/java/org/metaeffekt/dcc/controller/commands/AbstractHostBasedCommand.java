@@ -49,11 +49,15 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
             } else {
                 hosts.stream().forEach(h -> doExecuteForHost(h, force));
             }
+
+            // update status is performed sequentially in any case
+            hosts.stream().forEach(h -> updateStatus(h));
         } else {
             // reduce the handling to the host hosting the unit
             Id<HostName> host = getExecutionContext().getHostForUnit(unitId);
             if (host != null) {
                 doExecuteForHost(host, force);
+                updateStatus(host);
             } else {
                 throw new IllegalArgumentException(String.format("Cannot find host based executor for unit [%s]. "
                     + "Either the unit does not exists or is not bound to a host.", unitId));
@@ -65,12 +69,10 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
         if (isExecutionRequired(force, host, getCommandVerb())) {
             long timestamp = System.currentTimeMillis();
             doExecuteCommand(getExecutionContext().getExecutorForHost(host));
-            updateStatus(host);
             afterSuccessfulUnitExecution(timestamp);
         } else {
             LOG.info("Skipping command [{}] for host [{}] as it already has been executed.",
                     getCommandVerb(), host);
-            updateStatus(host);
         }
     }
 

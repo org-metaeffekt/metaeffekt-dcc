@@ -83,12 +83,22 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
             } else {
                 group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
             }
+
+            // execute update status sequentially
+            group.stream().forEach(unit -> updateStatus(limitToUnitId, unit));
         }
 
         if (limitToUnitId != null && !unitFound[0]) {
             throw new IllegalArgumentException(String.format(
                 "  Command [%s] not executable for unit [%s]. Either the unit does not exist or the command does not" +
                 " apply for the unit.", getCommandVerb(), limitToUnitId));
+        }
+    }
+
+    private void updateStatus(Id<UnitId> limitToUnitId, ConfigurationUnit unit) {
+        final Id<UnitId> unitId = unit.getId();
+        if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
+            updateStatus(unit.getId());
         }
     }
 
@@ -102,12 +112,10 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
                     LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(), unitId);
                     long timestamp = System.currentTimeMillis();
                     doExecuteCommand(unit);
-                    updateStatus(unitId);
                     afterSuccessfulUnitExecution(unit, timestamp);
                 } else {
                     LOG.info("  Skipping command [{}] for unit [{}] as it already has been executed.",
                             getCommandVerb(), unitId);
-                    updateStatus(unitId);
                 }
             }
         }
