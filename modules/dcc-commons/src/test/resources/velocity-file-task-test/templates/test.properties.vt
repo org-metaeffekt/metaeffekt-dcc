@@ -28,3 +28,7 @@ property.from.xpath.1=$xpath.evaluate($xml, '/data/string/text()')
 property.from.xpath.2=$xpath.evaluate($xml, '/data/element/@string')
 property.from.xpath.3=$xpath.evaluate($xml, '/data/element/@string', 'a default, which is not used')
 property.from.xpath.4=$xpath.evaluate($xml, '/data/element/@notAvailable', 'a default, which is used')
+
+# xpath nodes
+property.from.xpath.5=$xpath.evaluateNodes($xml, '//child')[1].getAttribute('id', '')
+property.from.xpath.6=$xpath.evaluateNode($xml, '//child[@id = "3"]').getAttribute('id')

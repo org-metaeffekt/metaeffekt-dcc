@@ -15,16 +15,19 @@
  */
 package org.metaeffekt.dcc.commons.ant;
 
+import org.metaeffekt.dcc.commons.ant.wrapper.NodeWrapper;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Enables to evaluate xpaths from a velocity template.
@@ -53,24 +56,24 @@ public class XPathProvider {
         return evaluate(xmlFileName, xpathExpression, null);
     }
 
+    /**
+     * Evaluates the xpathExrepssion against the file identified by the xmlFileName. If the evaluation does not result
+     * in a non-null, non-empty value, the defaultValue is returned.
+     * The implementation uses a cache, such that the file is not parsed multiple time when invoked several times.
+     *
+     * @param xmlFileName
+     * @param xpathExpression
+     * @param defaultValue
+     *
+     * @return The result of the evaluation. Contains the default value if the evaluation did not produce a proper
+     * result.
+     */
     public String evaluate(String xmlFileName, String xpathExpression, String defaultValue) {
-
-        final File xmlFile = new File(xmlFileName);
-        if (!xmlFile.exists() || !xmlFile.isFile()) {
-            throw new IllegalStateException(String.
-                format("The reference xml source [%s] is not a file or does not exists.", xmlFileName));
-        }
-
+        final File xmlFile = validateFile(xmlFileName);
         try {
-            final String docKey = xmlFile.getCanonicalPath();
-            Document doc = documentMap.get(docKey);
-            if (doc == null) {
-                doc = builder.parse(xmlFile);
-                documentMap.put(docKey, doc);
-            }
-            XPathExpression expr = xpath.compile(xpathExpression);
+            final Document doc = parseDocument(xmlFile);
+            final XPathExpression expr = xpath.compile(xpathExpression);
             String value = (String) expr.evaluate(doc, XPathConstants.STRING);
-
             if (value == null || value.isEmpty()) {
                 return defaultValue;
             } else {
@@ -80,6 +83,62 @@ public class XPathProvider {
             throw new IllegalStateException(String.format(
                     "Cannot evaluate xpath [%s] on file [%s]!", xpathExpression, xmlFileName), e);
         }
+    }
+
+    public NodeWrapper[] evaluateNodes(String xmlFileName, String xpathExpression) {
+        final File xmlFile = validateFile(xmlFileName);
+        try {
+            final Document doc = parseDocument(xmlFile);
+            final XPathExpression expr = xpath.compile(xpathExpression);
+            final NodeList nodes  = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            if (nodes == null || nodes.getLength() == 0) {
+                return new NodeWrapper[0];
+            } else {
+                final NodeWrapper[] nodeList = new NodeWrapper[nodes.getLength()];
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    nodeList[i] = new NodeWrapper(nodes.item(i));
+                }
+                return nodeList;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format(
+                    "Cannot evaluate xpath [%s] on file [%s]!", xpathExpression, xmlFileName), e);
+        }
+    }
+
+    public NodeWrapper evaluateNode(String xmlFileName, String xpathExpression) {
+        final File xmlFile = validateFile(xmlFileName);
+        try {
+            final Document doc = parseDocument(xmlFile);
+            final XPathExpression expr = xpath.compile(xpathExpression);
+            final Node node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+            if (node == null) {
+                return null;
+            }
+            return new NodeWrapper(node);
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format(
+                    "Cannot evaluate xpath [%s] on file [%s]!", xpathExpression, xmlFileName), e);
+        }
+    }
+
+    private Document parseDocument(File xmlFile) throws IOException, SAXException {
+        final String docKey = xmlFile.getCanonicalPath();
+        Document doc = documentMap.get(docKey);
+        if (doc == null) {
+            doc = builder.parse(xmlFile);
+            documentMap.put(docKey, doc);
+        }
+        return doc;
+    }
+
+    private File validateFile(String xmlFileName) {
+        final File xmlFile = new File(xmlFileName);
+        if (!xmlFile.exists() || !xmlFile.isFile()) {
+            throw new IllegalStateException(String.
+                format("The reference xml source [%s] is not a file or does not exists.", xmlFileName));
+        }
+        return xmlFile;
     }
 
 }

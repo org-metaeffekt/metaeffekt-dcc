@@ -16,6 +16,10 @@
 package org.metaeffekt.dcc.controller.commands;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.metaeffekt.dcc.commons.commands.Commands;
 import org.metaeffekt.dcc.commons.domain.Id;
@@ -24,6 +28,7 @@ import org.metaeffekt.dcc.commons.domain.Type.HostName;
 import org.metaeffekt.dcc.commons.domain.Type.UnitId;
 import org.metaeffekt.dcc.commons.execution.Executor;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
+
 
 /**
  * Base implementation of the {@link AbstractCommand} class for host-based executions.
@@ -44,10 +49,19 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
         if (unitId == null) {
             // do for all hosts
             Collection<Id<HostName>> hosts = getExecutionContext().getHostsExecutors().keySet();
-            if (parallel) {
-                hosts.parallelStream().forEach(h -> doExecuteForHost(h, force));
+            if (parallel && hosts.size() > 1) {
+                ExecutorService executor = Executors.newCachedThreadPool();
+                for (final Id<HostName> host : hosts) {
+                    executor.execute(() -> doExecuteForHost(host, force, true));
+                }
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                } catch (InterruptedException e) {
+                    // nothing to do
+                }
             } else {
-                hosts.stream().forEach(h -> doExecuteForHost(h, force));
+                hosts.stream().forEach(h -> doExecuteForHost(h, force, false));
             }
 
             // update status is performed sequentially in any case
@@ -56,7 +70,7 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
             // reduce the handling to the host hosting the unit
             Id<HostName> host = getExecutionContext().getHostForUnit(unitId);
             if (host != null) {
-                doExecuteForHost(host, force);
+                doExecuteForHost(host, force, false);
                 updateStatus(host);
             } else {
                 throw new IllegalArgumentException(String.format("Cannot find host based executor for unit [%s]. "
@@ -65,7 +79,10 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
         }
     }
 
-    private void doExecuteForHost(Id<HostName> host, boolean force) {
+    private void doExecuteForHost(Id<HostName> host, boolean force, boolean setThreadName) {
+        if (setThreadName) {
+            Thread.currentThread().setName(String.format("%-24s", host.getValue()));
+        }
         if (isExecutionRequired(force, host, getCommandVerb())) {
             long timestamp = System.currentTimeMillis();
             doExecuteCommand(getExecutionContext().getExecutorForHost(host));

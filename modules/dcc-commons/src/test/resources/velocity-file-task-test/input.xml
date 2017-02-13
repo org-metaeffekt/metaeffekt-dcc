@@ -2,4 +2,11 @@
 <data>
     <string>This is a string.</string>
     <element string="This is a string attribute." />
+    <container>
+        <child id="1" />
+    </container>
+    <container>
+        <child id="2" />
+        <child id="3" />
+    </container>
 </data>

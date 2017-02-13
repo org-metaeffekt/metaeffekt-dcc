@@ -158,12 +158,27 @@ public class ExecutionStateHandler {
         
         File stateDir = getCacheLocation(host, deploymentId);
 
-        try {
-            if (stateDir.exists()) {
-                FileUtils.forceDelete(stateDir);
+        // NOTE: using the dcc from within the eclipse ide on windows it seems that this code breaks, since eclipse is
+        // constantly refreshing and indexing the files. Therefore, a retry mechanism was integrated, that is
+        // compensate temporary file handles withing the state directory.
+        int retries = 20;
+        while (stateDir.exists()) {
+            try {
+                if (stateDir.exists()) {
+                    FileUtils.forceDelete(stateDir);
+                }
+                break;
+            } catch (IOException e) {
+                retries--;
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e1) {
+                    // do nothing
+                }
+                if (retries == 0) {
+                    throw new IllegalStateException("Cannot remove existing files in " + stateDir + ".", e);
+                }
             }
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot remove existing files in " + stateDir + ".", e);
         }
         
         // recreate folder

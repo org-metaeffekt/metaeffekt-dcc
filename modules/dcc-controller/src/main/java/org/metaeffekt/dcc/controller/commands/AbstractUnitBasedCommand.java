@@ -18,6 +18,9 @@ package org.metaeffekt.dcc.controller.commands;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -78,10 +81,19 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         // - handle state update separately (sequential, not concurrent); remove synchronized on updateStatus
         // - currently we rely on parallel stream regarding concurrent execution. Is this adequate?
         for (List<ConfigurationUnit> group : groupLists) {
-            if (parallel) {
-                group.parallelStream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
+            if (parallel && group.size() > 1) {
+                final ExecutorService executor = Executors.newCachedThreadPool();
+                for (final ConfigurationUnit unit : group) {
+                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, true));
+                }
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                } catch (InterruptedException e) {
+                    // nothing to do
+                }
             } else {
-                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit));
+                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit, false));
             }
 
             // execute update status sequentially
@@ -102,7 +114,10 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit) {
+    private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit, boolean setThreadName) {
+        if (setThreadName) {
+            Thread.currentThread().setName(String.format("%-24s", unit.getId().getValue()));
+        }
         final Id<UnitId> unitId = unit.getId();
         if (unit.getCommand(getCommandVerb()) != null) {
             if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
