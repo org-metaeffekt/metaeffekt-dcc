@@ -12,12 +12,12 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-modules-behavior-pom</artifactId>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.10.0</version>
     
     <packaging>pom</packaging>
 
     <properties>
-        <dcc.version>0.10-SNAPSHOT</dcc.version>
+        <dcc.version>0.10.0</dcc.version>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
     </properties>
