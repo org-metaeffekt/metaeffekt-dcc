@@ -15,6 +15,7 @@
  */
 package org.metaeffekt.dcc.commons.ant.wrapper;
 
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
@@ -33,13 +34,25 @@ public class NodeWrapper {
     }
 
     public String getAttribute(String attribute, String defaultValue) {
-        final Node namedItem = node.getAttributes().getNamedItem(attribute);
-        String value = namedItem.getNodeValue();
-        if (value == null || value.isEmpty()) {
-            return defaultValue;
-        } else {
-            return value;
+        return getAttribute(attribute, node.getAttributes(), defaultValue);
+    }
+
+    private String getAttribute(String attribute, NamedNodeMap attributes, String defaultValue) {
+        if (attributes != null) {
+            final Node namedItem = attributes.getNamedItem(attribute);
+            return getAttribute(namedItem, defaultValue);
         }
+        return defaultValue;
+    }
+
+    private String getAttribute(Node namedItem, String defaultValue) {
+        if (namedItem != null) {
+            String value = namedItem.getNodeValue();
+            if (value != null && !value.isEmpty()) {
+                return value;
+            }
+        }
+        return defaultValue;
     }
 
 }

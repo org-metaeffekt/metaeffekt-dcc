@@ -111,6 +111,7 @@ public class ApplyVelocityTemplateTask extends Task {
         context.put("FileUtil", FileUtil.class);
         context.put("UrlUtils", new UrlUtils());
         context.put("xpath", new XPathProvider());
+        context.put("PropertyUtils", new PropertyUtils());
 
         addConcreteExtensionSequence(DCC_UNIT_CONTRIBUTION_ITERATOR_SEQUENCE_REGEX, context,
                 "ContributionIteratorSequence", properties);

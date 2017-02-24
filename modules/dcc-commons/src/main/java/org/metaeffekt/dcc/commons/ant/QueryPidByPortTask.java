@@ -98,8 +98,6 @@ public class QueryPidByPortTask extends Task {
                     }
                 }
 
-                System.out.println(line);
-
                 if (line.contains("_" + ip + ":" + port + "_")) {
                     lines.add(line);
                     continue;

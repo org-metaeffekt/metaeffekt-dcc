@@ -97,12 +97,7 @@ public class ExecutionStateHandler {
             final URI configurationFolderURI = configurationDirectory.toURI();
             try {
                 final File targetFile = new File(configurationDirectory, ZIP_FILE_NAME);
-                if (targetFile.exists()) {
-                    FileUtils.forceDelete(targetFile);
-                }
-                if (targetFile.exists()) {
-                    throw new IllegalStateException("Unable to delete local state cache directory.");
-                }
+                deleteFile(targetFile);
                 try (OutputStream out = new FileOutputStream(targetFile);
                         ZipOutputStream zos = new ZipOutputStream(out)) {
                     for (File file : allExecutionProperties) {
@@ -158,29 +153,9 @@ public class ExecutionStateHandler {
         
         File stateDir = getCacheLocation(host, deploymentId);
 
-        // NOTE: using the dcc from within the eclipse ide on windows it seems that this code breaks, since eclipse is
-        // constantly refreshing and indexing the files. Therefore, a retry mechanism was integrated, that is
-        // compensate temporary file handles withing the state directory.
-        int retries = 20;
-        while (stateDir.exists()) {
-            try {
-                if (stateDir.exists()) {
-                    FileUtils.forceDelete(stateDir);
-                }
-                break;
-            } catch (IOException e) {
-                retries--;
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e1) {
-                    // do nothing
-                }
-                if (retries == 0) {
-                    throw new IllegalStateException("Cannot remove existing files in " + stateDir + ".", e);
-                }
-            }
-        }
-        
+        // delete
+        deleteFile(stateDir);
+
         // recreate folder
         stateDir.mkdirs();
 
@@ -206,6 +181,37 @@ public class ExecutionStateHandler {
             } catch (IOException e) {
                 LOG.error("Unable to update local execution state: ", e.getMessage());
                 LOG.debug("Error details:", e);
+            }
+        }
+    }
+
+    /**
+     * Deletes the passed in file or folder. In case the operation cannot be performed, waits and retries. Throws
+     * an exception in case all attempts to delete fail.
+     *
+     * @param file The file to delete.
+     */
+    private void deleteFile(File file) {
+        // NOTE: using the dcc from within the eclipse ide on windows it seems that this code breaks, since eclipse is
+        // constantly refreshing and indexing the files. Therefore, a retry mechanism was integrated, that is
+        // compensate temporary file handles withing the state directory.
+        int retries = 40;
+        while (file.exists()) {
+            try {
+                if (file.exists()) {
+                    FileUtils.forceDelete(file);
+                }
+                break;
+            } catch (IOException e) {
+                retries--;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    // do nothing
+                }
+                if (retries == 0) {
+                    throw new IllegalStateException("Unable to delete file/folder: " + file, e);
+                }
             }
         }
     }

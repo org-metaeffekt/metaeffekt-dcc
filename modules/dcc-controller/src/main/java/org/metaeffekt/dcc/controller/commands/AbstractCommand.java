@@ -16,6 +16,7 @@
 package org.metaeffekt.dcc.controller.commands;
 
 import java.io.File;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +115,22 @@ abstract class AbstractCommand implements Command {
     @Override
     public boolean isLocal() {
         return false;
+    }
+
+    /**
+     * Logs the execptions to the error log and throws an exception if exceptions have accumulated in exceptions.
+     *
+     *
+     * @param exceptionMap The exceptions maps the
+     */
+    protected void handleExceptions(Map<Id<?>, Throwable> exceptionMap) {
+        if (!exceptionMap.isEmpty()) {
+            for (Map.Entry<Id<?>, Throwable> entry : exceptionMap.entrySet()) {
+                LOG.error(String.format("Error executing command [%s] for unit [%s]: %s", getCommandVerb(),
+                        entry.getKey(), entry.getValue().getMessage()), entry.getValue());
+            }
+            throw new IllegalArgumentException("Aborting execution due to previous errors.");
+        }
     }
 
 }

@@ -18,6 +18,7 @@ package org.metaeffekt.dcc.controller.commands;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -63,12 +64,13 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     @Override
     protected void doExecute(final boolean force, final boolean parallel, final Id<UnitId> limitToUnitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
-        List<ConfigurationUnit> units = getExecutionContext().getProfile().getUnits(false);
+        final List<ConfigurationUnit> units = getExecutionContext().getProfile().getUnits(false);
 
         boolean[] unitFound = new boolean[1];
         unitFound[0] = false;
 
-        UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
+        final Map<Id<?>, Throwable> exceptions = new ConcurrentHashMap<>();
+        final UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
         final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
 
         // some commands require to execute the command in reverse order (eg. stop command)
@@ -84,7 +86,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
             if (parallel && group.size() > 1) {
                 final ExecutorService executor = Executors.newCachedThreadPool();
                 for (final ConfigurationUnit unit : group) {
-                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, true));
+                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, true, exceptions));
                 }
                 executor.shutdown();
                 try {
@@ -93,13 +95,16 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
                     // nothing to do
                 }
             } else {
-                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit, false));
+                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit, false, exceptions));
             }
 
             // execute update status sequentially
             group.stream().forEach(unit -> updateStatus(limitToUnitId, unit));
         }
 
+        handleExceptions(exceptions);
+
+        // handle the case the unit id that the execution was limited to was not found.
         if (limitToUnitId != null && !unitFound[0]) {
             throw new IllegalArgumentException(String.format(
                 "  Command [%s] not executable for unit [%s]. Either the unit does not exist or the command does not" +
@@ -114,26 +119,32 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit, boolean setThreadName) {
-        if (setThreadName) {
-            Thread.currentThread().setName(String.format("%-24s", unit.getId().getValue()));
-        }
+    private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit,
+            boolean setThreadName, Map<Id<?>, Throwable> exceptions) {
         final Id<UnitId> unitId = unit.getId();
-        if (unit.getCommand(getCommandVerb()) != null) {
-            if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
-                unitFound[0] = true;
-                prepareProperties(unit);
-                if (isExecutionRequired(force, unitId, getCommandVerb())) {
-                    LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(), unitId);
-                    long timestamp = System.currentTimeMillis();
-                    doExecuteCommand(unit);
-                    afterSuccessfulUnitExecution(unit, timestamp);
-                } else {
-                    LOG.info("  Skipping command [{}] for unit [{}] as it already has been executed.",
-                            getCommandVerb(), unitId);
+        if (setThreadName) {
+            Thread.currentThread().setName(String.format("%-24s", unitId.getValue()));
+        }
+        try {
+            if (unit.getCommand(getCommandVerb()) != null) {
+                if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
+                    unitFound[0] = true;
+                    prepareProperties(unit);
+                    if (isExecutionRequired(force, unitId, getCommandVerb())) {
+                        LOG.debug("  Executing command [{}] for unit [{}]", getCommandVerb(), unitId);
+                        long timestamp = System.currentTimeMillis();
+                        doExecuteCommand(unit);
+                        afterSuccessfulUnitExecution(unit, timestamp);
+                    } else {
+                        LOG.info("  Skipping command [{}] for unit [{}] as it already has been executed.",
+                                getCommandVerb(), unitId);
+                    }
                 }
             }
+        } catch (RuntimeException ex) {
+            exceptions.put(unitId, ex);
         }
+
     }
 
     protected void doExecuteCommand(ConfigurationUnit unit) {
