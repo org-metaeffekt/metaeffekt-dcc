@@ -76,14 +76,7 @@ public abstract class BaseExecutor implements Executor {
     protected synchronized void cleanFolders(File... folders) {
         for (File folder : folders) {
             if (folder.exists()) {
-                try {
-                    FileUtils.forceDelete(folder);
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-            if (folder.exists()) {
-                throw new IllegalStateException(String.format("Cannot delete folder [%s].", folder.getPath()));
+                executionStateHandler.deleteFile(folder);
             }
         }
     }

@@ -191,7 +191,7 @@ public class ExecutionStateHandler {
      *
      * @param file The file to delete.
      */
-    private void deleteFile(File file) {
+    public void deleteFile(File file) {
         // NOTE: using the dcc from within the eclipse ide on windows it seems that this code breaks, since eclipse is
         // constantly refreshing and indexing the files. Therefore, a retry mechanism was integrated, that is
         // compensate temporary file handles withing the state directory.
