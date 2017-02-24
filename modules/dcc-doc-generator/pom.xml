@@ -7,13 +7,13 @@
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-modules-behavior-pom</artifactId>
         <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-modules-behavior-pom</relativePath>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.12.0</version>
     </parent>
 
     <artifactId>dcc-doc-generator</artifactId>
 
     <properties>
-        <dcc.version>0.12-SNAPSHOT</dcc.version>
+        <dcc.version>0.12.0</dcc.version>
     </properties>
 
     <build>
