@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.1.0</version>
+        <version>0.2-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -20,6 +20,8 @@
         <dcc.version>0.13-SNAPSHOT</dcc.version>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
+
+        <artifact.inventory.source>/META-INF/dcc-artifact-inventory.xls</artifact.inventory.source>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +39,19 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.metaeffekt.core</groupId>
+                    <artifactId>ae-inventory-maven-plugin</artifactId>
+                    <version>${ae.core.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.metaeffekt.dcc</groupId>
+                            <artifactId>ae-dcc-inventory</artifactId>
+                            <version>${dcc.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
                 <plugin>
                     <!-- FIXME: isolate proper POM in metaeffekt core and add there -->
                     <groupId>org.apache.maven.plugins</groupId>

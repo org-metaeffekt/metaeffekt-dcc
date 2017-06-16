@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core</artifactId>
-        <version>0.1.0</version>
+        <version>0.2-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -53,11 +53,12 @@
     <properties>
         <artifact.inventory.enabled>true</artifact.inventory.enabled>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
-        <ae.core.version>0.1.0</ae.core.version>
+        <ae.core.version>0.2-SNAPSHOT</ae.core.version>
         <dcc.version>0.13-SNAPSHOT</dcc.version>
     </properties>
 
     <modules>
+        <module>inventory</module>
         <module>pom-hierarchy</module>
         <module>modules</module>
         <module>libraries</module>
@@ -89,6 +90,23 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.metaeffekt.core</groupId>
+                <artifactId>ae-inventory-maven-plugin</artifactId>
+                <version>${ae.core.version}</version>
+                <executions>
+                    <execution>
+                        <id>aggregate-reports</id>
+                        <goals>
+                            <goal>aggregate-inventory-reports</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
