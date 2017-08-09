@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2016 the original author or authors.
+ * Copyright 2009-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,32 +71,38 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
 
         final Map<Id<?>, Throwable> exceptions = new ConcurrentHashMap<>();
         final UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
-        final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
+
+        final List<List<ConfigurationUnit>> groupLists;
+        if (isSequential()) {
+            groupLists = unitDependencies.evaluateDependencyGroups(units);
+        } else {
+            groupLists = Collections.singletonList(units);
+        }
 
         // some commands require to execute the command in reverse order (eg. stop command)
         if (isReversive()) {
             Collections.reverse(groupLists);
         }
 
-        // NOTE: proposal for improvements:
-        // - filter the units for those that need to be processed; then operate on filtered list
-        // - handle state update separately (sequential, not concurrent); remove synchronized on updateStatus
-        // - currently we rely on parallel stream regarding concurrent execution. Is this adequate?
+        // process the resulting group list
         for (List<ConfigurationUnit> group : groupLists) {
+
+            // we always run in an executor (mainly due to logging)
+            final ExecutorService executor;
             if (parallel && group.size() > 1) {
-                final ExecutorService executor = Executors.newCachedThreadPool();
-                for (final ConfigurationUnit unit : group) {
-                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, true, exceptions));
-                }
-                executor.shutdown();
-                try {
-                    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                } catch (InterruptedException e) {
-                    // nothing to do
-                }
+                executor = Executors.newFixedThreadPool(Math.min(NUMBER_OF_THREADS, group.size()));
             } else {
-                group.stream().forEach(unit -> executeCommand(force, limitToUnitId, unitFound, unit, false, exceptions));
+                executor = Executors.newFixedThreadPool(1);
             }
+
+            // execute commands (queue)
+            for (final ConfigurationUnit unit : group) {
+                // don't queue anything in case there was already an exception
+                if (exceptions.isEmpty()) {
+                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, exceptions));
+                }
+            }
+            awaitTerminationOrCancelOnException(executor, exceptions);
 
             // execute update status sequentially
             group.stream().forEach(unit -> updateStatus(limitToUnitId, unit));
@@ -120,11 +126,9 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     }
 
     private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit,
-            boolean setThreadName, Map<Id<?>, Throwable> exceptions) {
+            Map<Id<?>, Throwable> exceptions) {
         final Id<UnitId> unitId = unit.getId();
-        if (setThreadName) {
-            Thread.currentThread().setName(String.format("%-24s", unitId.getValue()));
-        }
+        Thread.currentThread().setName(String.format("%-24s", unitId.getValue()));
         try {
             if (unit.getCommand(getCommandVerb()) != null) {
                 if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
@@ -352,4 +356,8 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
+    @Override
+    public boolean isSequential() {
+        return true;
+    }
 }

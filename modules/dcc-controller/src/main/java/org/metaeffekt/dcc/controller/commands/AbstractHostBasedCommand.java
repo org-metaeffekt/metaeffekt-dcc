@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2016 the original author or authors.
+ * Copyright 2009-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,23 +47,26 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
     protected void doExecute(boolean force, final boolean parallel, Id<UnitId> unitId) {
         LOG.info("Executing command [{}] ...", getCommandVerb());
         final Map<Id<?>, Throwable> exceptions = new ConcurrentHashMap<>();
+
         if (unitId == null) {
             // do for all hosts
             Collection<Id<HostName>> hosts = getExecutionContext().getHostsExecutors().keySet();
+
+            // we always run in an executor (mainly due to logging)
+            final ExecutorService executor;
             if (parallel && hosts.size() > 1) {
-                ExecutorService executor = Executors.newCachedThreadPool();
-                for (final Id<HostName> host : hosts) {
-                    executor.execute(() -> doExecuteForHost(host, force, true, exceptions));
-                }
-                executor.shutdown();
-                try {
-                    executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                } catch (InterruptedException e) {
-                    // nothing to do
-                }
+                executor = Executors.newFixedThreadPool(Math.min(NUMBER_OF_THREADS, hosts.size()));
             } else {
-                hosts.stream().forEach(h -> doExecuteForHost(h, force, false, exceptions));
+                executor = Executors.newFixedThreadPool(1);
             }
+
+            for (final Id<HostName> host : hosts) {
+                if (exceptions.isEmpty()) {
+                    executor.execute(() -> doExecuteForHost(host, force, exceptions));
+                }
+            }
+
+            awaitTerminationOrCancelOnException(executor, exceptions);
 
             // update status is performed sequentially in any case
             hosts.stream().forEach(h -> updateStatus(h));
@@ -71,7 +74,9 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
             // reduce the handling to the host hosting the unit
             Id<HostName> host = getExecutionContext().getHostForUnit(unitId);
             if (host != null) {
-                doExecuteForHost(host, force, false, exceptions);
+                final ExecutorService executor = Executors.newFixedThreadPool(1);
+                executor.execute(() -> doExecuteForHost(host, force, exceptions));
+                awaitTerminationOrCancelOnException(executor, exceptions);
                 updateStatus(host);
             } else {
                 throw new IllegalArgumentException(String.format("Cannot find host based executor for unit [%s]. "
@@ -84,11 +89,9 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
 
 
 
-    private void doExecuteForHost(Id<HostName> host, boolean force, boolean setThreadName, Map<Id<?>, Throwable> exceptions) {
+    private void doExecuteForHost(Id<HostName> host, boolean force, Map<Id<?>, Throwable> exceptions) {
         try {
-            if (setThreadName) {
-                Thread.currentThread().setName(String.format("%-24s", host.getValue()));
-            }
+            Thread.currentThread().setName(String.format("%-24s", host.getValue()));
             if (isExecutionRequired(force, host, getCommandVerb())) {
                 long timestamp = System.currentTimeMillis();
                 doExecuteCommand(getExecutionContext().getExecutorForHost(host));
@@ -123,5 +126,10 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
     
     protected void afterSuccessfulUnitExecution(long startTimestamp) {
         super.afterSuccessfulExecution("", String.format("[%s]", getCommandVerb()), startTimestamp);
+    }
+
+    @Override
+    public boolean isSequential() {
+        return false;
     }
 }

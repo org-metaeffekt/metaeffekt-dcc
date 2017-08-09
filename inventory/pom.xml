@@ -130,7 +130,6 @@
                             <className>org.metaeffekt.core.inventory.processor.UpdateVersionRecommendationProcessor</className>
                         </processor>
                     </processors>
-
                 </configuration>
             </plugin>
         </plugins>

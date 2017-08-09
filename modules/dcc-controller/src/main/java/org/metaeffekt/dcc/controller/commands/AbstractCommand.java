@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2016 the original author or authors.
+ * Copyright 2009-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.metaeffekt.dcc.controller.commands;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,8 @@ import org.metaeffekt.dcc.controller.execution.ExecutionContext;
  *  @author Karsten Klein
  */
 abstract class AbstractCommand implements Command {
+
+    protected static final int NUMBER_OF_THREADS = Integer.parseInt(System.getProperty("dcc.execution.thread.count", "20"));
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
@@ -129,7 +133,25 @@ abstract class AbstractCommand implements Command {
                 LOG.error(String.format("Error executing command [%s] for unit [%s]: %s", getCommandVerb(),
                         entry.getKey(), entry.getValue().getMessage()), entry.getValue());
             }
-            throw new IllegalArgumentException("Aborting execution due to previous errors.");
+            throw new IllegalStateException("Aborting execution due to previous errors.");
+        }
+    }
+
+    protected void awaitTerminationOrCancelOnException(ExecutorService executor, Map<Id<?>, Throwable> exceptions) {
+        // wait until all commands have finished or an error occurred
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            try {
+                executor.awaitTermination(200, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                // nothing to do
+            }
+
+            // when there is an exception, do not attempt the commands that have not started yet
+            // and try to terminate the currently running (not guaranteed)
+            if (!exceptions.isEmpty()) {
+                executor.shutdownNow();
+            }
         }
     }
 

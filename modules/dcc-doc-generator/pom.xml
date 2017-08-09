@@ -37,7 +37,6 @@
                                         <groupId>org.metaeffekt.dcc</groupId>
                                         <artifactId>dcc-styling</artifactId>
                                         <version>${dcc.version}</version>
-                                        <classifier>runtime</classifier>
                                         <type>jar</type>
                                         <includes>**/*.*</includes>
                                         <excludes>META-INF/**, META-INF</excludes>
@@ -125,7 +124,6 @@
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-commons</artifactId>
-            <classifier>runtime</classifier>
             <scope>runtime</scope>
             <version>${project.version}</version>
         </dependency>
@@ -133,7 +131,6 @@
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-styling</artifactId>
-            <classifier>runtime</classifier>
             <scope>runtime</scope>
             <version>${project.version}</version>
             <optional>true</optional>

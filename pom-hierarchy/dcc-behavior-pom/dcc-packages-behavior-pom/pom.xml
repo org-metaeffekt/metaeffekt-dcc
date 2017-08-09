@@ -10,12 +10,12 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <properties>
-        <ae.core.version>0.2-SNAPSHOT</ae.core.version>
+        <ae.core.version>0.4-SNAPSHOT</ae.core.version>
         <dcc.version>0.13-SNAPSHOT</dcc.version>
         
         <dcc.test.directory>${project.build.directory}/dcc</dcc.test.directory>
@@ -35,7 +35,7 @@
         <dcc.package.binaries.name>none</dcc.package.binaries.name>
         <dcc.package.binaries.type>zip</dcc.package.binaries.type>
         
-        <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
+        <artifact.inventory.version>0.3-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
         <artifact.inventory.manage.scope.provided>true</artifact.inventory.manage.scope.provided>
 
@@ -212,7 +212,6 @@
                                         <groupId>org.metaeffekt.dcc</groupId>
                                         <artifactId>dcc-styling</artifactId>
                                         <version>${dcc.version}</version>
-                                        <classifier>runtime</classifier>
                                         <type>jar</type>
                                         <includes>**/*</includes>
                                         <excludes>META-INF/**, META-INF</excludes>
@@ -457,7 +456,7 @@
                             <fileset>
                                 <directory>${basedir}/target/classes</directory>
                                 <includes>
-                                    <include>--nothing--</include>
+                                    <include>**/META-INF/LICENSE*</include>
                                 </includes>
                             </fileset>
                         </filesets>
@@ -512,7 +511,6 @@
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-commons</artifactId>
-            <classifier>runtime</classifier>
             <scope>runtime</scope>
             <version>${dcc.version}</version>
         </dependency>
@@ -528,7 +526,6 @@
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-controller</artifactId>
-            <classifier>runtime</classifier>
             <scope>test</scope>
             <version>${dcc.version}</version>
         </dependency>

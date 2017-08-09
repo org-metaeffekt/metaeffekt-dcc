@@ -46,7 +46,6 @@
                                     <artifactItem>
                                         <groupId>org.metaeffekt.dcc</groupId>
                                         <artifactId>dcc-controller</artifactId>
-                                        <classifier>runtime</classifier>
                                         <includes>${dcc.script.includes}</includes>
                                     </artifactItem>
                                 </artifactItems>
@@ -98,7 +97,6 @@
                                     <artifactItem>
                                         <groupId>org.metaeffekt.dcc</groupId>
                                         <artifactId>dcc-controller</artifactId>
-                                        <classifier>runtime</classifier>
                                         <includes>
                                             *.keystore,
                                             *.truststore
@@ -130,7 +128,6 @@
             <artifactId>dcc-commons</artifactId>
             <version>${dcc.version}</version>
             <scope>runtime</scope>
-            <classifier>runtime</classifier>
         </dependency>
 
         <dependency>
@@ -138,7 +135,6 @@
             <artifactId>dcc-controller</artifactId>
             <version>${dcc.version}</version>
             <scope>runtime</scope>
-            <classifier>runtime</classifier>
         </dependency>
 
         <dependency>

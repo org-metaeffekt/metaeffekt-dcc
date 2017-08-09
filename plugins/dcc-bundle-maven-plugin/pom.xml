@@ -61,7 +61,6 @@
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-commons</artifactId>
-            <classifier>runtime</classifier>
             <scope>runtime</scope>
             <version>${project.version}</version>
         </dependency>

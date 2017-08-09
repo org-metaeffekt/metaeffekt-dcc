@@ -29,7 +29,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
                     <executions>
                         <execution>
                             <id>aggregate-bundle-libs</id>
@@ -108,7 +107,7 @@
                                 <goal>publish-artifact</goal>
                             </goals>
                             <configuration>
-                                <qualifier>bundle</qualifier>
+                                <classifier>bundle</classifier>
                                 <type>zip</type>
                                 <filesets>
                                     <fileset>
@@ -245,7 +244,7 @@
                                         <goal>publish-artifact</goal>
                                     </goals>
                                     <configuration>
-                                        <qualifier>package</qualifier>
+                                        <classifier>package</classifier>
                                         <type>zip</type>
                                         <filesets>
                                             <fileset>

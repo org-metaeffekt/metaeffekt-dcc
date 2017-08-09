@@ -20,19 +20,16 @@
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-commons</artifactId>
             <version>${dcc.version}</version>
-            <classifier>runtime</classifier>
         </dependency>
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-controller</artifactId>
             <version>${dcc.version}</version>
-            <classifier>runtime</classifier>
         </dependency>
         <dependency>
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-doc-generator</artifactId>
             <version>${dcc.version}</version>
-            <classifier>runtime</classifier>
         </dependency>
         
         <dependency>

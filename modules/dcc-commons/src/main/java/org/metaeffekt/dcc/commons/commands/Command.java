@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2016 the original author or authors.
+ * Copyright 2009-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,5 +95,13 @@ public interface Command {
      * @return Boolean indicating whether the command is a local command.
      */
     public boolean isLocal();
+
+    /**
+     * Checks whether the command is sequential. Sequential commands have an order imposed by the
+     * dependencies to other units. Commands, which are not sequential can be executed in any order.
+     *
+     * @return Boolean indicating whether the command is sequential or not.
+     */
+    public boolean isSequential();
 
 }

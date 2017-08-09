@@ -70,7 +70,6 @@
             <groupId>org.metaeffekt.dcc</groupId>
             <artifactId>dcc-doc-generator</artifactId>
             <version>${project.version}</version>
-            <classifier>runtime</classifier>
             <scope>runtime</scope>
         </dependency>
 

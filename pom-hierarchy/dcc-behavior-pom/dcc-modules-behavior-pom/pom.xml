@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -18,7 +18,7 @@
 
     <properties>
         <dcc.version>0.13-SNAPSHOT</dcc.version>
-        <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
+        <artifact.inventory.version>0.3-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
 
         <artifact.inventory.source>/META-INF/dcc-artifact-inventory.xls</artifact.inventory.source>
@@ -74,46 +74,6 @@
                     <artifactId>ae-artifact-publish-maven-plugin</artifactId>
                     <version>${ae.core.version}</version>
                     <executions>
-                        <execution>
-                            <id>package-runtime</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>publish-artifact</goal>
-                            </goals>
-                            <configuration>
-                                <qualifier>runtime</qualifier>
-                                <filesets>
-                                    <!-- copy src/main/config; this may contain property tokens -->
-                                    <fileset>
-                                        <directory>${basedir}/target/classes</directory>
-                                        <includes>
-                                            <include>**/*.class</include>
-                                            <include>**/*.xml</include>
-                                            <include>**/*.xsd</include>
-                                            <include>**/*.txt</include>
-                                            <include>**/*.ldif</include>
-                                            <include>**/*.xls</include>
-                                            <include>**/*.properties</include>
-                                            <include>*.uris</include>
-                                            <include>*.jks</include>
-                                            <include>*.crt</include>
-                                            <include>*.wsdl</include>
-                                            <include>META-INF/services/**/*</include>
-                                            <include>META-INF/**/*.xslt</include>
-                                            <include>META-INF/**/*.schemas</include>
-                                            <include>META-INF/**/*.handlers</include>
-                                            <include>META-INF/**/*.wsdd</include>
-                                            <include>META-INF/**/*.csv</include>
-                                        </includes>
-                                        <excludes>
-                                            <exclude>**/.svn/**/*</exclude>
-                                            <exclude>**/.svn</exclude>
-                                        </excludes>
-                                        <followSymlinks>false</followSymlinks>
-                                    </fileset>
-                                </filesets>
-                            </configuration>
-                        </execution>
                         <!-- support sources for debugging with custom artifacts -->
                         <execution>
                             <!-- Some dcc modules contain a src/main/config folder to transport configuration 
@@ -124,7 +84,7 @@
                                 <goal>publish-artifact</goal>
                             </goals>
                             <configuration>
-                                <qualifier>config</qualifier>
+                                <classifier>config</classifier>
                                 <filesets>
                                     <fileset>
                                         <directory>${project.build.directory}/tmp/config-artifact</directory>
@@ -144,12 +104,12 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>3.0</version>
                     <configuration>
-                        <header>header/apache-license-2-header.txt</header>
+                        <header>header/apache-license-2.0-header.txt</header>
                         <properties>
                             <owner>metaeffekt.org</owner>
                             <email>contact@metaeffekt.org</email>
                             <year.initial>2009</year.initial>
-                            <year>2016</year>
+                            <year>2017</year>
                         </properties>
                         <includes>
                             <include>**/*.java</include>
@@ -228,7 +188,7 @@
                                         <goal>publish-artifact</goal>
                                     </goals>
                                     <configuration>
-                                        <qualifier>doc</qualifier>
+                                        <classifier>doc</classifier>
                                         <filesets>
                                             <fileset>
                                                 <directory>${project.build.directory}/tmp/doc-artifact</directory>
@@ -279,11 +239,28 @@
                                     <fileset>
                                         <directory>${basedir}/target/classes</directory>
                                         <includes>
-                                            <include>--nothing--</include>
+                                            <include>**/META-INF/LICENSE*</include>
                                         </includes>
                                         <followSymlinks>false</followSymlinks>
                                     </fileset>
                                 </filesets>
+                                <archive>
+                                    <index>false</index>
+                                    <addMavenDescriptor>false</addMavenDescriptor>
+                                    <manifestEntries>
+                                        <Created-By>${organization}</Created-By>
+                                        <Built-By>${organization}</Built-By>
+                                    </manifestEntries>
+                                    <manifestSections>
+                                        <manifestSection>
+                                            <name>License Information</name>
+                                            <manifestEntries>
+                                                <License>${license.identifier}</License>
+                                                <License-File>${license.file}</License-File>
+                                            </manifestEntries>
+                                        </manifestSection>
+                                    </manifestSections>
+                                </archive>
                             </configuration>
                             <dependencies>
                                 <dependency>
@@ -300,21 +277,6 @@
                             <artifactId>ae-artifact-publish-maven-plugin</artifactId>
                             <version>${ae.core.version}</version>
                             <executions>
-                                <execution>
-                                    <!--
-                                        Replaces the standard artifact (fat jar) with the public api version
-                                        Doing this is part of the multiartifact / public api enforcement 
-                                        strategy. 
-                                    -->
-                                    <id>overwrite-standard-artifact</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>publish-artifact-overwrite</goal>
-                                    </goals>
-                                    <configuration>
-                                        <sourceQualifier>api</sourceQualifier>
-                                    </configuration>
-                                </execution>
                                 <execution>
                                     <id>publish-api-sources-artifact</id>
                                     <phase>package</phase>
