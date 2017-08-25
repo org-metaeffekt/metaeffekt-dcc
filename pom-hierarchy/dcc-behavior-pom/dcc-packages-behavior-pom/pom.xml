@@ -5,18 +5,18 @@
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-packages-behavior-pom</artifactId>
     <packaging>pom</packaging>
-    <version>0.13-SNAPSHOT</version>
+    <version>0.13.0</version>
 
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5.0</version>
         <relativePath />
     </parent>
 
     <properties>
-        <ae.core.version>0.4-SNAPSHOT</ae.core.version>
-        <dcc.version>0.13-SNAPSHOT</dcc.version>
+        <ae.core.version>0.5.0</ae.core.version>
+        <dcc.version>0.13.0</dcc.version>
         
         <dcc.test.directory>${project.build.directory}/dcc</dcc.test.directory>
         <dcc.test.packages.directory>${dcc.test.directory}/packages</dcc.test.packages.directory>
@@ -35,7 +35,7 @@
         <dcc.package.binaries.name>none</dcc.package.binaries.name>
         <dcc.package.binaries.type>zip</dcc.package.binaries.type>
         
-        <artifact.inventory.version>0.3-SNAPSHOT</artifact.inventory.version>
+        <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
         <artifact.inventory.manage.scope.provided>true</artifact.inventory.manage.scope.provided>
 
@@ -125,7 +125,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.0</version>
                     <configuration>
                         <descriptorSourceDirectory>${basedir}/src/assemble</descriptorSourceDirectory>
                         <ignoreMissingDescriptor>true</ignoreMissingDescriptor>

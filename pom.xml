@@ -7,7 +7,7 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-application</artifactId>
-    <version>0.13-SNAPSHOT</version>
+    <version>0.13.0</version>
     <packaging>pom</packaging>
 
     <name>metaeffekt-dcc</name>
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5.0</version>
         <relativePath />
     </parent>
 
@@ -52,8 +52,8 @@
 
     <properties>
         <artifact.inventory.enabled>true</artifact.inventory.enabled>
-        <ae.core.version>0.4-SNAPSHOT</ae.core.version>
-        <dcc.version>0.13-SNAPSHOT</dcc.version>
+        <ae.core.version>0.5.0</ae.core.version>
+        <dcc.version>0.13.0</dcc.version>
     </properties>
 
     <modules>
@@ -110,7 +110,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <scanExcludes>**/ae-core-artifact-inventory.xls</scanExcludes>
-                                    <scanExcludes>**/ae-dita-artifact-inventory.xls</scanExcludes>
+                                    <scanExcludes>**/dcc-artifact-inventory.xls</scanExcludes>
                                 </configuration>
                             </execution>
                         </executions>

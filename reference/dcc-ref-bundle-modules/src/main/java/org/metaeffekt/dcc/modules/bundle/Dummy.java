@@ -15,6 +15,6 @@
  */
 package org.metaeffekt.dcc.modules.bundle;
 
-// the dummy class acticates the generation of a runtime artifact
+// the dummy class activates the generation of a runtime artifact
 public class Dummy {
 }
