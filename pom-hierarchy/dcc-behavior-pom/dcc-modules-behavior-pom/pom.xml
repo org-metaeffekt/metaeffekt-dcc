@@ -6,18 +6,18 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.14.0</version>
+        <version>HEAD-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-modules-behavior-pom</artifactId>
-    <version>0.14.0</version>
+    <version>HEAD-SNAPSHOT</version>
     
     <packaging>pom</packaging>
 
     <properties>
-        <dcc.version>0.14.0</dcc.version>
+        <dcc.version>HEAD-SNAPSHOT</dcc.version>
         <artifact.inventory.version>0.2-SNAPSHOT</artifact.inventory.version>
         <artifact.inventory.exclude.artifacts>^org\.metaeffekt\..*:*</artifact.inventory.exclude.artifacts>
 

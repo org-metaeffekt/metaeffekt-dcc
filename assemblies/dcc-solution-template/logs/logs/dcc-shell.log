@@ -3531,3 +3531,557 @@ org.apache.tools.ant.BuildException: Supposed to fail.
 2017-11-20T21:49:10,933 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
 2017-11-20T21:49:10,934 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [true]
 2017-11-20T21:49:10,934 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,630 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02]:
+2017-11-20T21:51:25,631 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-02]
+2017-11-20T21:51:25,632 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01]:
+2017-11-20T21:51:25,632 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-01]
+2017-11-20T21:51:25,632 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05]:
+2017-11-20T21:51:25,632 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-05]
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04]:
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [verify.command.execution.failure] = [true]
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03]:
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-03]
+2017-11-20T21:51:25,633 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/unit.config]:
+2017-11-20T21:51:25,634 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [unit.config]
+2017-11-20T21:51:25,634 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [unit.config]
+2017-11-20T21:51:25,634 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:51:25,634 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/unit.config]:
+2017-11-20T21:51:25,635 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [wrapped-java-runtime-template]:
+2017-11-20T21:51:25,635 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jpdaPort] = [8000]
+2017-11-20T21:51:25,635 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:51:25,635 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableJpda] = [false]
+2017-11-20T21:51:25,635 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:51:25,636 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [wrapped-java-runtime-template]
+2017-11-20T21:51:25,636 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableServiceWrapper] = [false]
+2017-11-20T21:51:25,636 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [language] = [en]
+2017-11-20T21:51:25,636 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:51:25,636 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/host]:
+2017-11-20T21:51:25,637 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:25,637 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,637 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:25,637 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:25,637 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/host]:
+2017-11-20T21:51:25,638 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:25,638 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,638 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:25,638 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:25,639 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contribution-template]:
+2017-11-20T21:51:25,639 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias] = [${_unitId}]
+2017-11-20T21:51:25,640 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contribution-template]
+2017-11-20T21:51:25,640 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.file] = [${dcc.solution.dir}/external/certificates/${_unitId}.cert.pem]
+2017-11-20T21:51:25,640 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [agent-host-template]:
+2017-11-20T21:51:25,640 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:25,641 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [agent-host-template]
+2017-11-20T21:51:25,641 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/host]:
+2017-11-20T21:51:25,641 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:25,641 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,641 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/verify.command.specification]:
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,642 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [certificate-components-template]:
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [certificate-components-template]
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/verify.command.specification]:
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:25,643 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/host]:
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/host]:
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,644 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:25,645 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:25,645 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/host]:
+2017-11-20T21:51:25,645 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,645 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [jmx-runtime-template]:
+2017-11-20T21:51:25,645 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.server.port] = [9997]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.enabled] = [false]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.ssl.enabled] = [false]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [jmx-runtime-template]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.registry.port] = [9097]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/verify.command.specification]:
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:25,646 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:25,647 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,647 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contributions-template]:
+2017-11-20T21:51:25,647 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.path] = [${dcc.solution.dir}/external/certificates/${_unitId}]
+2017-11-20T21:51:25,647 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contributions-template]
+2017-11-20T21:51:25,648 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias.prefix] = [${_unitId}-]
+2017-11-20T21:51:25,648 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/agent.endpoint]:
+2017-11-20T21:51:25,648 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:51:25,648 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [java-runtime-template]:
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [java-runtime-template]
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:51:25,649 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [runtime-template]:
+2017-11-20T21:51:25,650 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [runtime-template]
+2017-11-20T21:51:25,650 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/unit.config]:
+2017-11-20T21:51:25,650 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/agent.endpoint]:
+2017-11-20T21:51:25,652 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:51:25,652 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,652 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [components-template]:
+2017-11-20T21:51:25,652 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:51:25,652 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [components-template]
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/unit.config]:
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/verify.command.specification]:
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/unit.config]:
+2017-11-20T21:51:25,653 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [test-unit-template]:
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [test-unit-template]
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-template]:
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-template]
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/host]:
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,654 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02]:
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01]:
+2017-11-20T21:51:25,655 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/verify.command.specification]:
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [true]
+2017-11-20T21:51:25,656 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:25,661 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(49) - Executing command [initialize] ...
+2017-11-20T21:51:25,708 INFO  [localhost           ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(157) -   Executing command [clean] on [localhost].
+2017-11-20T21:51:25,724 INFO  [localhost           ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(157) -   Executing command [initialize] on [localhost].
+2017-11-20T21:51:25,725 INFO  [localhost           ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [initialize] took 0.18 seconds.
+2017-11-20T21:51:25,731 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [initialize] took 0.70 seconds.
+2017-11-20T21:51:25,732 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [verify] ...
+2017-11-20T21:51:25,741 INFO  [host-01             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [host-01] on [localhost].
+2017-11-20T21:51:25,741 INFO  [host-02             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [host-02] on [localhost].
+2017-11-20T21:51:26,509 INFO  [host-02             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [host-02] took 0.768 seconds.
+2017-11-20T21:51:26,509 INFO  [host-01             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [host-01] took 0.768 seconds.
+2017-11-20T21:51:26,523 INFO  [unit-02             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-02] on [localhost].
+2017-11-20T21:51:26,523 INFO  [unit-03             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-03] on [localhost].
+2017-11-20T21:51:26,523 INFO  [unit-01             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-01] on [localhost].
+2017-11-20T21:51:26,523 INFO  [unit-04             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-04] on [localhost].
+2017-11-20T21:51:27,776 INFO  [unit-02             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-02] took 1.254 seconds.
+2017-11-20T21:51:27,776 INFO  [unit-01             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-01] took 1.254 seconds.
+2017-11-20T21:51:27,776 INFO  [unit-03             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-03] took 1.253 seconds.
+2017-11-20T21:51:27,797 WARN  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(106) - Skipping execution of further commands due to previous error.
+2017-11-20T21:51:27,798 ERROR [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#handleExceptions(134) - Error executing command [verify] for unit [unit-04]: Execution of unit-04 failed.
+2017-11-20T21:51:27,798 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [install] ...
+2017-11-20T21:51:27,835 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [install] took 0.36 seconds.
+2017-11-20T21:51:27,836 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [configure] ...
+2017-11-20T21:51:27,875 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [configure] took 0.39 seconds.
+2017-11-20T21:51:27,876 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [start] ...
+2017-11-20T21:51:27,913 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [start] took 0.37 seconds.
+2017-11-20T21:51:27,914 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [stop] ...
+2017-11-20T21:51:27,949 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [stop] took 0.35 seconds.
+2017-11-20T21:51:28,098 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02]:
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-02]
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01]:
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-01]
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05]:
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-05]
+2017-11-20T21:51:28,099 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04]:
+2017-11-20T21:51:28,100 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:51:28,100 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [verify.command.execution.failure] = [true]
+2017-11-20T21:51:28,100 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03]:
+2017-11-20T21:51:28,100 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-03]
+2017-11-20T21:51:28,100 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/unit.config]:
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [unit.config]
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [unit.config]
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/unit.config]:
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [wrapped-java-runtime-template]:
+2017-11-20T21:51:28,101 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jpdaPort] = [8000]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableJpda] = [false]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [wrapped-java-runtime-template]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableServiceWrapper] = [false]
+2017-11-20T21:51:28,102 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [language] = [en]
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/host]:
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:28,103 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:28,104 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/host]:
+2017-11-20T21:51:28,104 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:28,104 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,104 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:28,104 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contribution-template]:
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias] = [${_unitId}]
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contribution-template]
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.file] = [${dcc.solution.dir}/external/certificates/${_unitId}.cert.pem]
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [agent-host-template]:
+2017-11-20T21:51:28,105 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:28,106 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [agent-host-template]
+2017-11-20T21:51:28,106 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/host]:
+2017-11-20T21:51:28,106 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:28,106 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,106 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:28,107 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:28,107 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/verify.command.specification]:
+2017-11-20T21:51:28,107 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:28,107 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:28,107 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:28,108 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [certificate-components-template]:
+2017-11-20T21:51:28,108 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:51:28,108 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [certificate-components-template]
+2017-11-20T21:51:28,108 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/verify.command.specification]:
+2017-11-20T21:51:28,108 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:28,109 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:28,109 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:28,109 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/host]:
+2017-11-20T21:51:28,109 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,109 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/host]:
+2017-11-20T21:51:28,110 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:28,110 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,110 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:28,110 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:28,110 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/host]:
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [jmx-runtime-template]:
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.server.port] = [9997]
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.enabled] = [false]
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.ssl.enabled] = [false]
+2017-11-20T21:51:28,111 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [jmx-runtime-template]
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.registry.port] = [9097]
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/verify.command.specification]:
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:28,112 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contributions-template]:
+2017-11-20T21:51:28,113 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.path] = [${dcc.solution.dir}/external/certificates/${_unitId}]
+2017-11-20T21:51:28,113 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contributions-template]
+2017-11-20T21:51:28,113 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias.prefix] = [${_unitId}-]
+2017-11-20T21:51:28,113 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/agent.endpoint]:
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [java-runtime-template]:
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [java-runtime-template]
+2017-11-20T21:51:28,114 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [runtime-template]:
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [runtime-template]
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/unit.config]:
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/agent.endpoint]:
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:51:28,115 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,116 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [components-template]:
+2017-11-20T21:51:28,116 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:51:28,116 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [components-template]
+2017-11-20T21:51:28,116 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/unit.config]:
+2017-11-20T21:51:28,116 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/verify.command.specification]:
+2017-11-20T21:51:28,117 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:28,117 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:51:28,117 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:51:28,117 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/unit.config]:
+2017-11-20T21:51:28,118 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [test-unit-template]:
+2017-11-20T21:51:28,118 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [test-unit-template]
+2017-11-20T21:51:28,118 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-template]:
+2017-11-20T21:51:28,118 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-template]
+2017-11-20T21:51:28,118 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/host]:
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02]:
+2017-11-20T21:51:28,119 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01]:
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:51:28,120 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:51:28,121 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/verify.command.specification]:
+2017-11-20T21:51:28,121 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:51:28,121 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [true]
+2017-11-20T21:51:28,121 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,859 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02]:
+2017-11-20T21:56:49,860 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-02]
+2017-11-20T21:56:49,861 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01]:
+2017-11-20T21:56:49,861 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-01]
+2017-11-20T21:56:49,861 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05]:
+2017-11-20T21:56:49,861 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-05]
+2017-11-20T21:56:49,862 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04]:
+2017-11-20T21:56:49,862 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:56:49,862 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [verify.command.execution.failure] = [true]
+2017-11-20T21:56:49,862 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03]:
+2017-11-20T21:56:49,862 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-03]
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/unit.config]:
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [unit.config]
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [unit.config]
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/unit.config]:
+2017-11-20T21:56:49,863 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [wrapped-java-runtime-template]:
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jpdaPort] = [8000]
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableJpda] = [false]
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [wrapped-java-runtime-template]
+2017-11-20T21:56:49,864 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableServiceWrapper] = [false]
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [language] = [en]
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/host]:
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,865 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:49,866 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:49,866 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/host]:
+2017-11-20T21:56:49,866 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:49,866 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,866 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:49,867 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:49,867 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contribution-template]:
+2017-11-20T21:56:49,867 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias] = [${_unitId}]
+2017-11-20T21:56:49,868 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contribution-template]
+2017-11-20T21:56:49,868 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.file] = [${dcc.solution.dir}/external/certificates/${_unitId}.cert.pem]
+2017-11-20T21:56:49,868 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [agent-host-template]:
+2017-11-20T21:56:49,868 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [agent-host-template]
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/host]:
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:49,869 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/verify.command.specification]:
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [certificate-components-template]:
+2017-11-20T21:56:49,870 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [certificate-components-template]
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/verify.command.specification]:
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,871 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/host]:
+2017-11-20T21:56:49,872 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,872 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/host]:
+2017-11-20T21:56:49,872 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:49,872 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,872 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:49,873 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:49,873 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/host]:
+2017-11-20T21:56:49,873 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,873 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [jmx-runtime-template]:
+2017-11-20T21:56:49,873 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.server.port] = [9997]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.enabled] = [false]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.ssl.enabled] = [false]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [jmx-runtime-template]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.registry.port] = [9097]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/verify.command.specification]:
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:49,874 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:49,875 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,875 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contributions-template]:
+2017-11-20T21:56:49,875 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.path] = [${dcc.solution.dir}/external/certificates/${_unitId}]
+2017-11-20T21:56:49,875 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contributions-template]
+2017-11-20T21:56:49,875 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias.prefix] = [${_unitId}-]
+2017-11-20T21:56:49,876 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/agent.endpoint]:
+2017-11-20T21:56:49,876 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:56:49,876 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,876 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [java-runtime-template]:
+2017-11-20T21:56:49,876 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [java-runtime-template]
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [runtime-template]:
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [runtime-template]
+2017-11-20T21:56:49,877 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/unit.config]:
+2017-11-20T21:56:49,878 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/agent.endpoint]:
+2017-11-20T21:56:49,880 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:56:49,880 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,880 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [components-template]:
+2017-11-20T21:56:49,880 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [components-template]
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/unit.config]:
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/verify.command.specification]:
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:49,881 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/unit.config]:
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [test-unit-template]:
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [test-unit-template]
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-template]:
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-template]
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/host]:
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:49,882 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02]:
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:49,883 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01]:
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/verify.command.specification]:
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [true]
+2017-11-20T21:56:49,884 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:49,889 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(49) - Executing command [initialize] ...
+2017-11-20T21:56:49,936 INFO  [localhost           ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(157) -   Executing command [clean] on [localhost].
+2017-11-20T21:56:49,951 INFO  [localhost           ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(157) -   Executing command [initialize] on [localhost].
+2017-11-20T21:56:49,952 INFO  [localhost           ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [initialize] took 0.16 seconds.
+2017-11-20T21:56:49,958 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [initialize] took 0.69 seconds.
+2017-11-20T21:56:49,959 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [verify] ...
+2017-11-20T21:56:49,968 INFO  [host-01             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [host-01] on [localhost].
+2017-11-20T21:56:49,968 INFO  [host-02             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [host-02] on [localhost].
+2017-11-20T21:56:50,695 INFO  [host-01             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [host-01] took 0.728 seconds.
+2017-11-20T21:56:50,695 INFO  [host-02             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [host-02] took 0.727 seconds.
+2017-11-20T21:56:50,710 INFO  [unit-04             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-04] on [localhost].
+2017-11-20T21:56:50,710 INFO  [unit-02             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-02] on [localhost].
+2017-11-20T21:56:50,711 INFO  [unit-03             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-03] on [localhost].
+2017-11-20T21:56:50,711 INFO  [unit-01             ] org.metaeffekt.dcc.controller.execution.LocalExecutor#logCommand(163) -   Executing command [verify] for unit [unit-01] on [localhost].
+2017-11-20T21:56:51,953 INFO  [unit-03             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-03] took 1.243 seconds.
+2017-11-20T21:56:51,953 INFO  [unit-01             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-01] took 1.243 seconds.
+2017-11-20T21:56:51,954 INFO  [unit-02             ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -    Success. Command [verify] for unit [unit-02] took 1.244 seconds.
+2017-11-20T21:56:51,975 WARN  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(106) - Skipping execution of further commands due to previous error.
+2017-11-20T21:56:51,976 ERROR [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#handleExceptions(134) - Error executing command [verify] for unit [unit-04]: Execution of unit-04 failed.
+2017-11-20T21:56:51,976 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [install] ...
+2017-11-20T21:56:52,013 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [install] took 0.37 seconds.
+2017-11-20T21:56:52,014 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [configure] ...
+2017-11-20T21:56:52,044 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [configure] took 0.30 seconds.
+2017-11-20T21:56:52,045 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [start] ...
+2017-11-20T21:56:52,086 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [start] took 0.41 seconds.
+2017-11-20T21:56:52,087 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#doExecute(67) - Executing command [stop] ...
+2017-11-20T21:56:52,114 INFO  [                    ] org.metaeffekt.dcc.controller.commands.AbstractCommand#afterSuccessfulExecution(110) -  Success. Command [stop] took 0.27 seconds.
+2017-11-20T21:56:52,262 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02]:
+2017-11-20T21:56:52,262 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-02]
+2017-11-20T21:56:52,262 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01]:
+2017-11-20T21:56:52,262 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-01]
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05]:
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-05]
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04]:
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [verify.command.execution.failure] = [true]
+2017-11-20T21:56:52,263 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03]:
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-03]
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/unit.config]:
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [unit.config]
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [unit.config]
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [unit-04]
+2017-11-20T21:56:52,264 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/unit.config]:
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [wrapped-java-runtime-template]:
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jpdaPort] = [8000]
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableJpda] = [false]
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [wrapped-java-runtime-template]
+2017-11-20T21:56:52,265 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [enableServiceWrapper] = [false]
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [language] = [en]
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/host]:
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,266 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/host]:
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:52,267 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:52,268 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contribution-template]:
+2017-11-20T21:56:52,268 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias] = [${_unitId}]
+2017-11-20T21:56:52,268 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contribution-template]
+2017-11-20T21:56:52,268 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.file] = [${dcc.solution.dir}/external/certificates/${_unitId}.cert.pem]
+2017-11-20T21:56:52,268 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [agent-host-template]:
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [agent-host-template]
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/host]:
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,269 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:52,270 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:52,270 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/verify.command.specification]:
+2017-11-20T21:56:52,270 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:52,270 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:52,270 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:52,271 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [certificate-components-template]:
+2017-11-20T21:56:52,271 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:56:52,271 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [certificate-components-template]
+2017-11-20T21:56:52,271 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/verify.command.specification]:
+2017-11-20T21:56:52,271 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/host]:
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/host]:
+2017-11-20T21:56:52,272 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/host]:
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,273 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [jmx-runtime-template]:
+2017-11-20T21:56:52,274 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.server.port] = [9997]
+2017-11-20T21:56:52,274 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.enabled] = [false]
+2017-11-20T21:56:52,274 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.ssl.enabled] = [false]
+2017-11-20T21:56:52,274 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [jmx-runtime-template]
+2017-11-20T21:56:52,274 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [jmx.rmi.registry.port] = [9097]
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/verify.command.specification]:
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [trust-contributions-template]:
+2017-11-20T21:56:52,275 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.path] = [${dcc.solution.dir}/external/certificates/${_unitId}]
+2017-11-20T21:56:52,276 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [trust-contributions-template]
+2017-11-20T21:56:52,276 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [cert.alias.prefix] = [${_unitId}-]
+2017-11-20T21:56:52,276 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02/agent.endpoint]:
+2017-11-20T21:56:52,276 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:56:52,277 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,277 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [java-runtime-template]:
+2017-11-20T21:56:52,277 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [permSizeMax] = [128]
+2017-11-20T21:56:52,277 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeMax] = [512]
+2017-11-20T21:56:52,277 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [java-runtime-template]
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [heapSizeInitial] = [128]
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [runtime-template]:
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [runtime-template]
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-01/unit.config]:
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01/agent.endpoint]:
+2017-11-20T21:56:52,278 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [port] = [33036]
+2017-11-20T21:56:52,279 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,279 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [components-template]:
+2017-11-20T21:56:52,279 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [baseDir] = [${dcc.solution.dir}/external/certificates]
+2017-11-20T21:56:52,279 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [components-template]
+2017-11-20T21:56:52,279 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/unit.config]:
+2017-11-20T21:56:52,280 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-05/verify.command.specification]:
+2017-11-20T21:56:52,280 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:52,280 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [false]
+2017-11-20T21:56:52,280 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
+2017-11-20T21:56:52,281 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-03/unit.config]:
+2017-11-20T21:56:52,281 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [test-unit-template]:
+2017-11-20T21:56:52,281 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [test-unit-template]
+2017-11-20T21:56:52,281 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-template]:
+2017-11-20T21:56:52,282 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-template]
+2017-11-20T21:56:52,282 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-02/host]:
+2017-11-20T21:56:52,282 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.id] = [host]
+2017-11-20T21:56:52,282 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,282 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_capability.definition] = [host]
+2017-11-20T21:56:52,283 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:52,283 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-02]:
+2017-11-20T21:56:52,283 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,283 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:52,283 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-02]
+2017-11-20T21:56:52,284 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [host-01]:
+2017-11-20T21:56:52,284 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [name] = [localhost]
+2017-11-20T21:56:52,284 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [agent.port] = [33036]
+2017-11-20T21:56:52,284 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [_unit.id] = [host-01]
+2017-11-20T21:56:52,284 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(201) - Properties for [unit-04/verify.command.specification]:
+2017-11-20T21:56:52,285 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.time] = [1000]
+2017-11-20T21:56:52,285 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.execution.failure] = [true]
+2017-11-20T21:56:52,285 INFO  [                    ] org.metaeffekt.dcc.commons.mapping.PropertiesHolder#dump(204) -    [command.random.access.file] = [${dcc.data.dir}/randomAccess/file.txt]
