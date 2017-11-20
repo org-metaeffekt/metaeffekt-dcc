@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.tools.ant.taskdefs.VerifyJar;
+import org.metaeffekt.dcc.commons.DccConstants;
 import org.metaeffekt.dcc.commons.ant.PropertyUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.BuildException;
@@ -32,12 +34,11 @@ import org.junit.Test;
 import org.metaeffekt.dcc.commons.mapping.Profile;
 import org.metaeffekt.dcc.commons.mapping.PropertiesHolder;
 import org.metaeffekt.dcc.commons.spring.xml.ProfileParser;
-import org.metaeffekt.dcc.controller.commands.ConfigureCommand;
-import org.metaeffekt.dcc.controller.commands.InstallCommand;
-import org.metaeffekt.dcc.controller.commands.StartCommand;
-import org.metaeffekt.dcc.controller.commands.StopCommand;
+import org.metaeffekt.dcc.controller.DccControllerConstants;
+import org.metaeffekt.dcc.controller.commands.*;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
 import org.metaeffekt.dcc.controller.execution.SSLConfiguration;
+import org.metaeffekt.dcc.shell.DccShell;
 
 public class ProfileCommandExecutionTest {
 
@@ -45,9 +46,6 @@ public class ProfileCommandExecutionTest {
 
     private static final String TARGET_BASE_DIR = "target/opt";
     private static final String SOLUTION_DIR = "target/dcc";
-    private static final String EQUALS = "=";
-    private static final String RUNTIME_HSQLDB_AUDIT_PROPERTIES = "hsqldb-runtime-audit/install.properties";
-    private static final String RUNTIME_HSQLDB_DEFAULT_PROPERTIES = "hsqldb-runtime-default/install.properties";
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -84,32 +82,29 @@ public class ProfileCommandExecutionTest {
         executionContext.setTargetBaseDir(targetBaseDir);
         executionContext.prepareForExecution();
 
-        InstallCommand installCommand = new InstallCommand(executionContext);
-        installCommand.execute(true);
 
-        File configurationTargetPath = new File(executionContext.getTargetDir(), "config");
-        
-        ConfigureCommand configureCommand = new ConfigureCommand(executionContext);
-        configureCommand.execute(true);
+        InitializeCommand initializeCommand = new InitializeCommand(executionContext);
+        initializeCommand.execute(true, true);
 
         try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            // ignore
+            VerifyCommand verifyCommand = new VerifyCommand(executionContext);
+            verifyCommand.execute(true, true);
+        } catch (IllegalStateException e) {
+            Assert.assertTrue(e.getSuppressed()[0].getMessage().contains("Execution of unit-04 failed"));
         }
+
+        InstallCommand installCommand = new InstallCommand(executionContext);
+        installCommand.execute(true, true);
+
+        ConfigureCommand configureCommand = new ConfigureCommand(executionContext);
+        configureCommand.execute(true, true);
 
         StartCommand startCommand = new StartCommand(executionContext);
-        startCommand.execute(true);
+        startCommand.execute(true, true);
 
         try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            // ignore
-        }
-        
-        try {
             StopCommand stopCommand = new StopCommand(executionContext);
-            stopCommand.execute(true);
+            stopCommand.execute(true, true);
         } catch (BuildException e) {
         }
     }

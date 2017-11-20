@@ -5,17 +5,17 @@
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-plugins-behavior-pom</artifactId>
     <packaging>pom</packaging>
-    <version>HEAD-SNAPSHOT</version>
+    <version>0.14.0</version>
     
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.14.0</version>
         <relativePath />
     </parent>
 
     <properties>
-        <dcc.version>HEAD-SNAPSHOT</dcc.version>
+        <dcc.version>0.14.0</dcc.version>
     </properties>
     
     <dependencyManagement>

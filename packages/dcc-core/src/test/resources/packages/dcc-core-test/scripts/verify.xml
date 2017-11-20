@@ -215,6 +215,29 @@
         <local name="pid" />
         <core:queryPidByCommandTask input="Just a Test" executable="java" command="some-special-parameter" resultProperty="pid" />
 
+
+        <local name="input" />
+        <local name="output" />
+        <property name="input" value=" 1 2 3 4 5 6        8 9   " />
+        <core:trimProperty property="output" input="${input}" />
+        <if>
+            <not><equals arg1="1 2 3 4 5 6        8 9" arg2="${output}" /></not>
+            <then>
+                <fail message="Expecting trimmed string. Actuall: ${output}" />
+            </then>
+        </if>
+
+        <local name="input" />
+        <local name="output" />
+        <property name="input" value="path=C:\Windows\tmp" />
+        <core:replaceProperty property="output" input="${input}" />
+        <if>
+            <not><equals arg1="path\=C\:\\Windows\\tmp" arg2="${output}" /></not>
+            <then>
+                <fail message="Expecting escaped property value string. Actual: ${output}" />
+            </then>
+        </if>
+
     </target>
     
 </project>

@@ -16,6 +16,8 @@ DCC_HOME=`dirname "$PRG"`
 # Absolute path to folder which contains the folder which contains the shell.sh file
 DCC_HOME=`cd "$DCC_HOME/.." ; pwd`
 
+cd $DCC_HOME
+
 # echo Resolved DCC_HOME: $DCC_HOME
 # echo "JAVA_HOME $JAVA_HOME"
 

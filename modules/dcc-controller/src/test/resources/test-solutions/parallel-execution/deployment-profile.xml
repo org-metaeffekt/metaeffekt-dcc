@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+        
+    <id>parallel-execution-profile</id>
+    
+    <type>
+        <deployment>
+            <properties location="deployment.properties"/>
+        </deployment>
+    </type>
+
+    <capability-definition id="host">
+        <description>Capability defining a physical host with hostname and/or IP address.</description>
+        <attribute-key key="name">
+            <description>
+                The host name. Use either the IP or the fully qualified DNS name of
+                a host. Please note that the DNS name will not be analyzed or resolved. In
+                particular two DNS names pointing to the same physical host will be treated as
+                separate entities. In this case conflicts on host resource level (ports) can not
+                be detected early in the installation procedure. The fully qualified name (host
+                name with full domain information) is required when other resources (like i.e.
+                certificates) are host/domain bound.
+            </description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="agent.endpoint">
+        <description>
+            Capability defining a DCC enabled host with a DCC Agent installation running on
+            a specific port.
+        </description>
+        <inherit definitionRef="host" />
+        <attribute-key key="port" default="31030">
+            <description>The IP port of the DCC Agent.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="order" />
+
+    <unit id="host-template" abstract="true">
+        <description>Abstract unit defining a template for a host.</description>
+        <provided-capability id="host" />
+        <provided-capability id="agent.endpoint" />
+        <mappings>
+            <mapping targetCapabilityId="host">
+                <map-unit-attributes/>
+            </mapping>
+        </mappings>
+    </unit>
+
+    <unit id="executor-template" abstract="true" package="test">
+        <description>Template unit defining a template for executing verify.</description>
+        <required-capability id="host" />
+        <required-capability id="order" optional="true" />
+        <provided-capability id="order" />
+        <command type="verify" />
+    </unit>
+
+    <unit id="host-1" extends="host-template" >
+        <attributes>
+            <attribute key="name" value="localhost"/>
+        </attributes>
+    </unit>
+
+    <unit id="executor-1" extends="executor-template" />
+    <unit id="executor-2" extends="executor-template" />
+    <unit id="executor-3" extends="executor-template" />
+    <unit id="executor-4" extends="executor-template" />
+    <unit id="executor-5" extends="executor-template" />
+
+    <unit id="executor-6" extends="executor-template" />
+    <unit id="executor-7" extends="executor-template" />
+    <unit id="executor-8" extends="executor-template" />
+    <unit id="executor-9" extends="executor-template" />
+    <unit id="executor-10" extends="executor-template" />
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-1" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-2" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-3" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-4" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-5" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-6" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-7" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-8" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-9" />
+    </binding>
+
+    <binding>
+        <source unitRef="host-1" capabilityId="host"/>
+        <target unitRef="executor-10" />
+    </binding>
+
+    <binding>
+        <source unitRef="executor-5" capabilityId="order"/>
+        <target unitRef="executor-6"/>
+    </binding>
+
+</profile>

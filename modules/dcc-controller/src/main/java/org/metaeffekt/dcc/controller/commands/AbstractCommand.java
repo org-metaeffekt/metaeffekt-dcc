@@ -129,16 +129,18 @@ abstract class AbstractCommand implements Command {
      */
     protected void handleExceptions(Map<Id<?>, Throwable> exceptionMap) {
         if (!exceptionMap.isEmpty()) {
+            RuntimeException ex = new IllegalStateException("Aborting execution due to previous errors.");
             for (Map.Entry<Id<?>, Throwable> entry : exceptionMap.entrySet()) {
                 LOG.error(String.format("Error executing command [%s] for unit [%s]: %s", getCommandVerb(),
-                        entry.getKey(), entry.getValue().getMessage()), entry.getValue());
+                        entry.getKey(), entry.getValue().getMessage()));
+                ex.addSuppressed(entry.getValue());
             }
-            throw new IllegalStateException("Aborting execution due to previous errors.");
+            throw ex;
         }
     }
 
     protected void awaitTerminationOrCancelOnException(ExecutorService executor, Map<Id<?>, Throwable> exceptions) {
-        // wait until all commands have finished or an error occurred
+        // shutdown and wait until all commands have finished or an error occurred
         executor.shutdown();
         while (!executor.isTerminated()) {
             try {

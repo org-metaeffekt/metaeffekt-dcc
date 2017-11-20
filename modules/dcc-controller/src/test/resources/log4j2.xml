@@ -2,8 +2,8 @@
 <Configuration strict="true" monitorInterval="30">
 
     <Properties>
-        <Property name="consoleLayoutPattern">%d{ISO8601} %-5p [%t] %c(%L) - %m%n</Property>
-        <Property name="fileLayoutPattern">%d{ISO8601} %-5p [%t] %c#%M(%L) - %m%n</Property>
+        <Property name="consoleLayoutPattern">%d{ISO8601} %-5p [%-20X{unitId}] %c(%L) - %m%n</Property>
+        <Property name="fileLayoutPattern">%d{ISO8601} %-5p [%-20X{unitId}] %c#%M(%L) - %m%n</Property>
     </Properties>
 
     <Appenders>

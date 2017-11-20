@@ -173,7 +173,7 @@ public class UnitDependencies {
             Collections.sort(group, new Comparator<ConfigurationUnit>() {
                 @Override
                 public int compare(ConfigurationUnit o1, ConfigurationUnit o2) {
-                    return o1.getId().compareTo(o2.getId());
+                    return o1.getId().getValue().compareTo(o2.getId().getValue());
                 }
             });
         }

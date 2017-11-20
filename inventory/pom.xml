@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-application</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.14.0</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -128,6 +128,15 @@
                         </processor>
                         <processor>
                             <className>org.metaeffekt.core.inventory.processor.UpdateVersionRecommendationProcessor</className>
+                        </processor>
+                        <processor>
+                            <className>org.metaeffekt.core.inventory.processor.ValidateInventoryProcessor</className>
+                            <properties>
+                                <licenses.path>${project.build.directory}/classes/META-INF/licenses</licenses.path>
+                                <create.license.folders>true</create.license.folders>
+                                <create.component.folders>true</create.component.folders>
+                                <failOnError>false</failOnError>
+                            </properties>
                         </processor>
                     </processors>
                 </configuration>

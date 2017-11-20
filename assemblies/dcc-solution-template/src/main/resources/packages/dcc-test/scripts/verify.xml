@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="test.verify" basedir=".." default="verify"
+         xmlns:core="http://metaeffekt.org/schema/dcc/package/core"
+         xmlns:test="http://metaeffekt.org/schema/dcc/package/test">
+
+    <import file="common.xml" />
+
+    <target name="verify" depends="test.init">
+        <core:log message="Verify" />
+
+
+        <sleep milliseconds="${command.execution.time}" />
+
+        <if>
+            <istrue value="${command.execution.failure}" />
+            <then>
+                <fail message="Execution of ${dcc.unit.id} failed." />
+            </then>
+        </if>
+
+    </target>
+
+</project>

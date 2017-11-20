@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="dcc.test"
+    xmlns:core="http://metaeffekt.org/schema/dcc/package/core"
+    xmlns:test="http://metaeffekt.org/schema/dcc/package/test">
+
+    <property name="dcc.package.dir" value="../.." />
+
+    <import file="${dcc.package.dir}/dcc-core/scripts/dcc-core.xml" />
+    
+    <target name="test.init" depends="core.init" >
+    </target>
+        
+</project>

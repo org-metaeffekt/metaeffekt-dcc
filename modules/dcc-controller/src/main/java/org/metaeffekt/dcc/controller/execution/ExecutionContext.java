@@ -103,7 +103,7 @@ public class ExecutionContext {
         this.profile = profile;
     }
 
-    public void prepareForExecution() {
+    public synchronized void prepareForExecution() {
         if (propertiesHolder == null) {
             propertiesHolder = profile.createPropertiesHolder(true);
             profile.evaluate(propertiesHolder);
@@ -214,7 +214,7 @@ public class ExecutionContext {
         return unitToUnitHosts.get(unitId);
     }
     
-    public void initializeExecutors(boolean force) {
+    public synchronized void initializeExecutors(boolean force) {
         if (hostsExecutors == null || force) {
             hostsExecutors = new HashMap<>();
             unitsHosts = new HashMap<>();

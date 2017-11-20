@@ -40,43 +40,22 @@
     </macrodef>
 
     <macrodef name="trimProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
-        <!-- NOTE: this implementation is not the most efficient. Consider replacing by dedicated task -->
         <attribute name="input" />
         <attribute name="property" />
         <sequential>
-            <tempfile property="temp.file" />
-            <echo file="${temp.file}" message="@{input}" />
-            <move file="${temp.file}" tofile="${temp.file}.2">
-                <filterchain>
-                    <trim/>
-                </filterchain>
-            </move>
-            <loadfile property="@{property}" srcFile="${temp.file}.2" />
-            <delete file="${temp.file}.2" failonerror="false" />
+            <propertyregex property="@{property}" input="@{input}" regexp="^\s*(.*[^\s])\s*$" select="\1" global="true" />
         </sequential>
     </macrodef>
 
     <macrodef name="replaceProperty" uri="http://metaeffekt.org/schema/dcc/package/core">
-        <!-- NOTE: this implementation is not the most efficient. Consider replacing by dedicated task -->
         <attribute name="input" />
         <attribute name="property" />
         <sequential>
-            <tempfile property="temp.file" />
-            <echo file="${temp.file}" message="@{input}" />
-            <move file="${temp.file}" tofile="${temp.file}.2">
-                <filterchain>
-                    <expandproperties />
-                    <tokenfilter>
-                        <!-- expand properties does not add escaping. This is to compensate -->
-                        <replacestring from="\" to="\\"/>
-                        <replacestring from="\\=" to="\="/>
-                        <replacestring from="\\:" to="\:"/>
-                        <replacestring from="\\" to="/"/>
-                    </tokenfilter>
-                </filterchain>
-            </move>
-            <loadfile property="@{property}" srcFile="${temp.file}.2" />
-            <delete file="${temp.file}.2" failonerror="false" />
+            <!-- expand properties does not add escaping. This is to compensate -->
+            <echo message="input: @{input}" />
+            <propertyregex property="@{property}" input="@{input}" regexp="(\\)" replace="\1\1" global="true" defaultValue="@{input}" override="true" />
+            <propertyregex property="@{property}" input="${@{property}}" regexp="=" replace="\\\\=" global="true" defaultValue="${@{property}}" override="true" />
+            <propertyregex property="@{property}" input="${@{property}}" regexp=":" replace="\\\\:" global="true" defaultValue="${@{property}}" override="true" />
         </sequential>
     </macrodef>
 
@@ -523,7 +502,48 @@
                     </if>
                 </then>
             </if>
+        </sequential>
+    </macrodef>
 
+    <macrodef name="queryProcessByPid" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="pid" />
+        <attribute name="resultProperty" />
+        <sequential>
+
+            <overwriteProperty name="@{resultProperty}" value="undefined" />
+
+            <local name="process" />
+
+            <!-- query process status -->
+            <if>
+                <os family="dos" />
+                <then>
+                    <!-- tasklist /FI "PID eq @{pid}" /FO LIST -->
+                    <exec executable="tasklist" outputproperty="process" >
+                        <arg value="/FI" />
+                        <arg value="PID eq @{pid}" />
+                        <arg value="/FO" />
+                        <arg value="LIST" />
+                    </exec>
+                </then>
+                <else>
+                    <!-- ps -p @{pid} -->
+                    <exec executable="ps" outputproperty="process" >
+                        <arg value="-p" />
+                        <arg value="@{pid}" />
+                    </exec>
+                </else>
+            </if>
+
+            <if>
+                <contains string="${process}" substring="${pid}" />
+                <then>
+                    <overwriteProperty name="@{resultProperty}" value="true" />
+                </then>
+                <else>
+                    <overwriteProperty name="@{resultProperty}" value="false" />
+                </else>
+            </if>
         </sequential>
     </macrodef>
 
@@ -757,7 +777,12 @@
                 <try>
                     <queryUnitStatus />
                     <!-- Execute stop action. If the action itself files the error will be propagated. -->
-                    <stop />
+                	<if>
+                		<processStoppedCondition />
+                		<else>
+                            <stop />
+                		</else>
+        			</if>
                 </try>
                 <finally>
                     <!-- Wait for the effects of the stop action. -->
@@ -774,7 +799,12 @@
                         </try>
                         <catch>
                             <!-- Wait period exceeded: execute kill action and wait for stop a second period -->
-                            <kill />
+                            <if>
+                                <processStoppedCondition />
+                                <else>
+                                    <kill />
+                                </else>
+                            </if>
                             <core:waitFor timeoutMessage="Stopping @{name} timed out!" timeout="@{timeoutAfterKill}">
                                 <query>
                                     <queryUnitStatus />
@@ -1084,17 +1114,28 @@
                             <if>
                                 <istrue value="@{force}" />
                                 <then>
-                                    <exec executable="taskkill">
+                                    <exec executable="taskkill" failonerror="true">
                                         <arg value="/pid" />
                                         <arg value="@{pid}" />
                                         <arg value="/f" />
                                     </exec>
                                 </then>
                                 <else>
-                                    <exec executable="taskkill">
-                                        <arg value="/pid" />
-                                        <arg value="@{pid}" />
-                                    </exec>
+                                    <trycatch>
+                                        <try>
+                                            <exec executable="taskkill" failonerror="true">
+                                                <arg value="/pid" />
+                                                <arg value="@{pid}" />
+                                            </exec>
+                                        </try>
+                                        <catch>
+                                            <exec executable="taskkill">
+                                                <arg value="/pid" />
+                                                <arg value="@{pid}" />
+                                                <arg value="/f" />
+                                            </exec>
+                                        </catch>
+                                    </trycatch>
                                 </else>
                             </if>
                         </windows>
@@ -1228,14 +1269,13 @@
             </core:debug>
 
             <core:queryPidByPortTask input="${netstat.result}" ip="@{host}" port="@{port}" protocol="@{protocol}" resultProperty="@{resultProperty}" />
-
         </sequential>
     </macrodef>
 
     <macrodef name="queryPidByCommandLine" uri="http://metaeffekt.org/schema/dcc/package/core" >
         <!-- Attribute exec contains the executable to restrict the results. E.g. 'java'. -->
         <attribute name="exec" />
-        <!-- Attribute commandLine contains the command line to search for. May use % for wildcard search. -->
+        <!-- Attribute commandLine contains the command line to search for. -->
         <attribute name="commandLine" />
         <attribute name="resultProperty" default="pid" />
         <sequential>
@@ -1245,23 +1285,40 @@
                 <windows>
                     <!-- use wmic to query process information -->
                     <exec executable="wmic" outputproperty="process.query.result"
-                        inputstring="process where &quot;CommandLine like '@{commandLine}'&quot; get processId">
+                        inputstring="process where &quot;CommandLine like '%@{commandLine}%' and name like'%@{exec}%.exe'&quot; get processId">
                     </exec>
+                    <core:debug>
+                        <echo message="${process.query.result}" />
+                    </core:debug>
+                    <propertyregex property="process.id" input="${process.query.result}" regexp="ProcessId\s*([0-9]+)" select="\1" global="true" defaultValue="-1"/>
+                    <core:overwriteProperty name="@{resultProperty}" value="${process.id}" />
                 </windows>
                 <linux>
                     <exec executable="ps" outputproperty="process.query.result">
-                        <arg line="-aww" />
+                        <arg line="-axww" />
                         <arg line="-o" />
                         <arg line="pid=,command=" />
                     </exec>
+                    <core:debug>
+                        <echo message="${process.query.result}" />
+                    </core:debug>
+                    <core:queryPidByCommandTask input="${process.query.result}" executable="@{exec}" command="@{commandLine}" resultProperty="@{resultProperty}" />
                 </linux>
             </core:doForOs>
-            <core:debug>
-                <echo message="${process.query.result}" />
-            </core:debug>
-            <core:queryPidByCommand input="${process.query.result}" executable="@{exec}" command="@{commandLine}" resultProperty="@{resultProperty}" />
         </sequential>
     </macrodef>
+
+    <macrodef name="applyVelocityTemplateWithValidation" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="targetFile" />
+        <attribute name="templateFile" />
+        <attribute name="propertyFile" />
+    	<sequential>
+            <core:applyVelocityTemplate targetFile="@{targetFile}"
+                templateFile="@{templateFile}"
+                propertyFile="@{propertyFile}" />
+            <core:assertAllExpressionsResolved file="@{targetFile}" />
+    	</sequential>
+	</macrodef>
 
     <macrodef name="applyVelocityTemplates" uri="http://metaeffekt.org/schema/dcc/package/core">
         <attribute name="includes" default="*.vt" />
@@ -1275,11 +1332,27 @@
                 <sequential>
                     <local name="targetName" />
                     <propertyregex property="targetName" input="@{file}" regexp="^(.*)[/\\](.*)\.vt" select="\2" />
-                    <core:applyVelocityTemplate targetFile="@{targetDir}/${targetName}"
+                    <core:applyVelocityTemplateWithValidation targetFile="@{targetDir}/${targetName}"
                         templateFile="@{templateDir}/${targetName}.vt"
                         propertyFile="${dcc.execution.properties}" />
                 </sequential>
             </for>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="assertAllExpressionsResolved" uri="http://metaeffekt.org/schema/dcc/package/core">
+        <attribute name="file" />
+        <attribute name="message" default="" />
+        <sequential>
+            <fail message="Derived configuration file @{file} contains not evaluated expressions. @{message}" >
+                <condition>
+                    <or>
+                        <resourcecontains resource="@{file}" substring="$xpath.evaluate" />
+                        <resourcecontains resource="@{file}" substring="$input.get" />
+                        <resourcecontains resource="@{file}" substring="$project" />
+                    </or>
+                </condition>
+            </fail>
         </sequential>
     </macrodef>
 

@@ -59,15 +59,20 @@ public class LocalExecutor extends BaseExecutor implements Executor {
                 if (deploymentProperties != null) {
                     localDestinationDir = deploymentProperties.getProperty(LOCAL_DEPLOYMENT_TARGET_DIR);
                 }
-                // In case the value is not set in the deployment properties, look in the environment for developer convenience
+                // in case the value is not set in the deployment properties, look in the system properties
+                if (localDestinationDir == null) {
+                    localDestinationDir = System.getProperty(LOCAL_DEPLOYMENT_TARGET_DIR);
+                }
+                // in case the value is still not available, look in the environment for developer convenience
                 if (localDestinationDir == null) {
                     localDestinationDir = System.getenv(ENV_LOCAL_DEPLOYMENT_TARGET_DIR);
                 }
 
                 if (localDestinationDir == null) {
                     LOG.debug("Cannot determine the target location of the deployment. Developers can provide a default value " +
-                            "by providing the environment variable [" + ENV_LOCAL_DEPLOYMENT_TARGET_DIR + "]. Bear in mind, " +
-                            "it will be overwritten by the setting in the deployment properties.");
+                            "by providing the environment variable [" + ENV_LOCAL_DEPLOYMENT_TARGET_DIR + "] or by specifying" +
+                            "the system property [" + LOCAL_DEPLOYMENT_TARGET_DIR + "]. Please note, that the priority is" +
+                            "deployment property, system property, environment variable.");
                     // in case deployment properties are specified and the above property is not
                     // set an exception is raised
                     IllegalStateException e = new IllegalStateException(
@@ -83,7 +88,16 @@ public class LocalExecutor extends BaseExecutor implements Executor {
 
                 // in order to provide all required paths for temporary folders and status tracking the following
                 // setting is used
-                final File workDir = new File(executionContext.getSolutionDir(), DccConstants.WORK_SUB_DIRECTORY);
+
+                // primarily the workDir is inferred from the system properties
+                String workDirInput = System.getProperty("dcc.work.dir");
+                final File workDir;
+                if (workDirInput != null) {
+                    workDir = new File(workDirInput);
+                } else {
+                    // if not provided we fallback to a folder in the solution dir (may not be writable and fail)
+                    workDir = new File(executionContext.getSolutionDir(), DccConstants.WORK_SUB_DIRECTORY);
+                }
                 final File workTargetDir = new File(workDir, "local");
                 getExecutionContext().setTargetBaseDir(workTargetDir);
             }

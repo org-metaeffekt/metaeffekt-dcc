@@ -47,6 +47,7 @@ import org.metaeffekt.dcc.commons.mapping.Profile;
 import org.metaeffekt.dcc.commons.mapping.PropertiesHolder;
 import org.metaeffekt.dcc.commons.properties.SortedProperties;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
+import org.slf4j.MDC;
 
 /**
  * Base implementation of the {@link AbstractCommand} class for unit-based executions.
@@ -72,12 +73,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         final Map<Id<?>, Throwable> exceptions = new ConcurrentHashMap<>();
         final UnitDependencies unitDependencies = getExecutionContext().getProfile().getUnitDependencies();
 
-        final List<List<ConfigurationUnit>> groupLists;
-        if (isSequential()) {
-            groupLists = unitDependencies.evaluateDependencyGroups(units);
-        } else {
-            groupLists = Collections.singletonList(units);
-        }
+        final List<List<ConfigurationUnit>> groupLists = unitDependencies.evaluateDependencyGroups(units);
 
         // some commands require to execute the command in reverse order (eg. stop command)
         if (isReversive()) {
@@ -97,21 +93,25 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
 
             // execute commands (queue)
             for (final ConfigurationUnit unit : group) {
-                // don't queue anything in case there was already an exception
-                if (exceptions.isEmpty()) {
-                    executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, exceptions));
-                }
+                executor.execute(() -> executeCommand(force, limitToUnitId, unitFound, unit, exceptions));
             }
+
             awaitTerminationOrCancelOnException(executor, exceptions);
 
             // execute update status sequentially
             group.stream().forEach(unit -> updateStatus(limitToUnitId, unit));
+
+            // in case we have exceptions; we stop the remaining executions
+            if (!exceptions.isEmpty()) {
+                LOG.warn("Skipping execution of further commands due to previous error.");
+                break;
+            }
         }
 
         handleExceptions(exceptions);
 
-        // handle the case the unit id that the execution was limited to was not found.
-        if (limitToUnitId != null && !unitFound[0]) {
+        // handle the case the unit id that the execution was limited to was not reached / found.
+        if (exceptions.isEmpty() && limitToUnitId != null && !unitFound[0]) {
             throw new IllegalArgumentException(String.format(
                 "  Command [%s] not executable for unit [%s]. Either the unit does not exist or the command does not" +
                 " apply for the unit.", getCommandVerb(), limitToUnitId));
@@ -128,7 +128,11 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
     private void executeCommand(boolean force, Id<UnitId> limitToUnitId, boolean[] unitFound, ConfigurationUnit unit,
             Map<Id<?>, Throwable> exceptions) {
         final Id<UnitId> unitId = unit.getId();
-        Thread.currentThread().setName(String.format("%-24s", unitId.getValue()));
+        MDC.put("unitId", unit.getId().getValue());
+        if (!exceptions.isEmpty()) {
+            LOG.warn("Skipping execution due to previous error.");
+            return;
+        }
         try {
             if (unit.getCommand(getCommandVerb()) != null) {
                 if (limitToUnitId == null || unitId.equals(limitToUnitId)) {
@@ -159,7 +163,7 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         super.afterSuccessfulExecution("  ", String.format("[%s] for unit [%s]", getCommandVerb(), unit.getId()), startTimestamp);
     }
 
-    protected Executor getExecutor(ConfigurationUnit unit) {
+    protected synchronized Executor getExecutor(ConfigurationUnit unit) {
         if (isLocal()) {
             return getExecutionContext().getInstallationHostExecutor(unit.getId());
         } else {
@@ -345,13 +349,11 @@ abstract class AbstractUnitBasedCommand extends AbstractCommand {
         }
     }
 
-    protected void updateStatus(final Id<UnitId> unitId) {
+    protected synchronized void updateStatus(final Id<UnitId> unitId) {
         if (!isLocal()) {
             final Executor executorForUnit = getExecutionContext().getExecutorForUnitIfExists(unitId);
             if (executorForUnit != null) {
-                synchronized (executorForUnit) {
-                    executorForUnit.retrieveUpdatedState();
-                }
+                executorForUnit.retrieveUpdatedState();
             }
         }
     }

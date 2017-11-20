@@ -13,12 +13,61 @@
         </solution>
     </type>
 
-    <description>Example Profile for installing HSQL, Tomcat and eHF</description>
+    <description>Example profile.</description>
 
 
     <import resource="packages/dcc-core/dcc-core-profile.xml" />
+    <import resource="packages/dcc-test/dcc-test-profile.xml" />
 
-    <unit id="host-app-01" extends="agent-host-template" />
-    <unit id="host-app-02" extends="agent-host-template" />
+    <unit id="host-01" extends="agent-host-template" />
+    <unit id="host-02" extends="agent-host-template" />
+
+    <unit id="unit-01" extends="test-unit-template">
+    </unit>
+
+    <unit id="unit-02" extends="test-unit-template">
+    </unit>
+
+    <unit id="unit-03" extends="test-unit-template">
+    </unit>
+
+    <unit id="unit-04" extends="test-unit-template">
+        <attributes>
+            <attribute key="verify.command.execution.failure" value="true" />
+        </attributes>
+    </unit>
+
+    <unit id="unit-05" extends="test-unit-template">
+    </unit>
+
+    <binding>
+        <source unitRef="host-01" capabilityId="host"/>
+        <target unitRef="unit-01"/>
+    </binding>
+
+    <binding>
+        <source unitRef="host-01" capabilityId="host"/>
+        <target unitRef="unit-02"/>
+    </binding>
+
+    <binding>
+        <source unitRef="host-02" capabilityId="host"/>
+        <target unitRef="unit-03"/>
+    </binding>
+
+    <binding>
+        <source unitRef="host-02" capabilityId="host"/>
+        <target unitRef="unit-04"/>
+    </binding>
+
+    <binding>
+        <source unitRef="host-02" capabilityId="host"/>
+        <target unitRef="unit-05"/>
+    </binding>
+
+    <binding>
+        <source unitRef="unit-04" capabilityId="unit.config"/>
+        <target unitRef="unit-05"/>
+    </binding>
 
 </profile>

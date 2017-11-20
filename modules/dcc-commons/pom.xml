@@ -8,7 +8,7 @@
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-modules-behavior-pom</artifactId>
         <relativePath>../../pom-hierarchy/dcc-behavior-pom/dcc-modules-behavior-pom</relativePath>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.14.0</version>
     </parent>
 
     <artifactId>dcc-commons</artifactId>
@@ -21,7 +21,7 @@
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-xjc-plugin</artifactId>
                     <!-- FIXME: move version definition into pom-hierarchy -->
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                     <executions>
                         <execution>
                             <id>generate-sources</id>

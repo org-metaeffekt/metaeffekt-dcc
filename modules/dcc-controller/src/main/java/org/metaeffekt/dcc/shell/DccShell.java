@@ -30,6 +30,7 @@ import java.util.logging.LogRecord;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.shell.Bootstrap;
 import org.springframework.shell.core.ExitShellRequest;
 import org.springframework.shell.core.JLineShellComponent;
@@ -65,6 +66,7 @@ public class DccShell {
 
         // initialize logger and back-end before anything else happens
         LOG = LoggerFactory.getLogger(DccShell.class);
+        MDC.put("unitId", "main");
 
         // if the above did not lead to any result we ensure that the current dir is used
         if (System.getProperty(DCC_SHELL_HOME) == null) {
@@ -100,7 +102,7 @@ public class DccShell {
             LOG.error(t.getMessage(), t);
         }
 
-        if (exitShellRequest == null || (exitShellRequest.getExitCode() != ExitShellRequest.NORMAL_EXIT.getExitCode())) {
+        if (exitShellRequest == null || exitShellRequest.getExitCode() != ExitShellRequest.NORMAL_EXIT.getExitCode()) {
             LOG.error("Exited abnormally. Please check the outputs.");
         }
 

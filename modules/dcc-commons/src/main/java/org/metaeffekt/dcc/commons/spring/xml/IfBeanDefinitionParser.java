@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 import org.metaeffekt.dcc.commons.ant.PropertyUtils;
 
 /**
- * Conditional beans parser. See ehf-util.xsd for details.
+ * Conditional beans parser. See dcc-profile-1.0.xsd for details.
  * 
  * @author Karsten Klein
  */

@@ -15,6 +15,8 @@
  */
 package org.metaeffekt.dcc.controller;
 
+import org.slf4j.MDC;
+
 import java.util.HashSet;
 import java.util.Set;
 

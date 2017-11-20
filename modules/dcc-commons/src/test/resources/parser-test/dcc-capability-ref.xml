@@ -4,8 +4,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
         http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
-        
-        <!-- Has been copied to ehf-core/packages/dcc-shared-package -->
 
     <id>validProfile</id>
 

@@ -28,6 +28,7 @@ import org.metaeffekt.dcc.commons.domain.Type.HostName;
 import org.metaeffekt.dcc.commons.domain.Type.UnitId;
 import org.metaeffekt.dcc.commons.execution.Executor;
 import org.metaeffekt.dcc.controller.execution.ExecutionContext;
+import org.slf4j.MDC;
 
 
 /**
@@ -91,7 +92,11 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
 
     private void doExecuteForHost(Id<HostName> host, boolean force, Map<Id<?>, Throwable> exceptions) {
         try {
-            Thread.currentThread().setName(String.format("%-24s", host.getValue()));
+            MDC.put("unitId", host.getValue());
+            if (!exceptions.isEmpty()) {
+                LOG.warn("Skipping execution due to previous error.");
+                return;
+            }
             if (isExecutionRequired(force, host, getCommandVerb())) {
                 long timestamp = System.currentTimeMillis();
                 doExecuteCommand(getExecutionContext().getExecutorForHost(host));
@@ -117,11 +122,9 @@ public abstract class AbstractHostBasedCommand extends AbstractCommand {
         return getExecutionStateHandler().alreadySuccessfullyExecuted(host, command, host, deploymentId);
     }
 
-    private void updateStatus(Id<HostName> host) {
+    private synchronized void updateStatus(Id<HostName> host) {
         final Executor executorForHost = getExecutionContext().getExecutorForHost(host);
-        synchronized (executorForHost) {
-            executorForHost.retrieveUpdatedState();
-        }
+        executorForHost.retrieveUpdatedState();
     }
     
     protected void afterSuccessfulUnitExecution(long startTimestamp) {

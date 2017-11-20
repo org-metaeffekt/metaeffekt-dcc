@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile
+    xmlns="http://metaeffekt.org/schema/dcc/profile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://metaeffekt.org/schema/dcc/profile http://metaeffekt.org/schema/dcc/profile/dcc-profile.xsd">
+
+    <id>dcc-test</id>
+
+    <description>
+        Defines unit for testing purposes.
+    </description>
+
+    <import resource="../dcc-core/dcc-core-profile.xml" />
+
+    <capability-definition id="command.specification">
+        <description>Capability defining a generic test unit attributes.</description>
+        <attribute-key key="command.execution.time" default="1000">
+            <description>Duration specification. Specifies the time the execution takes in milliseconds.</description>
+        </attribute-key>
+        <attribute-key key="command.execution.failure" default="false">
+            <description>Indicates whether the command fails.</description>
+        </attribute-key>
+        <attribute-key key="command.random.access.file" default="${dcc.data.dir}/randomAccess/file.txt">
+            <description>File that is arbitrary read from / written to. Supports isolated concurrency tests.</description>
+        </attribute-key>
+    </capability-definition>
+
+    <capability-definition id="unit.config">
+    </capability-definition>
+
+    <unit id="test-unit-template" extends="runtime-template" abstract="true" package="dcc-test">
+        <description>Abstract test unit template.</description>
+
+        <required-capability id="unit.config" optional="true"/>
+
+        <provided-capability id="verify.command.specification" definitionRef="command.specification"/>
+        <provided-capability id="unit.config" />
+
+        <command type="verify">
+            <capability id="verify.command.specification" />
+        </command>
+        <mappings>
+            <mapping targetCapabilityId="verify.command.specification">
+                <map-unit-attributes sourcePrefix="verify" />
+            </mapping>
+        </mappings>
+    </unit>
+
+</profile>
