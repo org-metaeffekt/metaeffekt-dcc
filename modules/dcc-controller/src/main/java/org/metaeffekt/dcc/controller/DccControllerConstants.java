@@ -15,8 +15,10 @@
  */
 package org.metaeffekt.dcc.controller;
 
+import org.metaeffekt.dcc.commons.DccConstants;
 import org.slf4j.MDC;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,15 +28,15 @@ import java.util.Set;
 public class DccControllerConstants {
 
     public static final String DCC_SHELL_HOME = "dcc.shell.home";
-    public static final String DCC_SHELL_VERSION = "1.4";
+    public static final String DCC_SHELL_VERSION = "0.15.0";
     
-    public static final String DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN = "1\\.[2-9][1-9]*\\..*";
-    public static final String DCC_SHELL_RECOMMENED_AGENT_VERSION = "1.4.0";
+    public static final String DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN = "0\\.[0-1][0-5]{0,1}\\..*";
+    public static final String DCC_SHELL_RECOMMENED_AGENT_VERSION = "0.15.0";
 
     public static final Set<String> DCC_SHELL_WARN_AGENT_VERSIONS = new HashSet<>();
-    
+
     static {
-        DCC_SHELL_WARN_AGENT_VERSIONS.add("1.2.0");
+        DCC_SHELL_WARN_AGENT_VERSIONS.add("add-version-that-should-provide-a-warning");
     }
 
 }

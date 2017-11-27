@@ -23,18 +23,9 @@ public class VersionTest {
 
     @Test
     public void test() {
-        Assert.assertFalse("1.0.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertFalse("1.0.1".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertFalse("1.0.2".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertFalse("1.1.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.2.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.2.4".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.3.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.3.1".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.3.2".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.4.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertTrue("1.31.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
-        Assert.assertFalse("2.1.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
+        Assert.assertTrue("0.1.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
+        Assert.assertTrue("0.15.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
+        Assert.assertFalse("0.16.0".matches(DccControllerConstants.DCC_SHELL_SUPPORTED_AGENT_VERSION_PATTERN));
     }
 
 }

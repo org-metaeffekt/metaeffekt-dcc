@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-pom-hierarchy</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.15.0</version>
     </parent>
 
     <modules>

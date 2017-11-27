@@ -37,8 +37,8 @@ public final class DccConstants {
     public static final String LIB_SUB_DIRECTORY = "lib";
 
     public static final String WORK_SUB_DIRECTORY = "work";
-    public static final String STATE_CACHE_SUB_DIRECTORY = "work/state";
-    public static final String TMP_SUB_DIRECTORY = "work/tmp";
+    public static final String STATE_CACHE_SUB_DIRECTORY = "state";
+    public static final String TMP_SUB_DIRECTORY = "tmp";
 
     public static final String COMMAND_PROPERTIES = "command-properties";
     public static final String PREREQUISITES_PROPERTIES = "prerequisites-properties";

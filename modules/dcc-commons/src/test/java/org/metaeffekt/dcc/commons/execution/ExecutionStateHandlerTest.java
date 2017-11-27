@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.metaeffekt.dcc.commons.DccConstants;
+import org.metaeffekt.dcc.commons.DccUtils;
 import org.metaeffekt.dcc.commons.commands.Commands;
 import org.metaeffekt.dcc.commons.domain.Id;
 import org.metaeffekt.dcc.commons.domain.Type.DeploymentId;
@@ -113,12 +114,14 @@ public class ExecutionStateHandlerTest {
 
     @Test
     public void alreadySuccessfullyExecuted() throws IOException {
+        final File stateDir = DccUtils.workStateBaseDir(solutionDir);
+
         FileUtils.copyFileToDirectory(new File(new File(new File(targetDir,
                 DccConstants.CONFIG_SUB_DIRECTORY), "unit1"),"start.properties"),
-                new File(new File(solutionDir, DccConstants.STATE_CACHE_SUB_DIRECTORY), "unit1"));
+                new File(stateDir, "unit1"));
         FileUtils.copyFileToDirectory(new File(new File(new File(targetDir,
                 DccConstants.CONFIG_SUB_DIRECTORY), "unit2"), "start.properties"),
-                new File(new File(solutionDir, DccConstants.STATE_CACHE_SUB_DIRECTORY), "unit2"));
+                new File(stateDir, "unit2"));
 
         executionStateHandler = new ExecutionStateHandler(targetDir, solutionDir);
         

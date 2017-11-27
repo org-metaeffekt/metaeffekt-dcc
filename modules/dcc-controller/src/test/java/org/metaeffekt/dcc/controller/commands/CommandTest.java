@@ -56,8 +56,11 @@ public class CommandTest {
         executionContext.setTargetBaseDir(new File("target/dcc-destination"));
         testCommand = new TestCommand(executionContext);
 
+        final File workDir = DccUtils.workBaseDir(SOLUTION_LOCATION);
+        final File tmpDir = new File(workDir, DccConstants.TMP_SUB_DIRECTORY);
+
         Delete delete = new Delete();
-        delete.setDir(new File(SOLUTION_LOCATION, DccConstants.TMP_SUB_DIRECTORY));
+        delete.setDir(tmpDir);
         delete.execute();
     }
 

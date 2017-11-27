@@ -101,8 +101,7 @@ public abstract class BaseExecutor implements Executor {
     }
 
     protected File getStateCacheDirectory() {
-        return new File(getExecutionContext().getSolutionDir(),
-                DccConstants.STATE_CACHE_SUB_DIRECTORY);
+        return DccUtils.workStateBaseDir(getExecutionContext().getSolutionDir());
     }
 
     private void initializeStateHanderIfRequired() {

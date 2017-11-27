@@ -2,7 +2,7 @@
 <Configuration strict="true" monitorInterval="30" shutdownHook="disable" >
 
     <Properties>
-        <Property name="dcc.shell.home">.</Property>
+        <Property name="dcc.shell.home">target</Property>
         <Property name="dcc.shell.log.dir">${sys:dcc.shell.home}/logs</Property>
         <Property name="consoleLayoutPattern">%d{ISO8601} %-5p [%-20X{unitId}] %c(%L) - %m%n</Property>
         <Property name="fileLayoutPattern">%d{ISO8601} %-5p [%-20X{unitId}] %c#%M(%L) - %m%n</Property>
@@ -15,8 +15,8 @@
         </Console>
 
         <RollingFile name="FILE"
-                     fileName="${sys:dcc.shell.log.dir}/logs/dcc-shell.log"
-                     filePattern="${sys:dcc.shell.log.dir}/logs/dcc-shell-%d{MM-dd-yyyy}-%i.log.gz">
+                     fileName="${sys:dcc.shell.log.dir}/dcc-shell.log"
+                     filePattern="${sys:dcc.shell.log.dir}/dcc-shell-%d{MM-dd-yyyy}-%i.log.gz">
 
             <PatternLayout pattern="${fileLayoutPattern}"/>
             <Policies>

@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.metaeffekt.dcc.commons.DccUtils;
+import org.metaeffekt.dcc.controller.DccControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,15 +91,7 @@ public class LocalExecutor extends BaseExecutor implements Executor {
                 // in order to provide all required paths for temporary folders and status tracking the following
                 // setting is used
 
-                // primarily the workDir is inferred from the system properties
-                String workDirInput = System.getProperty("dcc.work.dir");
-                final File workDir;
-                if (workDirInput != null) {
-                    workDir = new File(workDirInput);
-                } else {
-                    // if not provided we fallback to a folder in the solution dir (may not be writable and fail)
-                    workDir = new File(executionContext.getSolutionDir(), DccConstants.WORK_SUB_DIRECTORY);
-                }
+                final File workDir = DccUtils.workBaseDir(executionContext.getSolutionDir());
                 final File workTargetDir = new File(workDir, "local");
                 getExecutionContext().setTargetBaseDir(workTargetDir);
             }

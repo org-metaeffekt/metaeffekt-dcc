@@ -15,8 +15,8 @@
         </Console>
 
         <RollingFile name="FILE"
-             fileName="${sys:dcc.shell.log.dir}/logs/dcc-shell.log"
-             filePattern="${sys:dcc.shell.log.dir}/logs/dcc-shell-%d{MM-dd-yyyy}-%i.log.gz">
+             fileName="${sys:dcc.shell.log.dir}/dcc-shell.log"
+             filePattern="${sys:dcc.shell.log.dir}/dcc-shell-%d{MM-dd-yyyy}-%i.log.gz">
 
             <PatternLayout pattern="${fileLayoutPattern}"/>
             <Policies>

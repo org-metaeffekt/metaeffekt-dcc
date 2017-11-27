@@ -70,7 +70,8 @@ public class ExecutionStateHandler {
 
     public ExecutionStateHandler(File targetDir, File solutionDir) {
         this.configurationDirectory = new File(targetDir, DccConstants.CONFIG_SUB_DIRECTORY);
-        this.stateCacheDirectory = new File(solutionDir, DccConstants.STATE_CACHE_SUB_DIRECTORY);
+
+        this.stateCacheDirectory = DccUtils.workStateBaseDir(solutionDir);
 
         DccUtils.prepareFoldersForWriting(configurationDirectory, stateCacheDirectory);
     }

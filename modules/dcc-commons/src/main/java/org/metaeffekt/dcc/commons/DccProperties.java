@@ -33,6 +33,8 @@ public final class DccProperties {
 
     public static final String DCC_SOLUTION_DIR = "dcc.solution.dir";
 
+    public static final String DCC_WORK_DIR = "dcc.work.dir";
+
     public static final String DCC_TARGET_DIR = "dcc.target.dir";
 
     public static final String DCC_COMMAND = "dcc.command";

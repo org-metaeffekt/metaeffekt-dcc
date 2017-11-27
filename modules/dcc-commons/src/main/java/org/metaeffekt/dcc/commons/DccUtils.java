@@ -15,6 +15,8 @@
  */
 package org.metaeffekt.dcc.commons;
 
+import static org.metaeffekt.dcc.commons.DccProperties.DCC_WORK_DIR;
+
 import java.io.File;
 
 import org.apache.commons.lang3.Validate;
@@ -36,20 +38,77 @@ public final class DccUtils {
         // do nothing
     }
 
+    /**
+     * Retrieves the work base directory. The work dir may either be set by the system property
+     * {@link DccProperties#DCC_WORK_DIR} or is derived from the solutionDir.
+     *
+     * @param solutionDir To be able to derive the workDir from the solutionDir the solutionDir is provided as
+     *                    parameter.
+     *
+     * @return The workDir as {@link File} instance.
+     */
+    public static File workBaseDir(final File solutionDir) {
+        String workDirInput = System.getProperty(DCC_WORK_DIR);
+        if (workDirInput != null) {
+            return new File(workDirInput);
+        } else {
+            // if not provided we fallback to a folder in the solution dir (may not be writable and fail)
+            return new File(solutionDir, DccConstants.WORK_SUB_DIRECTORY);
+        }
+    }
+
+    /**
+     * Retrieves the work/tmp base directory based on the solutionDir.
+     *
+     * @param solutionDir The solution dir.
+     *
+     * @return The work/tmp base directory.
+     */
+    public static File workTmpBaseDir(File solutionDir) {
+        return new File(workBaseDir(solutionDir), DccConstants.TMP_SUB_DIRECTORY);
+    }
+
+    /**
+     * Retrieves the work/tmp directory for the given deployment id.
+     *
+     * @param solutionDir The solution dir.
+     * @param deploymentId The deployment id. Will be used to create a sub-directory in work/tmp.
+     *
+     * @return The work/tmp/deploymentId directory.
+     */
     public static File workingTmpDir(File solutionDir, Id<DeploymentId> deploymentId) {
         Validate.notNull(solutionDir);
         Validate.notNull(deploymentId);
-        return new File(new File(solutionDir, DccConstants.TMP_SUB_DIRECTORY), deploymentId.getValue());
+        return new File(workTmpBaseDir(solutionDir), deploymentId.getValue());
     }
 
+    /**
+     * Retrieves the work/tmp config directory for a given deployment id. Currently this is the same as returned
+     * by workingTmpDir.
+     *
+     * @param solutionDir The solution dir.
+     * @param deploymentId The deployment id. Will be used to create a sub-directory in work/tmp.
+     *
+     * @return The work/tmp/deploymentId directory.
+     */
     public static File workingTmpConfigDir(File solutionDir, Id<DeploymentId> deploymentId) {
         // currently these is the same as the workingTmpDir. A substructure is created anyways
         return workingTmpDir(solutionDir, deploymentId);
     }
 
+    /**
+     * Retrieves the work/state base directory.
+     *
+     * @param solutionDir The solution dir.
+     *
+     * @return The work/state base directory.
+     */
+    public static File workStateBaseDir(File solutionDir) {
+        return new File(DccUtils.workBaseDir(solutionDir), DccConstants.STATE_CACHE_SUB_DIRECTORY);
+    }
+
     public static File propertyFile(File baseFolder, Id<UnitId> unitId, Commands command) {
         Validate.notNull(command);
-
         return propertyFile(baseFolder, unitId, propertyFileName(command));
     }
 
@@ -62,7 +121,7 @@ public final class DccUtils {
             Commands command) {
         
         // assuming that baseFolder is the config folder. The folder may use
-        // descriminators for the individual contexts (local state, remote host
+        // discriminators for the individual contexts (local state, remote host
         // specific)
         
         Validate.notNull(command);
