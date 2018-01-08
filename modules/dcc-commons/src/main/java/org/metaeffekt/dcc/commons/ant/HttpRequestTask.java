@@ -82,7 +82,7 @@ public class HttpRequestTask extends Task {
 
         BasicCredentialsProvider credentialsProvider = null;
         if (username != null) {
-            log("User: " + username);
+            log("User: " + username, Project.MSG_DEBUG);
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
                     new AuthScope(serverHostName, serverPort),
@@ -132,22 +132,28 @@ public class HttpRequestTask extends Task {
 
     public void doRequest(HttpClient httpClient, HttpUriRequest request) throws IOException,
             ClientProtocolException {
-        log("Executing request: " + request.toString());
+        log("Executing request: " + request.toString(), Project.MSG_DEBUG);
         if (request instanceof HttpEntityEnclosingRequestBase
                 && ((HttpEntityEnclosingRequestBase) request).getEntity() != null
                 && StringUtils.isNotBlank(body)) {
-            log("With request body: " + body);
+            log("With request body: " + body, Project.MSG_DEBUG);
         } else {
-            log("Without request body.");
+            log("Without request body.", Project.MSG_DEBUG);
         }
         HttpResponse response = httpClient.execute(request);
         StatusLine statusLine = response.getStatusLine();
         String responseBody = EntityUtils.toString(response.getEntity());
         EntityUtils.consume(response.getEntity());
-        log("Received response: " + responseBody, Project.MSG_DEBUG);
 
         final String statusCode = String.valueOf(statusLine.getStatusCode());
         final String reasonPhrase = statusLine.getReasonPhrase();
+
+        String message = responseBody != null && responseBody.trim().length() > 0 ? responseBody : reasonPhrase;
+        if (message == null) {
+            message = "failed without cause";
+        }
+
+        log("Received response (" + statusCode + "): " + message, Project.MSG_DEBUG);
 
         if (responseStatusCodePropertyName != null) {
             getProject().setProperty(responseStatusCodePropertyName, statusCode);
@@ -240,7 +246,6 @@ public class HttpRequestTask extends Task {
     public void setResponseBodyPropertyName(String responseBodyPropertyName) {
         this.responseBodyPropertyName = responseBodyPropertyName;
     }
-
     
     public boolean isFailOnError() {
         return failOnError;
