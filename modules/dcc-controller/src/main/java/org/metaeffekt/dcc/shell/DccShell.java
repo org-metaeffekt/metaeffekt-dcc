@@ -15,19 +15,19 @@
  */
 package org.metaeffekt.dcc.shell;
 
+import static org.metaeffekt.dcc.commons.DccProperties.DCC_PREFIX_FALLBACK_KEY;
 import static org.metaeffekt.dcc.controller.DccControllerConstants.DCC_SHELL_HOME;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import org.metaeffekt.dcc.commons.ant.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -166,11 +166,33 @@ public class DccShell {
                 argsList.add(CMDFILE_OPTION);
                 argsList.add(arg);
             } else {
-                // pass-through other arguments
-                argsList.add(arg);
+                if (arg.equals("--pf")) {
+                    // support alternate properties to be loaded
+                    if (i + 1 < size) {
+                        final String fileArg = args[i + 1];
+                        checkFileExists(fileArg);
+                        Properties p = PropertyUtils.loadPropertyFile(new File(fileArg));
+                        for (Map.Entry<Object, Object> pEntry : p.entrySet()) {
+                            System.setProperty(DCC_PREFIX_FALLBACK_KEY + pEntry.getKey(), String.valueOf(pEntry.getValue()));
+                        }
+                    } else {
+                        // ignore
+                    }
+                } else if (arg.equals("--p")) {
+                    // support single alternate property in the shape --p key=value
+                    if (i + 1 < size) {
+                        final String entry = args[i + 1];
+                        int index = entry.indexOf('=');
+                        System.setProperty(DCC_PREFIX_FALLBACK_KEY + entry.substring(0, index), entry.substring(index + 1));
+                    } else {
+                        // ignore
+                    }
+                } else {
+                    // pass-through other arguments
+                    argsList.add(arg);
+                }
             }
         }
-
         return argsList.toArray(new String[argsList.size()]);
     }
 

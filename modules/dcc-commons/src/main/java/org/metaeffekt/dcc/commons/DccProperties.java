@@ -47,6 +47,8 @@ public final class DccProperties {
 
     public static final String DCC_JAVA_HOME = "dcc.java.home";
 
+    public static final String DCC_PREFIX_FALLBACK_KEY = "dcc.fallback.";
+
     /**
      * Used in two circumstances:
      * 1) to enable overwriting the profile set deployment id in the deployment properties

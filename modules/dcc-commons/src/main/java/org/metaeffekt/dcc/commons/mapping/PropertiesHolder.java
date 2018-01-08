@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.metaeffekt.dcc.commons.DccUtils;
 import org.metaeffekt.dcc.commons.properties.SortedProperties;
 
+import static org.metaeffekt.dcc.commons.DccProperties.DCC_PREFIX_FALLBACK_KEY;
+
 /**
  * The {@link PropertiesHolder} manages all {@link Properties} that are evaluated by a profile. It
  * also provides consistent access to the input properties.
@@ -104,11 +106,12 @@ public class PropertiesHolder {
         if (value == null && solutionProperties != null) {
             value = solutionProperties.getProperty(key);
         }
-        
+
         if (value == null) {
-            value = defaultValue;
+            // access fallback properties using system properties
+            value = System.getProperty(DCC_PREFIX_FALLBACK_KEY + key, defaultValue);
         }
-        
+
         return value;
     }
 
