@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-modules-behavior-pom</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.16.0</version>
         <relativePath>../dcc-modules-behavior-pom</relativePath>
     </parent>
 
