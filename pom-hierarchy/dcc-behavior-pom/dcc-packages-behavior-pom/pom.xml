@@ -5,18 +5,18 @@
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-packages-behavior-pom</artifactId>
     <packaging>pom</packaging>
-    <version>0.16.0</version>
+    <version>HEAD-SNAPSHOT</version>
 
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-plugin-management-pom</artifactId>
-        <version>0.14.0</version>
+        <version>HEAD-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <properties>
-        <ae.core.version>0.14.0</ae.core.version>
-        <dcc.version>0.16.0</dcc.version>
+        <ae.core.version>HEAD-SNAPSHOT</ae.core.version>
+        <dcc.version>HEAD-SNAPSHOT</dcc.version>
         
         <dcc.test.directory>${project.build.directory}/dcc</dcc.test.directory>
         <dcc.test.packages.directory>${dcc.test.directory}/packages</dcc.test.packages.directory>
