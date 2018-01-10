@@ -33,7 +33,7 @@
 
     <unit id="unit-04" extends="test-unit-template">
         <attributes>
-            <attribute key="verify.command.execution.failure" value="true" />
+            <attribute key="verify.command.execution.failure" value="false" />
         </attributes>
     </unit>
 

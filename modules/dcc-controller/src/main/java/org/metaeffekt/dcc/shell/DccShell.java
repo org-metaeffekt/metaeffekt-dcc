@@ -156,6 +156,8 @@ public class DccShell {
 
                     argsList.add(arg);
                     argsList.add(fileArg);
+
+                    // skip next
                     i++;
                 } else {
                     // ignore
@@ -175,6 +177,9 @@ public class DccShell {
                         for (Map.Entry<Object, Object> pEntry : p.entrySet()) {
                             System.setProperty(DCC_PREFIX_FALLBACK_KEY + pEntry.getKey(), String.valueOf(pEntry.getValue()));
                         }
+
+                        // skip next
+                        i++;
                     } else {
                         // ignore
                     }
@@ -184,6 +189,9 @@ public class DccShell {
                         final String entry = args[i + 1];
                         int index = entry.indexOf('=');
                         System.setProperty(DCC_PREFIX_FALLBACK_KEY + entry.substring(0, index), entry.substring(index + 1));
+
+                        // skip next
+                        i++;
                     } else {
                         // ignore
                     }
