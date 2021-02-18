@@ -7,7 +7,7 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-application</artifactId>
-    <version>0.35.0</version>
+    <version>HEAD-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>metaeffekt-dcc</name>
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core</artifactId>
-        <version>0.28.0</version>
+        <version>HEAD-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -52,8 +52,8 @@
 
     <properties>
         <artifact.inventory.enabled>false</artifact.inventory.enabled>
-        <ae.core.version>0.28.0</ae.core.version>
-        <dcc.version>0.35.0</dcc.version>
+        <ae.core.version>HEAD-SNAPSHOT</ae.core.version>
+        <dcc.version>HEAD-SNAPSHOT</dcc.version>
     </properties>
 
     <modules>
@@ -95,7 +95,6 @@
     </build>
 
     <profiles>
-
         <profile>
             <id>deploy</id>
             <distributionManagement>
@@ -120,7 +119,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -128,31 +127,8 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>aggregate-inventory</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.metaeffekt.core</groupId>
-                        <artifactId>ae-inventory-maven-plugin</artifactId>
-                        <version>${ae.core.version}</version>
-                        <executions>
-                            <execution>
-                                <id>aggregate-reports</id>
-                                <goals>
-                                    <goal>aggregate-inventory-reports</goal>
-                                </goals>
-                                <phase>validateNever</phase>
                                 <configuration>
-                                    <scanExcludes>**/ae-core-artifact-inventory.xls</scanExcludes>
-                                    <scanExcludes>**/dcc-artifact-inventory.xls</scanExcludes>
+                                    <executable>gpg</executable>
                                 </configuration>
                             </execution>
                         </executions>
