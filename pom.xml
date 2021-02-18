@@ -129,7 +129,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>gpg</executable>
+                                    <executable>/usr/local/bin/gpg</executable>
                                 </configuration>
                             </execution>
                         </executions>
