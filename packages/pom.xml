@@ -12,7 +12,7 @@
         <groupId>org.metaeffekt.dcc</groupId>
         <artifactId>dcc-application</artifactId>
         <relativePath>../</relativePath>
-        <version>0.36.0</version>
+        <version>HEAD-SNAPSHOT</version>
     </parent>
 
     <modules>
