@@ -7,7 +7,7 @@
 
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-application</artifactId>
-    <version>HEAD-SNAPSHOT</version>
+    <version>0.35.0</version>
     <packaging>pom</packaging>
 
     <name>metaeffekt-dcc</name>
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.28.0</version>
         <relativePath />
     </parent>
 
@@ -51,20 +51,22 @@
     <inceptionYear>2016</inceptionYear>
 
     <properties>
-        <artifact.inventory.enabled>true</artifact.inventory.enabled>
-        <ae.core.version>HEAD-SNAPSHOT</ae.core.version>
-        <dcc.version>HEAD-SNAPSHOT</dcc.version>
+        <artifact.inventory.enabled>false</artifact.inventory.enabled>
+        <ae.core.version>0.28.0</ae.core.version>
+        <dcc.version>0.35.0</dcc.version>
     </properties>
 
     <modules>
         <module>inventory</module>
         <module>pom-hierarchy</module>
         <module>modules</module>
+<!--
         <module>libraries</module>
         <module>packages</module>
         <module>assemblies</module>
         <module>plugins</module>
         <module>reference</module>
+-->
     </modules>
 
     <build>
@@ -80,10 +82,10 @@
                             <org.metaeffekt.core>${ae.core.version}</org.metaeffekt.core>
                         </groupIdVersionMap>
                         <propertyVersionMap>
-                            <artifact.inventory.version>${artifact.inventory.version}</artifact.inventory.version>
+                            <artifact.inventory.version>false</artifact.inventory.version>
                             <ae.core.version>${ae.core.version}</ae.core.version>
                             <dcc.version>${dcc.version}</dcc.version>
-                            <artifact.inventory.enabled>${artifact.inventory.enabled}</artifact.inventory.enabled>
+                            <artifact.inventory.enabled>false</artifact.inventory.enabled>
                         </propertyVersionMap>
                     </configuration>
                 </plugin>
@@ -107,7 +109,7 @@
                                 <goals>
                                     <goal>aggregate-inventory-reports</goal>
                                 </goals>
-                                <phase>validate</phase>
+                                <phase>validateNever</phase>
                                 <configuration>
                                     <scanExcludes>**/ae-core-artifact-inventory.xls</scanExcludes>
                                     <scanExcludes>**/dcc-artifact-inventory.xls</scanExcludes>

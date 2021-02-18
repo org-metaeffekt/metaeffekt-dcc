@@ -484,7 +484,7 @@ public class CertificateManager {
     }
 
     protected List<Extension> createExtensions(PublicKey publicKey, X509Certificate issuerCertificate)
-            throws CertIOException, NoSuchAlgorithmException, IOException {
+            throws NoSuchAlgorithmException, IOException {
         
         List<Extension> extensions = new ArrayList<>();
 
@@ -892,15 +892,17 @@ public class CertificateManager {
         }
         
         // multiple attributes can be added using an array-like notation
-        for (Object key : componentProperties.keySet()) {
+        List<String> objects = new ArrayList<>(componentProperties.stringPropertyNames());
+        objects.sort(String.CASE_INSENSITIVE_ORDER);
+        for (Object key :objects) {
             final String attributeKey = String.valueOf(key);
             if (attributeKey.startsWith(prefix + ".")) {
                 String attributeName = attributeKey.substring(prefix.length() + 1);
                 if (attributeName.contains("[")) {
                     attributeName = attributeName.substring(0, attributeName.indexOf("["));
-                    final ASN1ObjectIdentifier oid = BCStyle.INSTANCE.attrNameToOID(attributeName);
-                    nameBuilder.addRDN(oid, getProperty(attributeKey));
                 }
+                final ASN1ObjectIdentifier oid = BCStyle.INSTANCE.attrNameToOID(attributeName);
+                nameBuilder.addRDN(oid, getProperty(attributeKey));
             }
         }
 
@@ -913,11 +915,11 @@ public class CertificateManager {
     }
 
     protected int getProperty(String key, int defaultInt) {
-        return Integer.parseInt(getProperty(PROPERTY_CERT_USAGE, String.valueOf(defaultInt)));
+        return Integer.parseInt(getProperty(key, String.valueOf(defaultInt)));
     }
 
     protected boolean getProperty(String key, boolean defaultBoolean) {
-        return Boolean.parseBoolean(getProperty(PROPERTY_CERT_USAGE, String.valueOf(defaultBoolean)));
+        return Boolean.parseBoolean(getProperty(key, String.valueOf(defaultBoolean)));
     }
 
     protected String getProperty(String key, String defaultString) {

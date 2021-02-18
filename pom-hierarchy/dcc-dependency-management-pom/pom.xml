@@ -8,17 +8,17 @@
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-dependency-management-pom</artifactId>
     <packaging>pom</packaging>
-    <version>HEAD-SNAPSHOT</version>
+    <version>0.35.0</version>
 
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-modules-dependency-management-pom</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.28.0</version>
         <relativePath />
     </parent>
 
     <properties>
-        <bouncycastle.version>1.58</bouncycastle.version>
+        <bouncycastle.version>1.68</bouncycastle.version>
         <camel.version>2.19.2</camel.version>
         <cglib.version>3.2.5</cglib.version>
         <commons.fileupload.version>1.3.3</commons.fileupload.version>
