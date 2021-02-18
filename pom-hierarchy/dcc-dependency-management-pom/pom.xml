@@ -8,12 +8,12 @@
     <groupId>org.metaeffekt.dcc</groupId>
     <artifactId>dcc-dependency-management-pom</artifactId>
     <packaging>pom</packaging>
-    <version>HEAD-SNAPSHOT</version>
+    <version>0.18.0</version>
 
     <parent>
         <groupId>org.metaeffekt.core</groupId>
         <artifactId>ae-core-modules-dependency-management-pom</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.35.0</version>
         <relativePath />
     </parent>
 
