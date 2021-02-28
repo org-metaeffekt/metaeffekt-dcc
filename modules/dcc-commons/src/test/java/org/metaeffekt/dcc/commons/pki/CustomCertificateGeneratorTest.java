@@ -36,8 +36,8 @@ public class CustomCertificateGeneratorTest {
     @Ignore
     @Test
     public void testGenerateKeyAndTrustStore() throws GeneralSecurityException, IOException, OperatorException {
-        final File componentsSourceDir = new File("/Volumes/USB/S-DIT/ca");
-        final File componentsTmpDir = new File("/Volumes/USB/S-DIT/ca-tmp");
+        final File componentsSourceDir = new File("/Volumes/USB/ca");
+        final File componentsTmpDir = new File("/Volumes/USB/ca-tmp");
 
         try {
             if (componentsTmpDir.exists()) FileUtils.deleteDirectory(componentsTmpDir);
